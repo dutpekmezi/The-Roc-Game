@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Utils.LogicTimer;
 using Utils.Scene;
+using Game.Systems;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -20,7 +22,10 @@ namespace Game.Installers
             
         private readonly List<IInitializable> _initializables = new();
 
+        private PlayerSystem _playerSystem;
         private LogicTimer _logicTimer;
+
+        [SerializeField] private PlayerController _playerPrefab;
 
         public Task Initialize()
         {
@@ -29,9 +34,11 @@ namespace Game.Installers
 
             _initialized = true;
 
-
+            _playerSystem = BindDisposable(new PlayerSystem(_playerPrefab));
             _logicTimer = BindDisposable(new LogicTimer(OnLogicTick));
             _logicTimer.Start();
+
+            _playerSystem.CreatePlayer();
 
 #if UNITY_EDITOR
             EditorApplication.pauseStateChanged += OnEditorPause;

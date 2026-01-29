@@ -1,7 +1,7 @@
-﻿using NaughtyAttributes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using NaughtyAttributes;
 
 namespace Utils.Scene
 {

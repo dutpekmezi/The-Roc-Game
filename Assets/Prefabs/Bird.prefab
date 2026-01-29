@@ -188,12 +188,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75619695caaa2ce429b326c83869befe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  flapForce: 5
-  maxUpAngle: 25
-  maxDownAngle: -75
-  rotationSpeed: 6
   animator: {fileID: 2364229910335764113}
   rb: {fileID: 1109046929536873537}
+  playerData: {fileID: 11400000, guid: 5cabe0876847c7e4a8a91ab79556ed1a, type: 2}
 --- !u!95 &120264163222715859
 Animator:
   serializedVersion: 7

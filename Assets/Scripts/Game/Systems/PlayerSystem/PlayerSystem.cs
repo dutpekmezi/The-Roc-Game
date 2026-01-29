@@ -1,21 +1,20 @@
+using System;
 using UnityEngine;
 using Utils.Logger;
 using Utils.Pools;
 
 namespace Game.Systems
 {
-    public class PlayerSystem
+    public class PlayerSystem : IDisposable
     {
         private const int DefaultPoolCapacity = 25;
         private const int DefaultPoolPreload = 1;
 
-        private readonly PlayerData playerData;
         private readonly PlayerController playerPrefab;
         private Pool playerPool;
 
-        public PlayerSystem(PlayerData playerData, PlayerController playerPrefab, int preload = DefaultPoolPreload, int capacity = DefaultPoolCapacity)
+        public PlayerSystem(PlayerController playerPrefab, int preload = DefaultPoolPreload, int capacity = DefaultPoolCapacity)
         {
-            this.playerData = playerData;
             this.playerPrefab = playerPrefab;
 
             InitializePool(preload, capacity);
@@ -47,9 +46,12 @@ namespace Game.Systems
                 return null;
             }
 
-            playerInstance.Init(playerData);
-
             return playerInstance;
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
 
         private void InitializePool(int preload, int capacity)

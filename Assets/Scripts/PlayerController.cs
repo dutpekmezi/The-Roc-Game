@@ -8,14 +8,10 @@ namespace Game.Systems
         [SerializeField] private Animator animator;
 
         [SerializeField] private Rigidbody2D rb;
+
+        [SerializeField] private PlayerData playerData;
+
         private bool isAlive = true;
-
-        private PlayerData playerData;
-
-        public void Init(PlayerData playerData)
-        {
-            this.playerData = playerData;
-        }
 
         private void Update()
         {
