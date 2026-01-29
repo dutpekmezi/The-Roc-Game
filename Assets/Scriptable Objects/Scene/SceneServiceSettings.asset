@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dee027c9778044240b309abcf203c933, type: 3}
+  m_Name: SceneServiceSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Utils.Scene.SceneServiceSettings
+  SceneConfigs:
+  - {fileID: 11400000, guid: 778a9af971f81f54a9c158efcf68f7de, type: 2}
+  - {fileID: 11400000, guid: f330f60d50270894c8c94a829aca5d0c, type: 2}
+  - {fileID: 11400000, guid: 6aca9761f5e405143ad37cd29857bea0, type: 2}

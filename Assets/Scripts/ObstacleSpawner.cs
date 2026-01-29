@@ -1,16 +1,16 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject obstaclePrefab;
+    [SerializeField] private List<ObstacleMover> obstaclePrefabs;
     [SerializeField] private float spawnInterval = 1.75f;
     [SerializeField] private float spawnX = 9f;
     [SerializeField] private float minY = -1.5f;
     [SerializeField] private float maxY = 2.5f;
     [SerializeField] private float minGap = 2.5f;
     [SerializeField] private float maxGap = 4f;
-    [SerializeField] private float minBodyScaleY = 0.6f;
-    [SerializeField] private float maxBodyScaleY = 2.5f;
 
     private float timer;
 
@@ -21,7 +21,7 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void Update()
     {
-        if (obstaclePrefab == null)
+        if (obstaclePrefabs == null)
         {
             return;
         }
@@ -40,17 +40,42 @@ public class ObstacleSpawner : MonoBehaviour
         Vector3 spawnPosition = new Vector3(spawnX, spawnY, 0f);
         float gap = Random.Range(minGap, maxGap);
 
-        CreateObstacle(spawnPosition + Vector3.up * (gap * 0.5f), true);
-        CreateObstacle(spawnPosition + Vector3.down * (gap * 0.5f), false);
+        var targetSpawnPosYBottom = spawnPosition.y;
+        var targetSpawnPosYTop = ((Vector2)spawnPosition + Vector2.up * (gap)).y;
+
+        if (targetSpawnPosYTop > maxY)
+        {
+            var diff = targetSpawnPosYTop - maxY;
+            targetSpawnPosYTop -= diff;
+            targetSpawnPosYBottom -= diff;
+        }
+        else if (targetSpawnPosYBottom < minY)
+        {
+            var diff = targetSpawnPosYBottom - minY;
+            targetSpawnPosYBottom -= diff;
+
+            targetSpawnPosYTop -= diff;
+        }
+
+        CreateObstacle(new Vector2(spawnX, targetSpawnPosYBottom), false);
+        CreateObstacle(new Vector2(spawnX, targetSpawnPosYTop), true);
     }
 
     private void CreateObstacle(Vector3 position, bool flipVertically)
     {
-        GameObject obstacleInstance = Instantiate(obstaclePrefab, position, Quaternion.identity);
-        if (obstacleInstance.TryGetComponent(out ObstacleMover obstacleMover))
+        var randomIndex = Random.Range(0, obstaclePrefabs.Count);
+
+        ObstacleMover randomObstaclePrefab = obstaclePrefabs[randomIndex];
+
+        var obstacleInstance = Instantiate(randomObstaclePrefab, position, Quaternion.identity);
+
+        if (flipVertically)
         {
-            float bodyScaleY = Random.Range(minBodyScaleY, maxBodyScaleY);
-            obstacleMover.Configure(bodyScaleY, flipVertically);
+            obstacleInstance.transform.rotation = Quaternion.Euler(0f, 0f, 180f);
+        }
+        else
+        {
+            obstacleInstance.transform.rotation = Quaternion.identity;
         }
     }
 }
