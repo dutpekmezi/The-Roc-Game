@@ -1,53 +1,56 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class PlayerController : MonoBehaviour
+namespace Game.Systems
 {
-    [SerializeField] private Animator animator;
-
-    [SerializeField] private Rigidbody2D rb;
-    private bool isAlive = true;
-
-    private PlayerData playerData;
-
-    public void Init(PlayerData playerData)
+    [RequireComponent(typeof(Rigidbody2D))]
+    public class PlayerController : MonoBehaviour
     {
-        this.playerData = playerData;
-    }
+        [SerializeField] private Animator animator;
 
-    private void Update()
-    {
-        if (!isAlive)
+        [SerializeField] private Rigidbody2D rb;
+        private bool isAlive = true;
+
+        private PlayerData playerData;
+
+        public void Init(PlayerData playerData)
         {
-            return;
+            this.playerData = playerData;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        private void Update()
         {
-            Flap();
-        }
-    }
+            if (!isAlive)
+            {
+                return;
+            }
 
-    private void FixedUpdate()
-    {
-        if (!isAlive)
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            {
+                Flap();
+            }
+        }
+
+        private void FixedUpdate()
         {
-            return;
+            if (!isAlive)
+            {
+                return;
+            }
+
+            float targetAngle = Mathf.Lerp(playerData.maxDownAngle, playerData.maxUpAngle, Mathf.InverseLerp(-6f, 6f, rb.linearVelocity.y));
         }
 
-        float targetAngle = Mathf.Lerp(playerData.maxDownAngle, playerData.maxUpAngle, Mathf.InverseLerp(-6f, 6f, rb.linearVelocity.y));
-    }
+        private void Flap()
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+            rb.AddForce(Vector2.up * playerData.flapForce, ForceMode2D.Impulse);
 
-    private void Flap()
-    {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-        rb.AddForce(Vector2.up * playerData.flapForce, ForceMode2D.Impulse);
+            animator.SetTrigger("Flap");
+        }
 
-        animator.SetTrigger("Flap");
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //isAlive = false;
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            //isAlive = false;
+        }
     }
 }

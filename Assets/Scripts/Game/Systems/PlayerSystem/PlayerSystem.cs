@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils.Pools;
 
 namespace Game.Systems
 {
@@ -9,6 +10,12 @@ namespace Game.Systems
         public PlayerSystem(PlayerData playerData)
         {
             this.playerData = playerData;
+        }
+
+        public PlayerController CreatePlayer()
+        {
+            //var instance = Spawn();
+            return null;
         }
     }
 }
