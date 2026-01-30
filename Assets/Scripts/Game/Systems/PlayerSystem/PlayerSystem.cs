@@ -13,6 +13,8 @@ namespace Game.Systems
         private readonly PlayerController playerPrefab;
         private Pool playerPool;
 
+        private PlayerController currentPlayer;
+
         public PlayerSystem(PlayerController playerPrefab, int preload = DefaultPoolPreload, int capacity = DefaultPoolCapacity)
         {
             this.playerPrefab = playerPrefab;
@@ -22,7 +24,7 @@ namespace Game.Systems
 
         public override void Tick()
         {
-            
+            currentPlayer.Tick();
         }
 
         public PlayerController CreatePlayer()
@@ -51,6 +53,7 @@ namespace Game.Systems
                 return null;
             }
 
+            currentPlayer = playerInstance;
             return playerInstance;
         }
 

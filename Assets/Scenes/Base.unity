@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 641b9009fdea4a6a8020f6e4fe9d19ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Installers.CoreInstaller
-  sceneServiceSettings: {fileID: 0}
+  sceneServiceSettings: {fileID: 11400000, guid: 4f8f6af0d39c42444ad2ecfad24a0f8d, type: 2}
   currencyServiceSettings: {fileID: 0}
   levelSettings: {fileID: 0}
   persistBetweenScenes: 1

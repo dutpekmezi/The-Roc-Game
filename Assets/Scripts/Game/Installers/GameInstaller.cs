@@ -23,9 +23,16 @@ namespace Game.Installers
         private readonly List<IInitializable> _initializables = new();
 
         private PlayerSystem _playerSystem;
+        private ObstacleSystem _obstacleSystem;
         private LogicTimer _logicTimer;
 
         [SerializeField] private PlayerController _playerPrefab;
+        [SerializeField] private ObstacleSettings _obstacleSettings;
+
+        private void Awake()
+        {
+            Initialize();
+        }
 
         public Task Initialize()
         {
@@ -35,6 +42,7 @@ namespace Game.Installers
             _initialized = true;
 
             _playerSystem = BindDisposable(new PlayerSystem(_playerPrefab));
+            _obstacleSystem = BindDisposable(new ObstacleSystem(_obstacleSettings));
             _logicTimer = BindDisposable(new LogicTimer(OnLogicTick));
             _logicTimer.Start();
 
@@ -71,7 +79,8 @@ namespace Game.Installers
 
         private void OnLogicTick()
         {
-  
+            _playerSystem.Tick();
+            _obstacleSystem.Tick();
         }
 
         private T BindDisposable<T>(T obj)

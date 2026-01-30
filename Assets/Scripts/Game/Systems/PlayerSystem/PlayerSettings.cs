@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Game.Systems
 {
-    [CreateAssetMenu(fileName = "PlayerData", menuName = "Game/Player/Player Data")]
-    public class PlayerData : ScriptableObject
+    [CreateAssetMenu(fileName = "PlayerSettings", menuName = "Game/Player/Player Settings")]
+    public class PlayerSettings : ScriptableObject
     {
         public float flapForce = 5.5f;
         public float maxUpAngle = 25f;

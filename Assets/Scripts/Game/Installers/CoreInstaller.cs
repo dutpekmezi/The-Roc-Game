@@ -31,9 +31,9 @@ namespace Game.Installers
             }
 
             SignalBus.Clear();
-            InitializeSaveService();
+            //InitializeSaveService();
             InitializeSceneService();
-            InitializeCurrencyService();
+            //InitializeCurrencyService();
         }
 
         private static void InitializeSaveService()

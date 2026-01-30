@@ -1,43 +1,33 @@
+using Game.Systems;
 using UnityEngine;
 
-public class ObstacleMover : MonoBehaviour
+namespace Game.Systems
 {
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float destroyX = -12f;
-
-    [SerializeField] private GameObject top;
-    [SerializeField] private GameObject body;
-    [SerializeField] private GameObject bottom;
-
-    private Vector3 initialTopLocalPosition;
-    private Vector3 initialBodyLocalScale;
-    private Vector3 initialBottomLocalPosition;
-
-    private void Awake()
+    public class ObstacleMover : MonoBehaviour
     {
-        if (top != null)
+        private ObstacleSettings obstacleSettings;
+        private ObstacleSystem obstacleSystem;
+
+        private bool isDestroyed = false;
+
+        public void Init(ObstacleSystem obstacleSystem)
         {
-            initialTopLocalPosition = top.transform.localPosition;
+            this.obstacleSettings = obstacleSystem.ObstacleSettings;
+            this.obstacleSystem = obstacleSystem;
+            isDestroyed = false;
         }
-
-        if (body != null)
+        public void Tick()
         {
-            initialBodyLocalScale = body.transform.localScale;
-        }
+            if (!isDestroyed)
+            {
+                transform.position += Vector3.left * obstacleSettings.moveSpeed * Time.deltaTime;
 
-        if (bottom != null)
-        {
-            initialBottomLocalPosition = bottom.transform.localPosition;
-        }
-    }
-
-    private void Update()
-    {
-        transform.position += Vector3.left * moveSpeed * Time.deltaTime;
-
-        if (transform.position.x <= destroyX)
-        {
-            Destroy(gameObject);
+                if (transform.position.x <= obstacleSettings.destroyX)
+                {
+                    obstacleSystem.DestroyObstacle(this);
+                    isDestroyed = true;
+                }
+            }
         }
     }
 }

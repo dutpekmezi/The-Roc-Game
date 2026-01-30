@@ -46,11 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59423b4f42235ee45ab57122b17e8cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleMover
-  moveSpeed: 2
-  destroyX: -5
-  top: {fileID: 4278393018772127501}
-  body: {fileID: 7382469100077548392}
-  bottom: {fileID: 0}
 --- !u!60 &528791709617333413
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -97,15 +92,15 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 1.2324265, y: 0.43939185}
-      - {x: -0.02084129, y: 0.5362579}
-      - {x: -1.2368872, y: 0.42019767}
-      - {x: -1.2471085, y: 0.12002921}
-      - {x: -0.26064777, y: -0.13282695}
+    - - {x: 0.9162402, y: 0.43266445}
+      - {x: 0.026250295, y: 0.4488022}
+      - {x: -0.92070085, y: 0.40674302}
+      - {x: -0.91073996, y: 0.12675655}
+      - {x: -0.23373806, y: -0.38173962}
       - {x: -0.20115162, y: -6.7112546}
       - {x: 0.2389465, y: -6.700182}
-      - {x: 0.35518622, y: -0.14280468}
-      - {x: 1.2540638, y: 0.23387745}
+      - {x: 0.30809465, y: -0.3580805}
+      - {x: 0.9176953, y: 0.15314901}
   m_UseDelaunayMesh: 0
 --- !u!1 &4278393018772127501
 GameObject:

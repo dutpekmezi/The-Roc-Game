@@ -3,15 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
-{
-    [SerializeField] private List<ObstacleMover> obstaclePrefabs;
-    [SerializeField] private float spawnInterval = 1.75f;
-    [SerializeField] private float spawnX = 9f;
-    [SerializeField] private float minY = -1.5f;
-    [SerializeField] private float maxY = 2.5f;
-    [SerializeField] private float minGap = 2.5f;
-    [SerializeField] private float maxGap = 4f;
-
+{/*
     private float timer;
 
     private void OnEnable()
@@ -77,5 +69,5 @@ public class ObstacleSpawner : MonoBehaviour
         {
             obstacleInstance.transform.rotation = Quaternion.identity;
         }
-    }
+    }*/
 }

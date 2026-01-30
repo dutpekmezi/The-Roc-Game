@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aafd666fd2417fc4484ece80ba6e5f6b, type: 3}
+  m_Name: ObstacleSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ObstacleSettings
+  moveSpeed: 4
+  destroyX: -12
+  spawnInterval: 2
+  spawnX: 5
+  minY: -4
+  maxY: 4
+  minGap: 3
+  maxGap: 4
+  obstaclePrefabs:
+  - {fileID: 5784314317272241808, guid: 0df23063020b5c64ebd323e518bb6b42, type: 3}
+  - {fileID: 5784314317272241808, guid: b76dd6563c4af7e42bf21e9cd6595fba, type: 3}
+  - {fileID: 5784314317272241808, guid: ba355ede45171714790e8bdd2c3ea3f4, type: 3}

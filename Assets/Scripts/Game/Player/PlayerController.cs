@@ -6,40 +6,52 @@ namespace Game.Systems
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour
     {
+        [Header("Refs")]
         [SerializeField] private Animator animator;
-
         [SerializeField] private Rigidbody2D rb;
+        [SerializeField] private PlayerSettings playerData;
 
-        [SerializeField] private PlayerData playerData;
+        [Header("Input")]
+        [SerializeField] private InputActionReference flapAction;
 
         private bool isAlive = true;
 
-        public void Tick()
-        {
-            if (!isAlive)
-            {
-                return;
-            }
+        private bool flapBuffered;
 
-            if (IsFlapPressed())
+        private void OnEnable()
+        {
+            if (flapAction != null)
             {
-                Flap();
+                flapAction.action.Enable();
+                flapAction.action.performed += OnFlapPerformed;
             }
         }
 
-        private static bool IsFlapPressed()
+        private void OnDisable()
         {
-            if (Keyboard.current?.spaceKey.wasPressedThisFrame == true)
+            if (flapAction != null)
             {
-                return true;
+                flapAction.action.performed -= OnFlapPerformed;
+                flapAction.action.Disable();
             }
+        }
 
-            if (Mouse.current?.leftButton.wasPressedThisFrame == true)
+        private void OnFlapPerformed(InputAction.CallbackContext ctx)
+        {
+            if (!isAlive) return;
+
+            flapBuffered = true;
+        }
+
+        public void Tick()
+        {
+            if (!isAlive) return;
+
+            if (flapBuffered)
             {
-                return true;
+                flapBuffered = false;
+                Flap();
             }
-
-            return Touchscreen.current?.primaryTouch.press.wasPressedThisFrame == true;
         }
 
         private void Flap()
@@ -52,7 +64,6 @@ namespace Game.Systems
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            //isAlive = false;
         }
     }
 }
