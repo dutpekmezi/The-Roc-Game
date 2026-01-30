@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aafd666fd2417fc4484ece80ba6e5f6b, type: 3}
   m_Name: ObstacleSettings
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ObstacleSettings
-  moveSpeed: 4
+  moveSpeed: 2
   destroyX: -12
   spawnInterval: 2
   spawnX: 5

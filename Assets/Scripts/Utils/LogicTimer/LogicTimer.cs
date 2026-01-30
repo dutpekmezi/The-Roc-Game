@@ -11,7 +11,7 @@ namespace Utils.LogicTimer
 
     public class LogicTimer : IDisposable
     {
-        public const float FramesPerSecond = 30f;
+        public const float FramesPerSecond = 30;
         public const float FixedDelta = 1f / FramesPerSecond;
 
         private double _totalTime;
