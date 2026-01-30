@@ -145,7 +145,6 @@ namespace Game.Anim
                 if (tween == null) return null;
 
                 tween.SetEase(ease);
-                if (delay > 0f) tween.SetDelay(delay);
 
                 return tween;
             }
@@ -154,16 +153,20 @@ namespace Game.Anim
             {
                 if (sequence == null || tween == null) return;
 
+                Sequence tweenSequence = DOTween.Sequence();
+                if (delay > 0f) tweenSequence.AppendInterval(delay);
+                tweenSequence.Append(tween);
+
                 switch (placement)
                 {
                     case SequencePlacement.Append:
-                        sequence.Append(tween);
+                        sequence.Append(tweenSequence);
                         break;
                     case SequencePlacement.InsertAtStart:
-                        sequence.Insert(0f, tween);
+                        sequence.Insert(0f, tweenSequence);
                         break;
                     default:
-                        sequence.Join(tween);
+                        sequence.Join(tweenSequence);
                         break;
                 }
             }
