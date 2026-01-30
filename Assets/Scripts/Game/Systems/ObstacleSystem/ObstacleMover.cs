@@ -1,5 +1,6 @@
 using Game.Systems;
 using UnityEngine;
+using Utils.LogicTimer;
 
 namespace Game.Systems
 {
@@ -20,7 +21,7 @@ namespace Game.Systems
         {
             if (!isDestroyed)
             {
-                transform.position += Vector3.left * obstacleSettings.moveSpeed * Time.deltaTime;
+                transform.position += Vector3.left * obstacleSettings.moveSpeed * LogicTimer.FixedDelta;
 
                 if (transform.position.x <= obstacleSettings.destroyX)
                 {

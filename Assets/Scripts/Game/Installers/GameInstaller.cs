@@ -24,10 +24,12 @@ namespace Game.Installers
 
         private PlayerSystem _playerSystem;
         private ObstacleSystem _obstacleSystem;
+        private CollectableSystem _collectableSystem;
         private LogicTimer _logicTimer;
 
         [SerializeField] private PlayerController _playerPrefab;
         [SerializeField] private ObstacleSettings _obstacleSettings;
+        [SerializeField] private CollectableSettings _collectableSettings;
 
         private void Awake()
         {
@@ -43,6 +45,8 @@ namespace Game.Installers
 
             _playerSystem = BindDisposable(new PlayerSystem(_playerPrefab));
             _obstacleSystem = BindDisposable(new ObstacleSystem(_obstacleSettings));
+            _collectableSystem = BindDisposable(new CollectableSystem(_collectableSettings));
+
             _logicTimer = BindDisposable(new LogicTimer(OnLogicTick));
             _logicTimer.Start();
 
