@@ -504,7 +504,7 @@ MonoBehaviour:
     relative: 1
     rotateMode: 1
   scale:
-    enabled: 0
+    enabled: 1
     duration: 1
     delay: 0
     ease: 1
@@ -693,7 +693,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 10.43, y: 13.05}
+  m_Size: {x: 10.44, y: 10.35}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

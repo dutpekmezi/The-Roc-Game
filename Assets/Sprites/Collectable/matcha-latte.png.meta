@@ -116,10 +116,10 @@ TextureImporter:
       name: matcha-latte_0
       rect:
         serializedVersion: 2
-        x: 26
-        y: 22
-        width: 1043
-        height: 1305
+        x: 23
+        y: 151
+        width: 1044
+        height: 1035
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
