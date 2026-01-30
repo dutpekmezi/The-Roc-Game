@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Systems
 {
@@ -20,10 +21,25 @@ namespace Game.Systems
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            if (IsFlapPressed())
             {
                 Flap();
             }
+        }
+
+        private static bool IsFlapPressed()
+        {
+            if (Keyboard.current?.spaceKey.wasPressedThisFrame == true)
+            {
+                return true;
+            }
+
+            if (Mouse.current?.leftButton.wasPressedThisFrame == true)
+            {
+                return true;
+            }
+
+            return Touchscreen.current?.primaryTouch.press.wasPressedThisFrame == true;
         }
 
         private void Flap()
