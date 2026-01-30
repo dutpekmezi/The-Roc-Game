@@ -5,7 +5,7 @@ using Utils.Pools;
 
 namespace Game.Systems
 {
-    public class PlayerSystem : IDisposable
+    public class PlayerSystem : BaseSystem
     {
         private const int DefaultPoolCapacity = 25;
         private const int DefaultPoolPreload = 1;
@@ -18,6 +18,11 @@ namespace Game.Systems
             this.playerPrefab = playerPrefab;
 
             InitializePool(preload, capacity);
+        }
+
+        public override void Tick()
+        {
+            
         }
 
         public PlayerController CreatePlayer()
@@ -47,11 +52,6 @@ namespace Game.Systems
             }
 
             return playerInstance;
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
 
         private void InitializePool(int preload, int capacity)

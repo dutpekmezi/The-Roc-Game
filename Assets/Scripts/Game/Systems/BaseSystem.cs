@@ -1,0 +1,25 @@
+using System;
+using UnityEngine;
+
+namespace Game.Systems
+{
+    public abstract class BaseSystem : IDisposable
+    {
+        public BaseSystem()
+        {
+
+        }
+
+        public abstract void Tick();
+
+        public virtual void OnDispose()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

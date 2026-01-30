@@ -13,7 +13,7 @@ namespace Game.Systems
 
         private bool isAlive = true;
 
-        private void Update()
+        public void Tick()
         {
             if (!isAlive)
             {
@@ -24,16 +24,6 @@ namespace Game.Systems
             {
                 Flap();
             }
-        }
-
-        private void FixedUpdate()
-        {
-            if (!isAlive)
-            {
-                return;
-            }
-
-            float targetAngle = Mathf.Lerp(playerData.maxDownAngle, playerData.maxUpAngle, Mathf.InverseLerp(-6f, 6f, rb.linearVelocity.y));
         }
 
         private void Flap()
