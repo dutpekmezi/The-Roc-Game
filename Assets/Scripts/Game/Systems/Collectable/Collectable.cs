@@ -37,6 +37,9 @@ namespace Game.Systems
             if (collision != null && collision.GetComponent<PlayerController>())
             {
                 isCollected = true;
+
+                CurrencyService.Instance.AddFakeCurrency("matcha", 15);
+
                 collectableSystem.DespawnCollectable(this);
             }
         }

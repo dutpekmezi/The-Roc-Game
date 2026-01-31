@@ -15,4 +15,4 @@ MonoBehaviour:
   currencyId: matcha
   currencySprite: {fileID: -7002255698544018446, guid: e92a7f14ab9bb0a438e52f9ca936e538, type: 3}
   currencyUIPrefab: {fileID: 15626377180415218, guid: e637f683ad56b944fafb283bfb11fbe5, type: 3}
-  destinationActionData: {fileID: 0}
+  destinationActionData: {fileID: 11400000, guid: ae4a4591b240bbc4caaa2cd8292949db, type: 2}

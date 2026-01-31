@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5e3b2b3f3e4cb0489008c13e2c68c9c, type: 3}
   m_Name: CurrencySettings
   m_EditorClassIdentifier: Assembly-CSharp::Utils.Currency.CurrencyServiceSettings
-  hardCurrency: {fileID: 0}
-  softCurrency: {fileID: 0}
+  hardCurrency: {fileID: 11400000, guid: e73d981417e5a6b4187b685ab657da37, type: 2}
+  softCurrency: {fileID: 11400000, guid: 9d7355c12c88f1c4faf39fba934d4eec, type: 2}
   energyCurrency: {fileID: 0}
-  currencyConfigs: []
+  currencyConfigs:
+  - {fileID: 11400000, guid: 9d7355c12c88f1c4faf39fba934d4eec, type: 2}
+  - {fileID: 11400000, guid: e73d981417e5a6b4187b685ab657da37, type: 2}

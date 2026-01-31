@@ -15,4 +15,4 @@ MonoBehaviour:
   currencyId: coffee
   currencySprite: {fileID: 4687309882487268517, guid: 76fbc01bac24712418ecebaeeafdfb11, type: 3}
   currencyUIPrefab: {fileID: 649728923891834555, guid: 1b87364a849fca54f9dcfd79b24ad3fe, type: 3}
-  destinationActionData: {fileID: 0}
+  destinationActionData: {fileID: 11400000, guid: ae4a4591b240bbc4caaa2cd8292949db, type: 2}
