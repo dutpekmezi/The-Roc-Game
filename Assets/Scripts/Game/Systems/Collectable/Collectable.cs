@@ -1,4 +1,5 @@
 using UnityEngine;
+using Utils.Currency;
 using Utils.LogicTimer;
 using Utils.Pools;
 
@@ -6,6 +7,8 @@ namespace Game.Systems
 {
     public class Collectable : MonoBehaviour
     {
+        //[SerializeField] private CurrencyConfig
+
         private bool isCollected = false;
 
         private CollectableSystem collectableSystem;

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Utils.Singleton;
 
 namespace Game.Systems
 {

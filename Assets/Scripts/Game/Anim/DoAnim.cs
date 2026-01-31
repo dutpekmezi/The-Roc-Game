@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using DG.Tweening;
 using UnityEngine;
 
@@ -13,6 +13,11 @@ namespace Game.Anim
         [SerializeField] private bool rebuildOnEnable = true;
         [SerializeField] private UpdateType updateType = UpdateType.Normal;
         [SerializeField] private bool useUnscaledTime;
+
+        [Header("Sequence Loop")]
+        [Tooltip("1 = no loop, -1 = infinite (sequence seviyesinde serbest)")]
+        [SerializeField] private int sequenceLoops = 1;
+        [SerializeField] private LoopType sequenceLoopType = LoopType.Restart;
 
         [Header("Movement")]
         [SerializeField] private MoveSettings move = new MoveSettings { enabled = false };
@@ -84,6 +89,10 @@ namespace Game.Anim
             _sequence.SetAutoKill(false);
             _sequence.SetUpdate(updateType, useUnscaledTime);
 
+            // Sequence loop burada serbest (DOTween'in istediği yer burası)
+            if (sequenceLoops != 1)
+                _sequence.SetLoops(NormalizeLoopCount(sequenceLoops), sequenceLoopType);
+
             bool hasTweens = false;
 
             hasTweens |= move.TryAdd(_sequence, resolvedTarget);
@@ -118,6 +127,13 @@ namespace Game.Anim
             _sequence = null;
         }
 
+        private static int NormalizeLoopCount(int loopCount)
+        {
+            if (loopCount < -1) return -1;
+            if (loopCount == 0) return 1;
+            return loopCount;
+        }
+
         // -------------------------
         // Base + shared helpers
         // -------------------------
@@ -129,29 +145,48 @@ namespace Game.Anim
 
             [Header("Timing")]
             public float duration = 0.35f;
+
+            [Tooltip("Sequence içinde gecikme. Join olsa bile timeline'da uygulanır.")]
             public float delay = 0f;
+
+            [Tooltip("Sequence içinde mutlak başlangıç zamanı. delay ile toplanır.")]
+            public float startAt = 0f;
+
             public Ease ease = Ease.OutQuad;
 
             [Header("Per-Tween Loop")]
-            [Tooltip("1 = no loop, -1 = infinite")]
+            [Tooltip("1 = no loop, -1 = infinite (Sequence içinde -1 otomatik clamp edilir)")]
             public int loops = 1;
+
             public LoopType loopType = LoopType.Restart;
+
+            [Tooltip("Sequence içindeyken loops=-1 olursa bu değere çevrilir (warning'i engeller).")]
+            public int infiniteLoopFallback = 999999;
 
             [Header("Sequence Placement")]
             public SequencePlacement placement = SequencePlacement.Join;
 
-            protected Tween ConfigureTween(Tween tween)
+            protected Tween ConfigureTween(Tween tween, bool isInsideSequence = true)
             {
                 if (tween == null) return null;
 
                 tween.SetEase(ease);
 
-                if (delay > 0f)
-                    tween.SetDelay(delay);
-
-                // IMPORTANT: Per-tween loops (this is what allows Rotate=Restart, Scale=Yoyo together)
                 if (loops != 1)
-                    tween.SetLoops(NormalizeLoopCount(loops), loopType);
+                {
+                    int normalized = NormalizeLoopCount(loops);
+
+                    // DOTween kuralı: Sequence içine konan tween infinite loop olamaz.
+                    if (isInsideSequence && normalized == -1)
+                    {
+                        int safe = Mathf.Max(2, infiniteLoopFallback);
+                        tween.SetLoops(safe, loopType);
+                    }
+                    else
+                    {
+                        tween.SetLoops(normalized, loopType);
+                    }
+                }
 
                 return tween;
             }
@@ -160,16 +195,21 @@ namespace Game.Anim
             {
                 if (sequence == null || tween == null) return;
 
+                float t = Mathf.Max(0f, startAt + delay);
+
                 switch (placement)
                 {
                     case SequencePlacement.Append:
+                        if (t > 0f) sequence.AppendInterval(t);
                         sequence.Append(tween);
                         break;
+
                     case SequencePlacement.InsertAtStart:
                         sequence.Insert(0f, tween);
                         break;
-                    default:
-                        sequence.Join(tween);
+
+                    default: // Join
+                        sequence.Insert(t, tween);
                         break;
                 }
             }
@@ -211,7 +251,7 @@ namespace Game.Anim
 
                 if (relative) tween.SetRelative();
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -244,7 +284,7 @@ namespace Game.Anim
                 if (!isAxisAdd && relative)
                     tween.SetRelative();
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -263,7 +303,7 @@ namespace Game.Anim
                 Tween tween = target.DOScale(targetScale, duration);
                 if (relative) tween.SetRelative();
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -286,7 +326,7 @@ namespace Game.Anim
                 Tween tween = resolved.DOAnchorPos(anchor, duration);
                 if (relative) tween.SetRelative();
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -314,7 +354,7 @@ namespace Game.Anim
                     _ => target.DOPunchPosition(punch, duration, vibrato, elasticity, snapping)
                 };
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -343,7 +383,7 @@ namespace Game.Anim
                     _ => target.DOShakePosition(duration, strength, vibrato, randomness, fadeOut, snapping)
                 };
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -368,7 +408,7 @@ namespace Game.Anim
 
                 Tween tween = resolved.DOShakeAnchorPos(duration, strength, vibrato, randomness, snapping, fadeOut);
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }
@@ -384,12 +424,15 @@ namespace Game.Anim
             {
                 if (!enabled || sequence == null) return false;
 
-                CanvasGroup resolved = canvasGroup != null ? canvasGroup : defaultTarget.GetComponent<CanvasGroup>();
+                CanvasGroup resolved = canvasGroup != null
+                    ? canvasGroup
+                    : (defaultTarget != null ? defaultTarget.GetComponent<CanvasGroup>() : null);
+
                 if (resolved == null) return false;
 
                 Tween tween = resolved.DOFade(alpha, duration);
 
-                ConfigureTween(tween);
+                ConfigureTween(tween, isInsideSequence: true);
                 AddToSequence(sequence, tween);
                 return true;
             }

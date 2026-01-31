@@ -40,6 +40,11 @@ namespace Game.Systems
             }
         }
 
+        public void Collect()
+        {
+
+        }
+
         public void SpawnRandomCollectable(Vector2 spawnPos)
         {
             var randomIndex = Random.Range(0, CollectableSettings.collectablePrefabs.Count);

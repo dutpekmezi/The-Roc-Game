@@ -5,8 +5,8 @@ namespace Utils.Currency
 {
     public static class CurrencyIds
     {
-        public const string Gold = "gold";
-        public const string Gem = "gem";
+        public const string Coffee = "coffee";
+        public const string Matcha = "matcha";
         public const string Bell = "bell";
 
         private static List<string> values = null;
@@ -17,7 +17,7 @@ namespace Utils.Currency
             {
                 values = new List<string>()
                 {
-                    Gold, Gem, Bell
+                    Coffee, Matcha, Bell
                 };
             }
 
