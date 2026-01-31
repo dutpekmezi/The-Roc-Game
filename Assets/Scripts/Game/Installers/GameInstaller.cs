@@ -85,6 +85,7 @@ namespace Game.Installers
         {
             _playerSystem.Tick();
             _obstacleSystem.Tick();
+            _collectableSystem.Tick();
         }
 
         private T BindDisposable<T>(T obj)

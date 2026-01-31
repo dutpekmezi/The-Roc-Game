@@ -54,11 +54,13 @@ namespace Game.Systems
         private void SpawnObstacle()
         {
             float spawnY = UnityEngine.Random.Range(ObstacleSettings.minY, ObstacleSettings.maxY);
-            Vector3 spawnPosition = new Vector3(ObstacleSettings.spawnX, spawnY, 0f);
+            Vector3 spawnPosition = new Vector2(ObstacleSettings.spawnX, spawnY);
             float gap = UnityEngine.Random.Range(ObstacleSettings.minGap, ObstacleSettings.maxGap);
 
             var targetSpawnPosYBottom = spawnPosition.y;
             var targetSpawnPosYTop = ((Vector2)spawnPosition + Vector2.up * (gap)).y;
+
+            
 
             if (targetSpawnPosYTop > ObstacleSettings.maxY)
             {
@@ -73,8 +75,11 @@ namespace Game.Systems
                 targetSpawnPosYTop -= diff;
             }
 
+            var collectableSpawnPos = new Vector2(ObstacleSettings.spawnX, targetSpawnPosYBottom + ((targetSpawnPosYTop - targetSpawnPosYBottom) * 0.5f));
+
             CreateObstacle(new Vector2(ObstacleSettings.spawnX, targetSpawnPosYBottom), false);
             CreateObstacle(new Vector2(ObstacleSettings.spawnX, targetSpawnPosYTop), true);
+            CollectableSystem.Instance.SpawnRandomCollectable(collectableSpawnPos);
         }
 
         private void CreateObstacle(Vector3 position, bool flipVertically)
@@ -102,7 +107,7 @@ namespace Game.Systems
             }
         }
 
-        public void DestroyObstacle(ObstacleMover obstacle)
+        public void DespawnObstacle(ObstacleMover obstacle)
         {
             Pools.Instance.Despawn(obstacle.gameObject);
             createdObstacles.Remove(obstacle);

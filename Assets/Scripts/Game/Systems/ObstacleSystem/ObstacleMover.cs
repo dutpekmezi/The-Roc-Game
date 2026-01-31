@@ -25,7 +25,7 @@ namespace Game.Systems
 
                 if (transform.position.x <= obstacleSettings.destroyX)
                 {
-                    obstacleSystem.DestroyObstacle(this);
+                    obstacleSystem.DespawnObstacle(this);
                     isDestroyed = true;
                 }
             }

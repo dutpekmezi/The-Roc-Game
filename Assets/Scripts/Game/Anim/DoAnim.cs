@@ -11,8 +11,6 @@ namespace Game.Anim
         [SerializeField] private Transform target;
         [SerializeField] private bool playOnEnable = true;
         [SerializeField] private bool rebuildOnEnable = true;
-        [SerializeField] private int loops = -1;
-        [SerializeField] private LoopType loopType = LoopType.Yoyo;
         [SerializeField] private UpdateType updateType = UpdateType.Normal;
         [SerializeField] private bool useUnscaledTime;
 
@@ -40,14 +38,14 @@ namespace Game.Anim
 
         private void Start()
         {
-            if (playOnEnable)
-            {
-                Play();
-            }
-            else if (rebuildOnEnable)
-            {
-                BuildSequence();
-            }
+            if (playOnEnable) Play();
+            else if (rebuildOnEnable) BuildSequence();
+        }
+
+        private void OnEnable()
+        {
+            if (playOnEnable) Play();
+            else if (rebuildOnEnable) BuildSequence();
         }
 
         private void OnDisable()
@@ -59,24 +57,18 @@ namespace Game.Anim
         public void Play()
         {
             if (_sequence == null || rebuildOnEnable)
-            {
                 BuildSequence();
-            }
 
             _sequence?.Restart();
         }
 
         [ContextMenu("Pause")]
-        public void Pause()
-        {
-            _sequence?.Pause();
-        }
+        public void Pause() => _sequence?.Pause();
 
         [ContextMenu("Stop")]
         public void Stop()
         {
             if (_sequence == null) return;
-
             _sequence.Rewind();
             _sequence.Pause();
         }
@@ -87,10 +79,10 @@ namespace Game.Anim
             KillSequence();
 
             Transform resolvedTarget = target != null ? target : transform;
+
             _sequence = DOTween.Sequence();
             _sequence.SetAutoKill(false);
             _sequence.SetUpdate(updateType, useUnscaledTime);
-            _sequence.SetLoops(NormalizeLoopCount(loops), loopType);
 
             bool hasTweens = false;
 
@@ -98,13 +90,16 @@ namespace Game.Anim
             hasTweens |= rotate.TryAdd(_sequence, resolvedTarget);
             hasTweens |= scale.TryAdd(_sequence, resolvedTarget);
             hasTweens |= anchor.TryAdd(_sequence, resolvedTarget);
+
             hasTweens |= punchPosition.TryAdd(_sequence, resolvedTarget);
             hasTweens |= punchRotation.TryAdd(_sequence, resolvedTarget);
             hasTweens |= punchScale.TryAdd(_sequence, resolvedTarget);
+
             hasTweens |= shakePosition.TryAdd(_sequence, resolvedTarget);
             hasTweens |= shakeRotation.TryAdd(_sequence, resolvedTarget);
             hasTweens |= shakeScale.TryAdd(_sequence, resolvedTarget);
             hasTweens |= shakeAnchor.TryAdd(_sequence, resolvedTarget);
+
             hasTweens |= fade.TryAdd(_sequence, resolvedTarget);
 
             if (!hasTweens)
@@ -116,28 +111,33 @@ namespace Game.Anim
             _sequence.Pause();
         }
 
-        private static int NormalizeLoopCount(int loopCount)
-        {
-            if (loopCount < -1) return -1;
-            if (loopCount == 0) return 1;
-            return loopCount;
-        }
-
         private void KillSequence()
         {
             if (_sequence == null) return;
-
             _sequence.Kill();
             _sequence = null;
         }
+
+        // -------------------------
+        // Base + shared helpers
+        // -------------------------
 
         [Serializable]
         public abstract class TweenSettingsBase
         {
             public bool enabled;
+
+            [Header("Timing")]
             public float duration = 0.35f;
-            public float delay;
+            public float delay = 0f;
             public Ease ease = Ease.OutQuad;
+
+            [Header("Per-Tween Loop")]
+            [Tooltip("1 = no loop, -1 = infinite")]
+            public int loops = 1;
+            public LoopType loopType = LoopType.Restart;
+
+            [Header("Sequence Placement")]
             public SequencePlacement placement = SequencePlacement.Join;
 
             protected Tween ConfigureTween(Tween tween)
@@ -145,7 +145,13 @@ namespace Game.Anim
                 if (tween == null) return null;
 
                 tween.SetEase(ease);
-                if (delay > 0f) tween.SetDelay(delay);
+
+                if (delay > 0f)
+                    tween.SetDelay(delay);
+
+                // IMPORTANT: Per-tween loops (this is what allows Rotate=Restart, Scale=Yoyo together)
+                if (loops != 1)
+                    tween.SetLoops(NormalizeLoopCount(loops), loopType);
 
                 return tween;
             }
@@ -167,6 +173,13 @@ namespace Game.Anim
                         break;
                 }
             }
+
+            protected static int NormalizeLoopCount(int loopCount)
+            {
+                if (loopCount < -1) return -1;
+                if (loopCount == 0) return 1;
+                return loopCount;
+            }
         }
 
         public enum SequencePlacement
@@ -175,6 +188,10 @@ namespace Game.Anim
             Append,
             InsertAtStart
         }
+
+        // -------------------------
+        // Concrete settings
+        // -------------------------
 
         [Serializable]
         public class MoveSettings : TweenSettingsBase
@@ -203,20 +220,29 @@ namespace Game.Anim
         [Serializable]
         public class RotateSettings : TweenSettingsBase
         {
-            public Vector3 euler = new Vector3(0f, 0f, 30f);
+            [Tooltip("Continuous spin: set 360 on one axis (e.g. Z=360).")]
+            public Vector3 euler = new Vector3(0f, 0f, 360f);
+
             public bool useLocal = true;
-            public bool relative = true;
-            public RotateMode rotateMode = RotateMode.FastBeyond360;
+
+            [Tooltip("Ignored automatically when using AxisAdd modes.")]
+            public bool relative = false;
+
+            [Tooltip("Use LocalAxisAdd/WorldAxisAdd for never-reversing rotation.")]
+            public RotateMode rotateMode = RotateMode.LocalAxisAdd;
 
             public bool TryAdd(Sequence sequence, Transform target)
             {
                 if (!enabled || sequence == null || target == null) return false;
 
+                bool isAxisAdd = rotateMode == RotateMode.LocalAxisAdd || rotateMode == RotateMode.WorldAxisAdd;
+
                 Tween tween = useLocal
                     ? target.DOLocalRotate(euler, duration, rotateMode)
                     : target.DORotate(euler, duration, rotateMode);
 
-                if (relative) tween.SetRelative();
+                if (!isAxisAdd && relative)
+                    tween.SetRelative();
 
                 ConfigureTween(tween);
                 AddToSequence(sequence, tween);
@@ -269,12 +295,7 @@ namespace Game.Anim
         [Serializable]
         public class PunchSettings : TweenSettingsBase
         {
-            public enum PunchType
-            {
-                Position,
-                Rotation,
-                Scale
-            }
+            public enum PunchType { Position, Rotation, Scale }
 
             public PunchType punchType = PunchType.Position;
             public Vector3 punch = new Vector3(0f, 30f, 0f);
@@ -302,12 +323,7 @@ namespace Game.Anim
         [Serializable]
         public class ShakeSettings : TweenSettingsBase
         {
-            public enum ShakeType
-            {
-                Position,
-                Rotation,
-                Scale
-            }
+            public enum ShakeType { Position, Rotation, Scale }
 
             public ShakeType shakeType = ShakeType.Position;
             public Vector3 strength = new Vector3(15f, 0f, 0f);
@@ -351,6 +367,7 @@ namespace Game.Anim
                 if (resolved == null) return false;
 
                 Tween tween = resolved.DOShakeAnchorPos(duration, strength, vibrato, randomness, snapping, fadeOut);
+
                 ConfigureTween(tween);
                 AddToSequence(sequence, tween);
                 return true;
@@ -371,6 +388,7 @@ namespace Game.Anim
                 if (resolved == null) return false;
 
                 Tween tween = resolved.DOFade(alpha, duration);
+
                 ConfigureTween(tween);
                 AddToSequence(sequence, tween);
                 return true;
