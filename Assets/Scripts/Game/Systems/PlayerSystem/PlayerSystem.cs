@@ -57,6 +57,16 @@ namespace Game.Systems
             return playerInstance;
         }
 
+        public PlayerController GetPlayer()
+        {
+            return currentPlayer;
+        }
+
+        public Transform GetPlayerTransform() 
+        {
+            return currentPlayer.transform;
+        }
+
         private void InitializePool(int preload, int capacity)
         {
             if (playerPrefab == null)

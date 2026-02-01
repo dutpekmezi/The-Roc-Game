@@ -75,7 +75,7 @@ namespace Game.Systems
         {
             if (CollectableSettings.collectablePrefabs == null)
             {
-                GameLogger.LogWarning("ObstacleSystem cannot initialize pool without a obstacle prefab.");
+                GameLogger.LogWarning("CollectableSystem cannot initialize pool without a collectable prefab.");
                 return;
             }
 
