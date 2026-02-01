@@ -1,10 +1,8 @@
 using Game.Installers;
 using UnityEngine;
-using Utils.Currency;
 using Utils.Logger;
 using Utils.LogicTimer;
 using Utils.Pools;
-using Utils.Currency;
 using Utils.ObjectFlowAnimator;
 
 namespace Game.Systems
@@ -12,7 +10,7 @@ namespace Game.Systems
     public class Collectable : MonoBehaviour
     {
         [SerializeField] protected ParticleSystem collectParticle;
-        [SerializeField] protected CurrencyConfig currencyConfig;
+        [SerializeField] protected CollectableConfig collectableConfig;
 
         private bool isCollected = false;
 
@@ -22,7 +20,7 @@ namespace Game.Systems
         private const int DefaultPoolPreload = 1;
         private Pool particlePool;
 
-        public CurrencyConfig CurrencyConfig => currencyConfig;
+        public CollectableConfig CollectableConfig => collectableConfig;
 
         public void Init(CollectableSystem collectableSystem)
         {
@@ -70,11 +68,17 @@ namespace Game.Systems
 
             var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
             Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
+            Vector3 endScreenPos = playerScreenPos;
+
+            if (GameCanvas.Instance != null && GameCanvas.Instance.TryGetCollectableBarScreenPosition(collectableConfig, out var barScreenPos))
+            {
+                endScreenPos = barScreenPos;
+            }
 
             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
-                endScreenPos: playerScreenPos,
-                sprite: currencyConfig.currencySprite,
+                endScreenPos: endScreenPos,
+                sprite: collectableConfig != null ? collectableConfig.CollectableSprite : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: 1
             );

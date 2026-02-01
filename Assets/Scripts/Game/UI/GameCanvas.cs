@@ -1,18 +1,12 @@
 using Game.Systems;
-using TMPro;
 using UnityEngine;
-using Utils.Currency;
 using Utils.Signal;
 
 public class GameCanvas : MonoBehaviour
 {
-    [SerializeField] private Transform collectedCurrenciesCoffeeTransform;
-    [SerializeField] private Transform collectedCurrenciesMatchaTransform;
-    [SerializeField] private Transform collectedCurrenciesCoinTransform;
-
-    [SerializeField] private TextMeshProUGUI collectedCoffeeCountText;
-    [SerializeField] private TextMeshProUGUI collectedMatchaCountText;
-    [SerializeField] private TextMeshProUGUI collectedCoinCountText;
+    [SerializeField] private CollectableBar coffeeBar;
+    [SerializeField] private CollectableBar matchaBar;
+    [SerializeField] private CollectableBar coinBar;
 
     public static GameCanvas Instance { get; private set; }
 
@@ -31,20 +25,59 @@ public class GameCanvas : MonoBehaviour
         SignalBus.Get<CollectableSystem.CollectableCollected>().Subscribe(UpdateCollecteds);
     }
 
-    private void UpdateCollecteds(string currencyId, int amount)
+    public bool TryGetCollectableBarScreenPosition(CollectableConfig collectableConfig, out Vector3 screenPosition)
     {
-        switch (currencyId) 
+        var bar = GetCollectableBar(collectableConfig);
+        if (bar == null || bar.IconRectTransform == null)
         {
-            case CurrencyIds.Coin:
-                collectedCoinCountText.text = $"{amount}";
-                break;
-            case CurrencyIds.Coffee:
-                collectedCoffeeCountText.text = $"{amount}";
-                break;
-            case CurrencyIds.Matcha:
-                collectedMatchaCountText.text = $"{amount}";
-                break;
-            default: break;
+            screenPosition = Vector3.zero;
+            return false;
         }
+
+        screenPosition = RectTransformUtility.WorldToScreenPoint(null, bar.IconRectTransform.position);
+        return true;
+    }
+
+    private void UpdateCollecteds(CollectableConfig collectableConfig, int amount)
+    {
+        switch (collectableConfig)
+        {
+            case var _ when coffeeBar != null && collectableConfig == coffeeBar.CollectableConfig:
+                coffeeBar.SetCount(amount);
+                break;
+            case var _ when matchaBar != null && collectableConfig == matchaBar.CollectableConfig:
+                matchaBar.SetCount(amount);
+                break;
+            case var _ when coinBar != null && collectableConfig == coinBar.CollectableConfig:
+                coinBar.SetCount(amount);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private CollectableBar GetCollectableBar(CollectableConfig collectableConfig)
+    {
+        if (collectableConfig == null)
+        {
+            return null;
+        }
+
+        if (coffeeBar != null && coffeeBar.CollectableConfig == collectableConfig)
+        {
+            return coffeeBar;
+        }
+
+        if (matchaBar != null && matchaBar.CollectableConfig == collectableConfig)
+        {
+            return matchaBar;
+        }
+
+        if (coinBar != null && coinBar.CollectableConfig == collectableConfig)
+        {
+            return coinBar;
+        }
+
+        return null;
     }
 }

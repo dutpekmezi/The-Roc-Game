@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1668716064342166324}
   - component: {fileID: 5944450079977944907}
   - component: {fileID: 2342134176719700149}
+  - component: {fileID: 907654321987654321}
   m_Layer: 5
   m_Name: Collected_Bar
   m_TagString: Untagged
@@ -73,6 +74,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &907654321987654321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5694309004004973407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcaf6edcaf764f2799dfb1d3c4e69c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectableConfig: {fileID: 0}
+  iconImage: {fileID: 0}
+  countText: {fileID: 0}
 --- !u!1 &7897049198800304206
 GameObject:
   m_ObjectHideFlags: 0
