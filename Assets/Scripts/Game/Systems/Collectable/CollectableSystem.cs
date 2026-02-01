@@ -1,7 +1,6 @@
 using Game.Systems;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils.Currency;
 using Utils.Logger;
 using Utils.LogicTimer;
 using Utils.Pools;
@@ -21,9 +20,7 @@ namespace Game.Systems
         private Pool collectablePool;
 
         private int collectedCollectablesCount;
-        private int collectedCoffeeCount;
-        private int collectedMatchaCount;
-        private int collectedCoinCount;
+        private readonly Dictionary<CollectableConfig, int> collectedCounts = new();
 
         public static CollectableSystem Instance { get; private set; }
 
@@ -51,25 +48,19 @@ namespace Game.Systems
         {
             collectedCollectablesCount++;
 
-            if (collectable.CurrencyConfig.currencyId == CurrencyIds.Matcha)
+            var collectableConfig = collectable.CollectableConfig;
+            if (collectableConfig == null)
             {
-                collectedMatchaCount++;
+                GameLogger.LogWarning("CollectableSystem collected item without a collectable config.");
             }
-            else if (collectable.CurrencyConfig.currencyId == CurrencyIds.Coffee)
+            else
             {
-                collectedCoffeeCount++;
-            }
-            else if (collectable.CurrencyConfig.currencyId == CurrencyIds.Coin)
-            {
-                collectedCoinCount++;
+                collectedCounts.TryGetValue(collectableConfig, out var currentAmount);
+                currentAmount++;
+                collectedCounts[collectableConfig] = currentAmount;
+                SignalBus.Get<CollectableCollected>().Invoke(collectableConfig, currentAmount);
             }
 
-            var currencId = collectable.CurrencyConfig.currencyId;
-
-            SignalBus.Get<CollectableCollected>().Invoke(currencId, 
-                currencId == CurrencyIds.Matcha ? collectedMatchaCount : 
-                currencId == CurrencyIds.Coffee ? collectedCoffeeCount :
-                currencId == CurrencyIds.Coin ? collectedCoinCount : 0);
             DespawnCollectable(collectable);
         }
 
@@ -123,6 +114,6 @@ namespace Game.Systems
             createdCollectables.Remove(collectable);
         }
 
-        public class CollectableCollected : Signal<string, int> { }
+        public class CollectableCollected : Signal<CollectableConfig, int> { }
     }
 }

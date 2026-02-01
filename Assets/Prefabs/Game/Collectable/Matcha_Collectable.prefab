@@ -901,7 +901,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.Collectable
   collectParticle: {fileID: 4522285013832878512, guid: 39f76c86c066a6144ac790b803f70da0, type: 3}
-  currencyConfig: {fileID: 11400000, guid: 9d7355c12c88f1c4faf39fba934d4eec, type: 2}
+  collectableConfig: {fileID: 11400000, guid: 2d2fe5660fab4941b05cf859af85256b, type: 2}
 --- !u!61 &6524985221414123712
 BoxCollider2D:
   m_ObjectHideFlags: 0
