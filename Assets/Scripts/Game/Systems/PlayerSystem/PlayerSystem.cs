@@ -15,8 +15,17 @@ namespace Game.Systems
 
         private PlayerController currentPlayer;
 
+        public static PlayerSystem Instance { get; private set; }
+
         public PlayerSystem(PlayerController playerPrefab, int preload = DefaultPoolPreload, int capacity = DefaultPoolCapacity)
         {
+            if (Instance != null && Instance != this)
+            {
+                Instance.Dispose();
+            }
+            
+            Instance = this;
+
             this.playerPrefab = playerPrefab;
 
             InitializePool(preload, capacity);

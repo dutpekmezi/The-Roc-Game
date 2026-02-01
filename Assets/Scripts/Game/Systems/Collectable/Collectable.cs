@@ -1,3 +1,4 @@
+using Game.Installers;
 using UnityEngine;
 using Utils.Currency;
 using Utils.Logger;
@@ -55,14 +56,14 @@ namespace Game.Systems
             //ResolveServices.CurrencyService.ModifyCurrency("gold", 1, false);
             //RewardManager.Instance.Gold += 1;
 
-            var player = PlayerSystem.Instance.GetPlayerEntity();
-            Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(player.transform.position);
+            var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
+            Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
 
             UIAnimationService.AddNewDestinationAction(
                 startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
                 endScreenPos: playerScreenPos,
-                sprite: ResolveServices.CurrencyService.GetCurrencyConfig("gold").currencySprite,
-                parent: ResolveServices.WindowService.Canvas.transform as RectTransform,
+                sprite: CurrencyService.Instance.GetCurrencyConfig("gold").currencySprite,
+                parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: 1
             );
         }

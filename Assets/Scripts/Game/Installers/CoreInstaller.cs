@@ -14,10 +14,21 @@ namespace Game.Installers
         [SerializeField] private LevelSettings levelSettings;
         [SerializeField] private bool persistBetweenScenes = true;
 
+        public Canvas  Canvas { get; private set; }
+
         private bool _initialized;
+
+        public static CoreInstaller Instance { get; private set; }
 
         private void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(Instance.gameObject);
+            }
+
+            Instance = this;
+
             if (_initialized)
             {
                 return;
