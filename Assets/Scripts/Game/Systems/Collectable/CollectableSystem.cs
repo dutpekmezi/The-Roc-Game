@@ -1,9 +1,11 @@
 using Game.Systems;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils.Currency;
 using Utils.Logger;
 using Utils.LogicTimer;
 using Utils.Pools;
+using Utils.Signal;
 
 namespace Game.Systems
 {
@@ -17,6 +19,11 @@ namespace Game.Systems
         private const int DefaultPoolCapacity = 25;
         private const int DefaultPoolPreload = 1;
         private Pool collectablePool;
+
+        private int collectedCollectablesCount;
+        private int collectedCoffeeCount;
+        private int collectedMatchaCount;
+        private int collectedCoinCount;
 
         public static CollectableSystem Instance { get; private set; }
 
@@ -40,9 +47,30 @@ namespace Game.Systems
             }
         }
 
-        public void Collect()
+        public void Collect(Collectable collectable)
         {
+            collectedCollectablesCount++;
 
+            if (collectable.CurrencyConfig.currencyId == CurrencyIds.Matcha)
+            {
+                collectedMatchaCount++;
+            }
+            else if (collectable.CurrencyConfig.currencyId == CurrencyIds.Coffee)
+            {
+                collectedCoffeeCount++;
+            }
+            else if (collectable.CurrencyConfig.currencyId == CurrencyIds.Coin)
+            {
+                collectedCoinCount++;
+            }
+
+            var currencId = collectable.CurrencyConfig.currencyId;
+
+            SignalBus.Get<CollectableCollected>().Invoke(currencId, 
+                currencId == CurrencyIds.Matcha ? collectedMatchaCount : 
+                currencId == CurrencyIds.Coffee ? collectedCoffeeCount :
+                currencId == CurrencyIds.Coin ? collectedCoinCount : 0);
+            DespawnCollectable(collectable);
         }
 
         public void SpawnRandomCollectable(Vector2 spawnPos)
@@ -94,5 +122,7 @@ namespace Game.Systems
             Pools.Instance.Despawn(collectable.gameObject);
             createdCollectables.Remove(collectable);
         }
+
+        public class CollectableCollected : Signal<string, int> { }
     }
 }

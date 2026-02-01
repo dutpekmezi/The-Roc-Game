@@ -4,18 +4,25 @@ using Utils.Currency;
 using Utils.Logger;
 using Utils.LogicTimer;
 using Utils.Pools;
+using Utils.Currency;
+using Utils.ObjectFlowAnimator;
 
 namespace Game.Systems
 {
     public class Collectable : MonoBehaviour
     {
         [SerializeField] protected ParticleSystem collectParticle;
+        [SerializeField] protected CurrencyConfig currencyConfig;
 
         private bool isCollected = false;
 
         private CollectableSystem collectableSystem;
 
+        private const int DefaultPoolCapacity = 25;
+        private const int DefaultPoolPreload = 1;
         private Pool particlePool;
+
+        public CurrencyConfig CurrencyConfig => currencyConfig;
 
         public void Init(CollectableSystem collectableSystem)
         {
@@ -38,37 +45,42 @@ namespace Game.Systems
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            
+
             if (collision != null && collision.GetComponent<PlayerController>())
             {
                 isCollected = true;
 
-                FlyGold();
+                collectableSystem.Collect(this);
 
-                collectableSystem.DespawnCollectable(this);
+                FlyGold();
             }
         }
 
         private void FlyGold()
         {
+            if (particlePool == null)
+            {
+                InitializePool(DefaultPoolPreload, DefaultPoolCapacity, collectParticle);
+            }
+
             var instance = Pools.Instance.Spawn(collectParticle, transform.position, Quaternion.identity);
             Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
 
-            //ResolveServices.CurrencyService.ModifyCurrency("gold", 1, false);
-            //RewardManager.Instance.Gold += 1;
 
             var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
             Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
 
-            UIAnimationService.AddNewDestinationAction(
+            UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
                 endScreenPos: playerScreenPos,
-                sprite: CurrencyService.Instance.GetCurrencyConfig("gold").currencySprite,
-                parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
+                sprite: currencyConfig.currencySprite,
+                parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: 1
             );
         }
 
-        private void InitializePool(int preload, int capacity, Collectable collectablePrefab)
+        private void InitializePool(int preload, int capacity, ParticleSystem collectParticle)
         {
             if (collectParticle == null)
             {

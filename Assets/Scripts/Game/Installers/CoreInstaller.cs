@@ -14,7 +14,7 @@ namespace Game.Installers
         [SerializeField] private LevelSettings levelSettings;
         [SerializeField] private bool persistBetweenScenes = true;
 
-        public Canvas  Canvas { get; private set; }
+        [SerializeField] public Canvas Canvas;
 
         private bool _initialized;
 

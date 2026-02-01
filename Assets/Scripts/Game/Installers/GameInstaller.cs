@@ -30,9 +30,20 @@ namespace Game.Installers
         [SerializeField] private PlayerController _playerPrefab;
         [SerializeField] private ObstacleSettings _obstacleSettings;
         [SerializeField] private CollectableSettings _collectableSettings;
+        [SerializeField] private Canvas canvas;
+        public Canvas Canvas => canvas;
+
+        public static GameInstaller Instance { get; private set; }
 
         private void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(Instance.gameObject);
+            }
+
+            Instance = this;
+
             Initialize();
         }
 

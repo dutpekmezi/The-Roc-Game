@@ -167,6 +167,7 @@ MonoBehaviour:
   currencyServiceSettings: {fileID: 11400000, guid: a48d624c7efb2e9449680541e98b2b3e, type: 2}
   levelSettings: {fileID: 0}
   persistBetweenScenes: 1
+  Canvas: {fileID: 1695940406}
 --- !u!1 &912297837
 GameObject:
   m_ObjectHideFlags: 0

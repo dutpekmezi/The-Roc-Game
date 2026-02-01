@@ -169,7 +169,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -2
   m_Sprite: {fileID: -5662412467453539197, guid: df3546d5b9962414f97805e2edc8ccce, type: 3}
   m_Color: {r: 0.4415095, g: 0.19296405, b: 0.062477697, a: 1}
   m_FlipX: 0
@@ -616,6 +616,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64c45b0998fc5a646b8f697278219c0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.Collectable
+  collectParticle: {fileID: 4522285013832878512, guid: 39f76c86c066a6144ac790b803f70da0, type: 3}
+  currencyConfig: {fileID: 11400000, guid: e73d981417e5a6b4187b685ab657da37, type: 2}
 --- !u!61 &6524985221414123712
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -741,7 +743,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 304926413998409130, guid: 672ad9c0f8ee3f740b86265de10db26a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
