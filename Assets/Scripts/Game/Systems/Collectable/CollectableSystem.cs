@@ -75,11 +75,18 @@ namespace Game.Systems
             }
         }
 
+        [System.Obsolete]
         private void CreateCollectable(Vector3 position, Collectable collectablePrefab = null)
         {
             
             if (collectablePrefab == null)
             {
+                var random = Random.RandomRange(0f, 1f);
+                if (random > CollectableSettings.coinSpawnRate)
+                {
+                    collectablePrefab
+                }
+
                 var randomIndex = UnityEngine.Random.Range(0, CollectableSettings.collectablePrefabs.Count);
                 collectablePrefab = CollectableSettings.collectablePrefabs[randomIndex];
             }

@@ -15,5 +15,10 @@ namespace Game.Systems
 
         [MaxValue(1), MinValue(0)]
         public float coinSpawnRate = 0.7f;
+
+        public CollectableConfig GetCollectableConfigById(string id)
+        {
+
+        }
     }
 }
