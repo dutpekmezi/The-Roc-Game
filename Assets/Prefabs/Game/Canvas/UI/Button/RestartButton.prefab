@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1670023235228028030}
   - component: {fileID: 6284061782536787469}
   - component: {fileID: 329394189460984989}
-  - component: {fileID: 4886438234672123364}
+  - component: {fileID: 6871564564998130615}
   m_Layer: 5
   m_Name: RestartButton
   m_TagString: Untagged
@@ -121,8 +121,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6284061782536787469}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
---- !u!114 &4886438234672123364
+      m_Calls:
+      - m_Target: {fileID: 1770469454643899933}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6871564564998130615
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,14 +143,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1770469454643899933}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98e77efe3af1bc7439827b860a646edf, type: 3}
+  m_Script: {fileID: 11500000, guid: aadfbb83b8118d94cbfabaac93b5e733, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Utils.Buttons.BaseButton
+  m_EditorClassIdentifier: Assembly-CSharp::RestartButton
   buttonId: restart
   button: {fileID: 329394189460984989}
-  animate: 1
-  scale: 1.1
-  duration: 1
+  animate: 0
+  scale: 0
+  duration: 0
   ease: 4
 --- !u!1 &3779877020603380714
 GameObject:

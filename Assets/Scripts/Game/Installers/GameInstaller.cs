@@ -107,10 +107,10 @@ namespace Game.Installers
 
             await Clear();
 
+            _logicTimer = null;
             _playerSystem = null;
             _obstacleSystem = null;
             _collectableSystem = null;
-            _logicTimer = null;
             _initialized = false;
 
             await Initialize();
@@ -120,6 +120,8 @@ namespace Game.Installers
 
         private void OnLogicTick()
         {
+            if (_isRestarting) return;
+
             _playerSystem.Tick();
             _obstacleSystem.Tick();
             _collectableSystem.Tick();
