@@ -1,6 +1,8 @@
+using Game.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils.Pools;
+using Utils.Popup;
 
 namespace Game.Systems
 {
@@ -68,6 +70,12 @@ namespace Game.Systems
             if (!isAlive) return;
 
             isAlive = false;
+
+            var popupService = PopupService.Instance;
+            if (popupService != null && popupService.Get(GameOverPopup.PopupKey) == null)
+            {
+                popupService.Create(GameOverPopup.PopupKey);
+            }
 
             Pools.Instance.Despawn(gameObject);
         }
