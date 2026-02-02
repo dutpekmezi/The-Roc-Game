@@ -82,7 +82,7 @@ namespace Game.Systems
             if (collectablePrefab == null)
             {
                 var random = Random.RandomRange(0f, 1f);
-                if (random > CollectableSettings.coinSpawnRate)
+                if (random < CollectableSettings.coinSpawnRate)
                 {
                     collectablePrefab
                 }
