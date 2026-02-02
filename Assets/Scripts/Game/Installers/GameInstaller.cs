@@ -43,12 +43,22 @@ namespace Game.Installers
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(Instance.gameObject);
+                Destroy(gameObject);
+                return;
             }
 
             Instance = this;
 
             Initialize();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                _ = Clear();
+                Instance = null;
+            }
         }
 
         public Task Initialize()
