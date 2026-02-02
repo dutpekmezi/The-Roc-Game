@@ -1,13 +1,14 @@
-using Unity.VisualScripting;
-using UnityEngine;
+using Game.Installers;
 using Utils.Buttons;
-using Utils.Scene;
 public class RestartButton : BaseButton
 {
     public override void BaseOnClick()
     {
         base.BaseOnClick();
 
-        
+        if (GameInstaller.Instance != null)
+        {
+            GameInstaller.Instance.RestartGame();
+        }
     }
 }

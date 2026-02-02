@@ -27,6 +27,9 @@ namespace Game.Installers
         private CollectableSystem _collectableSystem;
         private LogicTimer _logicTimer;
 
+        [Header("Restart Settings")]
+        [SerializeField] private bool allowRestart = true;
+
         [SerializeField] private PlayerController _playerPrefab;
         [SerializeField] private ObstacleSettings _obstacleSettings;
         [SerializeField] private CollectableSettings _collectableSettings;
@@ -34,6 +37,7 @@ namespace Game.Installers
         public Canvas Canvas => canvas;
 
         public static GameInstaller Instance { get; private set; }
+        private bool _isRestarting;
 
         private void Awake()
         {
@@ -90,6 +94,28 @@ namespace Game.Installers
 #endif
 
             return Task.CompletedTask;
+        }
+
+        public async void RestartGame()
+        {
+            if (!allowRestart || _isRestarting)
+            {
+                return;
+            }
+
+            _isRestarting = true;
+
+            await Clear();
+
+            _playerSystem = null;
+            _obstacleSystem = null;
+            _collectableSystem = null;
+            _logicTimer = null;
+            _initialized = false;
+
+            await Initialize();
+
+            _isRestarting = false;
         }
 
         private void OnLogicTick()
