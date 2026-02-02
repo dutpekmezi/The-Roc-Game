@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CollectableSettings
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.CollectableSettings
   collectablePrefabs:
+  - {fileID: -4649295050493684701, guid: 7c0192ea38bb964478fd772fbcac57e4, type: 3}
   - {fileID: -4649295050493684701, guid: e41964f3095b62642857539989052e01, type: 3}
   - {fileID: -4649295050493684701, guid: 1cb5b578f4a1b7e42a5477194c1518e3, type: 3}
-  - {fileID: -4649295050493684701, guid: 7c0192ea38bb964478fd772fbcac57e4, type: 3}

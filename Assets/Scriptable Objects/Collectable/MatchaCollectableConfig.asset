@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edf8d92587915024b96f01fbd8002e9e, type: 3}
   m_Name: MatchaCollectableConfig
   m_EditorClassIdentifier: 
-  collectableId: matcha
-  collectableSprite: {fileID: -7002255698544018446, guid: e92a7f14ab9bb0a438e52f9ca936e538, type: 3}
+  Icon: {fileID: -7002255698544018446, guid: e92a7f14ab9bb0a438e52f9ca936e538, type: 3}
+  Id: matcha_latte
+  Name: Matcha lattes
+  Color: {r: 0, g: 0, b: 0, a: 0}

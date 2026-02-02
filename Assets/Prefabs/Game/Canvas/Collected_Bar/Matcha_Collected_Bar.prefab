@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2342134176719700149}
   - component: {fileID: 907654321987654321}
   m_Layer: 5
-  m_Name: Collected_Bar
+  m_Name: Matcha_Collected_Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,9 +86,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcaf6edcaf764f2799dfb1d3c4e69c1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectableConfig: {fileID: 0}
-  iconImage: {fileID: 0}
-  countText: {fileID: 0}
+  collectableConfig: {fileID: 11400000, guid: 2d2fe5660fab4941b05cf859af85256b, type: 2}
+  iconImage: {fileID: 51876944603005218}
+  countText: {fileID: 6139092154860737224}
 --- !u!1 &7897049198800304206
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,6 +233,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1668716064342166324}
     m_Modifications:
+    - target: {fileID: 2277842549649829679, guid: 1b87364a849fca54f9dcfd79b24ad3fe, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7343089410283351799, guid: 1b87364a849fca54f9dcfd79b24ad3fe, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -322,6 +326,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b87364a849fca54f9dcfd79b24ad3fe, type: 3}
+--- !u!114 &51876944603005218 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2277842549649829679, guid: 1b87364a849fca54f9dcfd79b24ad3fe, type: 3}
+  m_PrefabInstance: {fileID: 2244138917517176333}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &8845963147264295162 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7343089410283351799, guid: 1b87364a849fca54f9dcfd79b24ad3fe, type: 3}

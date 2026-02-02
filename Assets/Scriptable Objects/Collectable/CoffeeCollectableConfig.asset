@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edf8d92587915024b96f01fbd8002e9e, type: 3}
   m_Name: CoffeeCollectableConfig
   m_EditorClassIdentifier: 
-  collectableId: coffee
-  collectableSprite: {fileID: 4687309882487268517, guid: 76fbc01bac24712418ecebaeeafdfb11, type: 3}
+  Icon: {fileID: 4687309882487268517, guid: 76fbc01bac24712418ecebaeeafdfb11, type: 3}
+  Id: coffee
+  Name: Coffee
+  Color: {r: 0.8037735, g: 0.22314118, b: 0, a: 1}

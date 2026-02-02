@@ -1,11 +1,12 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CollectableConfig", menuName = "Game/Collectable/Collectable Config", order = 1)]
-public class CollectableConfig : ScriptableObject
+namespace Game.Systems
 {
-    [SerializeField] private string collectableId;
-    [SerializeField] private Sprite collectableSprite;
-
-    public string CollectableId => collectableId;
-    public Sprite CollectableSprite => collectableSprite;
+    public class CollectableConfig : ScriptableObject
+    {
+        public Sprite Icon;
+        public string Id;
+        public string Name;
+        public Color Color;
+    }
 }

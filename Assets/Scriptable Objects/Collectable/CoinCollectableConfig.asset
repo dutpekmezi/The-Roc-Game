@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edf8d92587915024b96f01fbd8002e9e, type: 3}
   m_Name: CoinCollectableConfig
   m_EditorClassIdentifier: 
-  collectableId: coin
-  collectableSprite: {fileID: 7675826601332790545, guid: fefc128260cae9e4fae26d318f60fd3d, type: 3}
+  Icon: {fileID: 7675826601332790545, guid: fefc128260cae9e4fae26d318f60fd3d, type: 3}
+  Id: coin
+  Name: Coin
+  Color: {r: 0, g: 0, b: 0, a: 0}

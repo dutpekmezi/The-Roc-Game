@@ -68,7 +68,7 @@ namespace Game.Systems
 
             var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
             Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
-            Vector3 endScreenPos = playerScreenPos;
+            Vector2 endScreenPos = playerScreenPos;
 
             if (GameCanvas.Instance != null && GameCanvas.Instance.TryGetCollectableBarScreenPosition(collectableConfig, out var barScreenPos))
             {
@@ -78,7 +78,7 @@ namespace Game.Systems
             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
                 endScreenPos: endScreenPos,
-                sprite: collectableConfig != null ? collectableConfig.CollectableSprite : null,
+                sprite: collectableConfig != null ? collectableConfig.Icon : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: 1
             );
