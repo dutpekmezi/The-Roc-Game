@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Utils.Pools;
 
 namespace Game.Systems
 {
@@ -62,8 +63,20 @@ namespace Game.Systems
             animator.SetTrigger("Flap");
         }
 
+        private void Die()
+        {
+            if (!isAlive) return;
+
+            isAlive = false;
+
+            Pools.Instance.Despawn(gameObject);
+        }
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (!isAlive) return;
+
+            Die();
         }
     }
 }

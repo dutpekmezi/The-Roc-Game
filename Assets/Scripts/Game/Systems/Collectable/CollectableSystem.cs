@@ -64,11 +64,15 @@ namespace Game.Systems
             DespawnCollectable(collectable);
         }
 
+        [System.Obsolete]
         public void SpawnRandomCollectable(Vector2 spawnPos)
         {
-            var randomIndex = Random.Range(0, CollectableSettings.collectablePrefabs.Count);
-            var randomCollectablePrefab = CollectableSettings.collectablePrefabs[randomIndex];
-            CreateCollectable(spawnPos, randomCollectablePrefab);
+            var random = Random.RandomRange(0f, 1f);
+            if (random > CollectableSettings.collectableSpawnRate)
+            {
+                var randomIndex = Random.Range(0, CollectableSettings.collectablePrefabs.Count);
+                CreateCollectable(spawnPos);
+            }
         }
 
         private void CreateCollectable(Vector3 position, Collectable collectablePrefab = null)
