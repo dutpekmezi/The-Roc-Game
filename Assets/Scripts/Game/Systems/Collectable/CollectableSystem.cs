@@ -68,7 +68,7 @@ namespace Game.Systems
         public void SpawnRandomCollectable(Vector2 spawnPos)
         {
             var random = Random.RandomRange(0f, 1f);
-            if (random > CollectableSettings.collectableSpawnRate)
+            if (random < CollectableSettings.collectableSpawnRate)
             {
                 CreateCollectable(spawnPos);
             }
