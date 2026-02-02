@@ -1,5 +1,4 @@
 using NaughtyAttributes;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +17,27 @@ namespace Game.Systems
 
         public CollectableConfig GetCollectableConfigById(string id)
         {
+            if (string.IsNullOrWhiteSpace(id) || collectablePrefabs == null)
+            {
+                return null;
+            }
 
+            for (int i = 0; i < collectablePrefabs.Count; i++)
+            {
+                var collectablePrefab = collectablePrefabs[i];
+                if (collectablePrefab == null)
+                {
+                    continue;
+                }
+
+                var config = collectablePrefab.CollectableConfig;
+                if (config != null && config.Id == id)
+                {
+                    return config;
+                }
+            }
+
+            return null;
         }
     }
 }
