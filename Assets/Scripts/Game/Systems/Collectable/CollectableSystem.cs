@@ -70,7 +70,6 @@ namespace Game.Systems
             var random = Random.RandomRange(0f, 1f);
             if (random > CollectableSettings.collectableSpawnRate)
             {
-                var randomIndex = Random.Range(0, CollectableSettings.collectablePrefabs.Count);
                 CreateCollectable(spawnPos);
             }
         }
@@ -78,17 +77,24 @@ namespace Game.Systems
         [System.Obsolete]
         private void CreateCollectable(Vector3 position, Collectable collectablePrefab = null)
         {
-            
             if (collectablePrefab == null)
             {
                 var random = Random.RandomRange(0f, 1f);
                 if (random < CollectableSettings.coinSpawnRate)
                 {
-                    collectablePrefab
+                    var coinConfig = CollectableSettings.GetCollectableConfigById(CollectableIds.Coin);
+                    collectablePrefab = GetCollectablePrefabByConfig(coinConfig);
+                }
+                else
+                {
+                    collectablePrefab = GetRandomNonCoinCollectablePrefab();
                 }
 
-                var randomIndex = UnityEngine.Random.Range(0, CollectableSettings.collectablePrefabs.Count);
-                collectablePrefab = CollectableSettings.collectablePrefabs[randomIndex];
+                if (collectablePrefab == null && CollectableSettings.collectablePrefabs != null && CollectableSettings.collectablePrefabs.Count > 0)
+                {
+                    var randomIndex = UnityEngine.Random.Range(0, CollectableSettings.collectablePrefabs.Count);
+                    collectablePrefab = CollectableSettings.collectablePrefabs[randomIndex];
+                }
             }
 
             if (collectablePool == null)
@@ -99,6 +105,57 @@ namespace Game.Systems
             var collectableInstance = Pools.Instance.Spawn(collectablePrefab, position, Quaternion.identity, null);
             collectableInstance.Init(this);
             createdCollectables.Add(collectableInstance);
+        }
+
+        private Collectable GetRandomNonCoinCollectablePrefab()
+        {
+            if (CollectableSettings.collectablePrefabs == null || CollectableSettings.collectablePrefabs.Count == 0)
+            {
+                return null;
+            }
+
+            var nonCoinPrefabs = new List<Collectable>();
+            for (int i = 0; i < CollectableSettings.collectablePrefabs.Count; i++)
+            {
+                var prefab = CollectableSettings.collectablePrefabs[i];
+                if (prefab == null)
+                {
+                    continue;
+                }
+
+                var config = prefab.CollectableConfig;
+                if (config != null && config.Id != CollectableIds.Coin)
+                {
+                    nonCoinPrefabs.Add(prefab);
+                }
+            }
+
+            if (nonCoinPrefabs.Count == 0)
+            {
+                return null;
+            }
+
+            var randomIndex = UnityEngine.Random.Range(0, nonCoinPrefabs.Count);
+            return nonCoinPrefabs[randomIndex];
+        }
+
+        private Collectable GetCollectablePrefabByConfig(CollectableConfig config)
+        {
+            if (config == null || CollectableSettings.collectablePrefabs == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < CollectableSettings.collectablePrefabs.Count; i++)
+            {
+                var prefab = CollectableSettings.collectablePrefabs[i];
+                if (prefab != null && prefab.CollectableConfig == config)
+                {
+                    return prefab;
+                }
+            }
+
+            return null;
         }
 
         private void InitializePool(int preload, int capacity, Collectable collectablePrefab)
