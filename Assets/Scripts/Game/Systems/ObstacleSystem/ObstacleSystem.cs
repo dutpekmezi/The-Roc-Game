@@ -131,9 +131,14 @@ namespace Game.Systems
             }
         }
 
-        public override void OnDispose()
+        public override void Dispose()
         {
-            base.OnDispose();
+            base.Dispose();
+
+            foreach (var obstacle in createdObstacles)
+            {
+                Pools.Instance.Despawn(obstacle.gameObject);
+            }
 
             createdObstacles.Clear();
             createdObstacles = null;

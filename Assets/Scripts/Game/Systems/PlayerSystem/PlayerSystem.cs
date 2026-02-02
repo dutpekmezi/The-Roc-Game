@@ -93,5 +93,12 @@ namespace Game.Systems
                 playerPool = Pools.Instance.InitializePool(playerPrefab.gameObject, preload);
             }
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Pools.Instance.Despawn(currentPlayer.gameObject);
+        }
     }
 }

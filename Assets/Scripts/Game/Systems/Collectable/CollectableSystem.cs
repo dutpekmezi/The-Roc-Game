@@ -182,6 +182,23 @@ namespace Game.Systems
             createdCollectables.Remove(collectable);
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            foreach (Collectable collectable in createdCollectables)
+            {
+                Pools.Instance.Despawn(collectable.gameObject);
+            }
+
+            createdCollectables.Clear();
+            collectedCounts.Clear();
+
+            createdCollectables = null;
+            
+            collectedCollectablesCount = 0;
+        }
+
         public class CollectableCollected : Signal<CollectableConfig, int> { }
     }
 }

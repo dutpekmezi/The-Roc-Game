@@ -13,14 +13,14 @@ namespace Game.Systems
 
         public abstract void Tick();
 
-        public virtual void OnDispose()
+        public void OnDispose()
         {
             Dispose();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
-            throw new NotImplementedException();
+            OnDispose();
         }
     }
 }
