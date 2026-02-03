@@ -134,8 +134,6 @@ namespace Game.Systems
 
         public override void Dispose()
         {
-            base.Dispose();
-
             foreach (var obstacle in createdObstacles)
             {
                 Pools.Instance.Despawn(obstacle.gameObject);

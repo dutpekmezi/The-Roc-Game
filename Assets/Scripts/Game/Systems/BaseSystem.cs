@@ -17,9 +17,6 @@ namespace Game.Systems
         {
         }
 
-        public virtual void Dispose()
-        {
-            OnDispose();
-        }
+        public abstract void Dispose();
     }
 }

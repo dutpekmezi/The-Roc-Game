@@ -185,7 +185,6 @@ namespace Game.Systems
 
         public override void Dispose()
         {
-            base.Dispose();
 
             foreach (Collectable collectable in createdCollectables)
             {

@@ -1,3 +1,4 @@
+using Game.Installers;
 using System;
 using UnityEngine;
 using Utils.Logger;
@@ -38,7 +39,7 @@ namespace Game.Systems
 
         public PlayerController CreatePlayer()
         {
-            return CreatePlayer(Vector3.zero, Quaternion.identity, null);
+            return CreatePlayer(Vector3.zero, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
         }
 
         public PlayerController CreatePlayer(Vector3 position, Quaternion rotation, Transform parent)
@@ -96,7 +97,6 @@ namespace Game.Systems
 
         public override void Dispose()
         {
-            base.Dispose();
         }
     }
 }
