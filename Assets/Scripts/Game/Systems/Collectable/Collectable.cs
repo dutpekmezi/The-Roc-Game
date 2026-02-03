@@ -62,7 +62,7 @@ namespace Game.Systems
                 InitializePool(DefaultPoolPreload, DefaultPoolCapacity, collectParticle);
             }
 
-            var instance = Pools.Instance.Spawn(collectParticle, transform.position, Quaternion.identity);
+            var instance = Pools.Instance.Spawn(collectParticle, transform.position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
             Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
 
 

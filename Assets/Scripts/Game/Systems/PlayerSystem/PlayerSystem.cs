@@ -97,8 +97,6 @@ namespace Game.Systems
         public override void Dispose()
         {
             base.Dispose();
-
-            Pools.Instance.Despawn(currentPlayer.gameObject);
         }
     }
 }

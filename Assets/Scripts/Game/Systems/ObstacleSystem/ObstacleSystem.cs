@@ -1,3 +1,4 @@
+using Game.Installers;
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,7 +94,7 @@ namespace Game.Systems
                 InitializePool(DefaultPoolPreload, DefaultPoolCapacity, randomObstaclePrefab);
             }
 
-            var obstacleInstance = Pools.Instance.Spawn(randomObstaclePrefab, position, Quaternion.identity, null);
+            var obstacleInstance = Pools.Instance.Spawn(randomObstaclePrefab, position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
             obstacleInstance.Init(this);
             createdObstacles.Add(obstacleInstance);
 

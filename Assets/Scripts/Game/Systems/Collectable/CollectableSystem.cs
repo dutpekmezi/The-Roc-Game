@@ -1,3 +1,4 @@
+using Game.Installers;
 using Game.Systems;
 using System.Collections.Generic;
 using UnityEngine;
@@ -102,7 +103,7 @@ namespace Game.Systems
                 InitializePool(DefaultPoolPreload, DefaultPoolCapacity, collectablePrefab);
             }
 
-            var collectableInstance = Pools.Instance.Spawn(collectablePrefab, position, Quaternion.identity, null);
+            var collectableInstance = Pools.Instance.Spawn(collectablePrefab, position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
             collectableInstance.Init(this);
             createdCollectables.Add(collectableInstance);
         }

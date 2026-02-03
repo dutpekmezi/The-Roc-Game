@@ -27,38 +27,26 @@ namespace Game.Installers
         private CollectableSystem _collectableSystem;
         private LogicTimer _logicTimer;
 
-        [Header("Restart Settings")]
-        [SerializeField] private bool allowRestart = true;
-
         [SerializeField] private PlayerController _playerPrefab;
         [SerializeField] private ObstacleSettings _obstacleSettings;
         [SerializeField] private CollectableSettings _collectableSettings;
         [SerializeField] private Canvas canvas;
+        [SerializeField] private Transform gameObjectsParent;
         public Canvas Canvas => canvas;
+        public Transform GameObjectsParent => gameObjectsParent;
 
         public static GameInstaller Instance { get; private set; }
-        private bool _isRestarting;
 
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(gameObject);
-                return;
+                Destroy(Instance.gameObject);
             }
 
             Instance = this;
 
             Initialize();
-        }
-
-        private void OnDestroy()
-        {
-            if (Instance == this)
-            {
-                _ = Clear();
-                Instance = null;
-            }
         }
 
         public Task Initialize()
@@ -106,32 +94,8 @@ namespace Game.Installers
             return Task.CompletedTask;
         }
 
-        public async void RestartGame()
-        {
-            if (!allowRestart || _isRestarting)
-            {
-                return;
-            }
-
-            _isRestarting = true;
-
-            await Clear();
-
-            _logicTimer = null;
-            _playerSystem = null;
-            _obstacleSystem = null;
-            _collectableSystem = null;
-            _initialized = false;
-
-            await Initialize();
-
-            _isRestarting = false;
-        }
-
         private void OnLogicTick()
         {
-            if (_isRestarting) return;
-
             _playerSystem.Tick();
             _obstacleSystem.Tick();
             _collectableSystem.Tick();

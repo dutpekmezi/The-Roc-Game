@@ -1,14 +1,19 @@
 using Game.Installers;
 using Utils.Buttons;
-public class RestartButton : BaseButton
-{
-    public override void BaseOnClick()
-    {
-        base.BaseOnClick();
+using Utils.Scene;
 
-        if (GameInstaller.Instance != null)
+namespace Game.UI
+{
+    public class RestartButton : BaseButton
+    {
+        public override void BaseOnClick()
         {
-            GameInstaller.Instance.RestartGame();
+            base.BaseOnClick();
+
+            GameInstaller.Instance.Clear();
+
+            _ = SceneService.Instance.RemoveScene(SceneKeys.GameScene);
+            _ = SceneService.Instance.LoadScene(SceneKeys.GameScene);
         }
     }
 }

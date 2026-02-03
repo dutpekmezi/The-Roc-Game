@@ -72,7 +72,7 @@ namespace Game.Installers
 
             _ = new SceneService(sceneServiceSettings);
 
-            _ = SceneService.Instance.LoadScene(SceneKeys.GameScene);
+            _ = SceneService.Instance.LoadScene(SceneKeys.MenuScene);
         }
 
         private void InitializeCurrencyService()
