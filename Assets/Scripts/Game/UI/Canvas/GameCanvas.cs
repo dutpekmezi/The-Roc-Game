@@ -1,29 +1,53 @@
+using Game.Installers;
 using Game.Systems;
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
+using Utils.Logger;
+using Utils.Pools;
 using Utils.Signal;
 
-public class GameCanvas : MonoBehaviour
+public class GameCanvas : BaseSystem
 {
     [SerializeField] private CollectableBar coffeeBar;
     [SerializeField] private CollectableBar matchaBar;
     [SerializeField] private CollectableBar coinBar;
 
+    private GameCanvasSettings GameCanvasSettings;
+
+    private Pool UIPool;
+
+    private Transform collectableBarsParent;
+    private List<CollectableBar> createdCollectableBars = new();
+
     public static GameCanvas Instance { get; private set; }
 
-    private void Awake()
+    public GameCanvas(GameCanvasSettings gameCanvasSettings)
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(Instance.gameObject);
+            Instance.Dispose();
         }
 
         Instance = this;
+
+        GameCanvasSettings = gameCanvasSettings;
+
+        SignalBus.Get<CollectableSystem.CollectableCollected>().Subscribe(UpdateCollecteds);
+
+        //CreateCollectableBars();
     }
 
-    private void Start()
+    /*private void CreateCollectableBars()
     {
-        SignalBus.Get<CollectableSystem.CollectableCollected>().Subscribe(UpdateCollecteds);
-    }
+        //collectableBarsParent = Pools.Instance.Spawn(GameCanvasSettings.collectableBarsParent, GameInstaller.Instance.CollectableFlyDestination);
+
+        foreach (var collectablebar in GameCanvasSettings.collectableBars)
+        {
+            var instance = Pools.Instance.Spawn(collectablebar, collectableBarsParent);
+            createdCollectableBars.Add(instance);
+        }
+    }*/
 
     public bool TryGetCollectableBarScreenPosition(CollectableConfig collectableConfig, out Vector3 screenPosition)
     {
@@ -79,5 +103,42 @@ public class GameCanvas : MonoBehaviour
         }
 
         return null;
+    }
+
+    public override void Tick()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    private void InitializePool(int preload, int capacity, CollectableBar collectableBar)
+    {
+        if (GameCanvasSettings.collectableBars == null)
+        {
+            GameLogger.LogWarning("ObstacleSystem cannot initialize pool without a obstacle prefab.");
+            return;
+        }
+
+        if (capacity > 0)
+        {
+            UIPool = Pools.Instance.InitializePool(collectableBar.gameObject, preload, capacity);
+        }
+        else
+        {
+            UIPool = Pools.Instance.InitializePool(collectableBar.gameObject, preload);
+        }
+    }
+
+    public override void Dispose()
+    {
+        if (collectableBarsParent != null)
+        {
+            foreach (var collectableBar in createdCollectableBars)
+            {
+                if (collectableBar != null) Pools.Instance.Despawn(collectableBar.gameObject);
+            }
+
+            createdCollectableBars.Clear();
+            createdCollectableBars = null;
+        }
     }
 }

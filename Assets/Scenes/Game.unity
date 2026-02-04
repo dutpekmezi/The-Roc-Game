@@ -372,7 +372,10 @@ MonoBehaviour:
   _playerPrefab: {fileID: 4740051394969765359, guid: 463a90c6897424e4abc1a96082db92b1, type: 3}
   _obstacleSettings: {fileID: 11400000, guid: 2bc94bc6d6924644d80ce42d8714afd0, type: 2}
   _collectableSettings: {fileID: 11400000, guid: 86e8569471c9a7a46b0d6eab6a58409f, type: 2}
+  _gameCanvasSettings: {fileID: 11400000, guid: 7cbd42cacfc11694086f73de4842ceb0, type: 2}
   canvas: {fileID: 1522862959}
+  collectableFlyDestination: {fileID: 1522862960}
+  gameObjectsParent: {fileID: 1973058917}
 --- !u!4 &1325509038
 Transform:
   m_ObjectHideFlags: 0
@@ -740,6 +743,11 @@ PrefabInstance:
 --- !u!223 &1522862959 stripped
 Canvas:
   m_CorrespondingSourceObject: {fileID: 8220375318884802984, guid: fcc8db9e6a5685b488e5f36c91514d33, type: 3}
+  m_PrefabInstance: {fileID: 1522862958}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1522862960 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3238002288192055233, guid: fcc8db9e6a5685b488e5f36c91514d33, type: 3}
   m_PrefabInstance: {fileID: 1522862958}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1973058916

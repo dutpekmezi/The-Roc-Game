@@ -26,7 +26,7 @@ namespace Game.Systems
         {
             if (Instance != null && Instance != this)
             {
-                Instance.OnDispose();
+                Instance.Dispose();
             }
 
             Instance = this;
@@ -134,13 +134,18 @@ namespace Game.Systems
 
         public override void Dispose()
         {
-            foreach (var obstacle in createdObstacles)
+            if (createdObstacles != null)
             {
-                Pools.Instance.Despawn(obstacle.gameObject);
+                foreach (var obstacle in createdObstacles)
+                {
+                    if (obstacle != null) Pools.Instance.Despawn(obstacle.gameObject);
+                }
+
+                createdObstacles.Clear();
+                createdObstacles = null;
             }
 
-            createdObstacles.Clear();
-            createdObstacles = null;
+            return;
         }
     }   
 }

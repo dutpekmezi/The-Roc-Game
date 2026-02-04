@@ -29,7 +29,7 @@ namespace Game.Systems
         {
             if (Instance != null && Instance != this)
             {
-                Instance.OnDispose();
+                Instance.Dispose();
             }
 
             Instance = this;
@@ -186,15 +186,18 @@ namespace Game.Systems
         public override void Dispose()
         {
 
-            foreach (Collectable collectable in createdCollectables)
+            if (createdCollectables != null)
             {
-                Pools.Instance.Despawn(collectable.gameObject);
+                foreach (Collectable collectable in createdCollectables)
+                {
+                    if (collectable != null) Pools.Instance.Despawn(collectable.gameObject);
+                }
+
+                createdCollectables.Clear();
+                collectedCounts.Clear();
+
+                createdCollectables = null;
             }
-
-            createdCollectables.Clear();
-            collectedCounts.Clear();
-
-            createdCollectables = null;
             
             collectedCollectablesCount = 0;
         }

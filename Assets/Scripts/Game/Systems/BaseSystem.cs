@@ -13,10 +13,6 @@ namespace Game.Systems
 
         public abstract void Tick();
 
-        public void OnDispose()
-        {
-        }
-
         public abstract void Dispose();
     }
 }

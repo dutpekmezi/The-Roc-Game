@@ -70,9 +70,9 @@ namespace Game.Systems
             Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
             Vector2 endScreenPos = playerScreenPos;
 
-            if (GameCanvas.Instance != null && GameCanvas.Instance.TryGetCollectableBarScreenPosition(collectableConfig, out var barScreenPos))
+            if (GameCanvas.Instance != null)
             {
-                endScreenPos = barScreenPos;
+                endScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, GameInstaller.Instance.CollectableFlyDestination.position);
             }
 
             UIFlowAnimator.Instance.AddNewDestinationAction(

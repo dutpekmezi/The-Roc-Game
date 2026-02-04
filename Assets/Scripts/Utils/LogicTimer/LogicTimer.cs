@@ -30,7 +30,10 @@ namespace Utils.LogicTimer
         public LogicTimer(Action onTick)
         {
             if (Instance != null)
-                throw new System.Exception("LogicTimer already has an instance");
+            {
+                Instance.Dispose();
+                //throw new System.Exception("LogicTimer already has an instance");
+            }
 
             Instance = this;
 
