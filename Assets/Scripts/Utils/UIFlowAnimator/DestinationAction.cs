@@ -100,6 +100,14 @@ namespace Utils.ObjectFlowAnimator
 
             for (int i = 0; i < spawnedObjects.Count; i++)
             {
+                if (spawnedObjects[i].particle == null)
+                {
+                    numberOfDiedParticles++;
+                    spawnedObjects.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+
                 if (spawnedObjects[i].moveSpeedFactor < 1.0f)
                 {
                     spawnedObjects[i].moveSpeedFactor += .01f * dt * 60.0f;
