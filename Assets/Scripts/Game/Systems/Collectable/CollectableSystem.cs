@@ -79,7 +79,7 @@ namespace Game.Systems
             return collectedCounts.TryGetValue(collectableConfig, out count);
         }
 
-        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1, float startDelay = -1f)
+        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1, float startDelay = -1f, Action onReceivedItem = null)
         {
             if (count <= 0)
             {
@@ -91,10 +91,10 @@ namespace Game.Systems
                 startDelay = CollectableSettings.flyCollectedStartDelay;
             }
 
-            FlyCollectedCollectables(collectableConfig, () => endScreenPos, count, startDelay);
+            FlyCollectedCollectables(collectableConfig, () => endScreenPos, count, startDelay, onReceivedItem);
         }
 
-        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = -1f)
+        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = -1f, Action onReceivedItem = null)
         {
             if (count <= 0)
             {
@@ -106,10 +106,10 @@ namespace Game.Systems
                 startDelay = CollectableSettings.flyCollectedStartDelay;
             }
 
-            FlyCollectedCollectables(collectableConfig, endScreenPosProvider, count, startDelay);
+            FlyCollectedCollectables(collectableConfig, endScreenPosProvider, count, startDelay, onReceivedItem);
         }
 
-        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = 0f)
+        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = 0f, Action onReceivedItem = null)
         {
             if (particlePool == null)
             {
@@ -141,7 +141,8 @@ namespace Game.Systems
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: count,
-                startDelay: startDelay
+                startDelay: startDelay,
+                onReceivedItem: onReceivedItem
             );
         }
 
