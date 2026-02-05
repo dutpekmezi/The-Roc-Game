@@ -78,17 +78,22 @@ namespace Game.Systems
             return collectedCounts.TryGetValue(collectableConfig, out count);
         }
 
-        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1)
+        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1, float startDelay = -1f)
         {
             if (count <= 0)
             {
                 return;
             }
 
-            FlyCollectedCollectables(collectableConfig, endScreenPos, count);
+            if (startDelay < 0f)
+            {
+                startDelay = CollectableSettings.flyCollectedStartDelay;
+            }
+
+            FlyCollectedCollectables(collectableConfig, endScreenPos, count, startDelay);
         }
 
-        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1)
+        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1, float startDelay = 0f)
         {
             if (particlePool == null)
             {
@@ -112,7 +117,8 @@ namespace Game.Systems
                 endScreenPos: endScreenPos,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
-                particleCount: count
+                particleCount: count,
+                startDelay: startDelay
             );
         }
 

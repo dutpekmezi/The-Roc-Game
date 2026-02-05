@@ -16,6 +16,7 @@ namespace Utils.ObjectFlowAnimator
         public RectTransform parent;
 
         public int particleCount;
+        public float startDelay;
 
         public DestinationActionData destinationActionData;
 
@@ -39,6 +40,7 @@ namespace Utils.ObjectFlowAnimator
         private int numberOfSpawnedParticles = 0;
 
         private float animationCounter = 0;
+        private float startDelayRemaining = 0f;
 
         private List<ParticleData> spawnedObjects = new List<ParticleData>();
 
@@ -52,6 +54,7 @@ namespace Utils.ObjectFlowAnimator
         public DestinationAction(DestinationActionProperties properties)
         {
             actionProperties = properties;
+            startDelayRemaining = Mathf.Max(0f, actionProperties.startDelay);
         }
 
         public void Tick()
@@ -59,6 +62,15 @@ namespace Utils.ObjectFlowAnimator
             if (IsDone()) return;
 
             float dt = Time.fixedDeltaTime;
+
+            if (startDelayRemaining > 0f)
+            {
+                startDelayRemaining -= dt;
+                if (startDelayRemaining > 0f)
+                {
+                    return;
+                }
+            }
 
             animationCounter += dt;
 

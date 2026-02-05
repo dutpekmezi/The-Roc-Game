@@ -8,6 +8,6 @@ namespace Utils.ObjectFlowAnimator
         public UIFlowAnimatorSettings Settings { get; }
         public void AddNewDestinationAction(DestinationActionProperties destinationActionProperties);
         public void AddNewDestinationAction(Vector3 startScreenPos, Vector3 endScreenPos, Sprite sprite, RectTransform parent, int particleCount,
-            DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null);
+            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null);
     }
 }

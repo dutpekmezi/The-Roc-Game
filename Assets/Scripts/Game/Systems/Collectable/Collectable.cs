@@ -79,7 +79,8 @@ namespace Game.Systems
                 endScreenPos: endScreenPos,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
-                particleCount: 1
+                particleCount: 1,
+                startDelay: collectableSystem.CollectableSettings.flyGoldStartDelay
             );
         }
 
