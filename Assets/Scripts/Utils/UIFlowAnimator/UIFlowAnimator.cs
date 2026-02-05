@@ -14,7 +14,7 @@ namespace Utils.ObjectFlowAnimator
         public UIFlowAnimatorSettings Settings => settings;
 
         public void AddNewDestinationAction(Vector3 startScreenPos, Vector3 endScreenPos, Sprite sprite, RectTransform parent, int particleCount,
-            DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null)
+            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null)
         {
             DestinationActionProperties dap = new DestinationActionProperties();
             dap.startPos = startScreenPos;
@@ -22,6 +22,7 @@ namespace Utils.ObjectFlowAnimator
             dap.sprite = sprite;
             dap.parent = parent;
             dap.particleCount = particleCount;
+            dap.startDelay = startDelay;
             dap.destinationActionData = destinationActionData;
             dap.prefab = prefab;
             dap.onSpawn = onSpawn;
