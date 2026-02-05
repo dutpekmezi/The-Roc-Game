@@ -148,7 +148,7 @@ namespace Game.Systems
         [System.Obsolete]
         public void SpawnRandomCollectable(Vector2 spawnPos)
         {
-            var random = Random.RandomRange(0f, 1f);
+            var random = UnityEngine.Random.RandomRange(0f, 1f);
             if (random < CollectableSettings.collectableSpawnRate)
             {
                 CreateCollectable(spawnPos);
@@ -160,7 +160,7 @@ namespace Game.Systems
         {
             if (collectablePrefab == null)
             {
-                var random = Random.RandomRange(0f, 1f);
+                var random = UnityEngine.Random.RandomRange(0f, 1f);
                 if (random < CollectableSettings.coinSpawnRate)
                 {
                     var coinConfig = CollectableSettings.GetCollectableConfigById(CollectableIds.Coin);

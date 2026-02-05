@@ -59,11 +59,8 @@ namespace Game.UI
                     continue;
                 }
 
-                CollectableSystem.Instance.FlyCollectedCollectablesToScreenPosition(
-                    config,
-                    () => GetScreenPoint(collectableBar.IconRectTransform),
-                    count
-                );
+                 var endScreenPos = GetScreenPoint(collectableBar.IconRectTransform);
+                CollectableSystem.Instance.FlyCollectedCollectablesToScreenPosition(config, endScreenPos, count);
                 collectableBar.SetCount(count);
             }
         }
