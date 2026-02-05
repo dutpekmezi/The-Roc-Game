@@ -83,8 +83,7 @@ namespace Game.Systems
                sprite: collectableConfig != null ? collectableConfig.Icon : null,
                parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                particleCount: 1,
-               startDelay: collectableSystem.CollectableSettings.flyGoldStartDelay,
-               onReceivedItem: () => collectableSystem.RegisterCollected(collectableConfig)
+               startDelay: collectableSystem.CollectableSettings.flyGoldStartDelay
            );
         }
 
