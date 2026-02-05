@@ -68,7 +68,28 @@ namespace Game.Systems
             DespawnCollectable(collectable);
         }
 
-        private void FlyCollectedCollectables(int count = 1)
+        public bool TryGetCollectedCount(CollectableConfig collectableConfig, out int count)
+        {
+            if (collectableConfig == null)
+            {
+                count = 0;
+                return false;
+            }
+
+            return collectedCounts.TryGetValue(collectableConfig, out count);
+        }
+
+        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector3 endScreenPos, int count = 1)
+        {
+            if (count <= 0)
+            {
+                return;
+            }
+
+            FlyCollectedCollectables(collectableConfig, endScreenPos, count);
+        }
+
+        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Vector3 endScreenPos, int count = 1)
         {
             if (particlePool == null)
             {
@@ -89,7 +110,7 @@ namespace Game.Systems
             }
             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: startScreenPos,
-                endScreenPos: ,
+                endScreenPos: endScreenPos,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: count
