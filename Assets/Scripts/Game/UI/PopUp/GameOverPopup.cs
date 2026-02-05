@@ -65,7 +65,7 @@ namespace Game.UI
             }
         }
 
-        private static Vector2 GetScreenPoint(RectTransform rectTransform)
+        private Vector2 GetScreenPoint(RectTransform rectTransform)
         {
             if (rectTransform == null)
             {
