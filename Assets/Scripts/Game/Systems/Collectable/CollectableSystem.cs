@@ -50,22 +50,23 @@ namespace Game.Systems
 
         public void Collect(Collectable collectable)
         {
+            DespawnCollectable(collectable);
+        }
+
+        public void RegisterCollected(CollectableConfig collectableConfig)
+        {
             collectedCollectablesCount++;
 
-            var collectableConfig = collectable.CollectableConfig;
             if (collectableConfig == null)
             {
                 GameLogger.LogWarning("CollectableSystem collected item without a collectable config.");
-            }
-            else
-            {
-                collectedCounts.TryGetValue(collectableConfig, out var currentAmount);
-                currentAmount++;
-                collectedCounts[collectableConfig] = currentAmount;
-                SignalBus.Get<CollectableCollected>().Invoke(collectableConfig, currentAmount);
+                return;
             }
 
-            DespawnCollectable(collectable);
+            collectedCounts.TryGetValue(collectableConfig, out var currentAmount);
+            currentAmount++;
+            collectedCounts[collectableConfig] = currentAmount;
+            SignalBus.Get<CollectableCollected>().Invoke(collectableConfig, currentAmount);
         }
 
         public bool TryGetCollectedCount(CollectableConfig collectableConfig, out int count)
