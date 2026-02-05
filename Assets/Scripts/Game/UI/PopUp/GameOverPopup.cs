@@ -59,10 +59,28 @@ namespace Game.UI
                     continue;
                 }
 
-                var endScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, collectableBar.IconRectTransform.position);
+                var endScreenPos = GetScreenPoint(collectableBar.IconRectTransform);
                 CollectableSystem.Instance.FlyCollectedCollectablesToScreenPosition(config, endScreenPos, count);
                 collectableBar.SetCount(count);
             }
+        }
+
+        private static Vector2 GetScreenPoint(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+            {
+                return Vector2.zero;
+            }
+
+            Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+            Camera camera = null;
+
+            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                camera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+            }
+
+            return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
         }
     }
 }
