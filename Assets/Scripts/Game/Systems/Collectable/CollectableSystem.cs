@@ -105,7 +105,7 @@ namespace Game.Systems
 
             if (GameCanvas.Instance != null)
             {
-                startScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, GameInstaller.Instance.CollectableFlyDestination.position);
+                startScreenPos = GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
             }
             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: startScreenPos,
@@ -250,6 +250,23 @@ namespace Game.Systems
         {
             Pools.Instance.Despawn(collectable.gameObject);
             createdCollectables.Remove(collectable);
+        }
+
+        private static Vector2 GetScreenPoint(Canvas canvas, RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+            {
+                return Vector2.zero;
+            }
+
+            Camera camera = null;
+
+            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                camera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+            }
+
+            return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
         }
 
         public override void Dispose()
