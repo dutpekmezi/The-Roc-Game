@@ -59,12 +59,18 @@ namespace Game.UI
                     continue;
                 }
 
+                var currentCount = 0;
+                collectableBar.SetCount(currentCount);
                 CollectableSystem.Instance.FlyCollectedCollectablesToScreenPosition(
                     config,
                     () => GetScreenPoint(collectableBar.IconRectTransform),
-                    count
+                    count,
+                    onReceivedItem: () =>
+                    {
+                        currentCount = Mathf.Min(currentCount + 1, count);
+                        collectableBar.SetCount(currentCount);
+                    }
                 );
-                collectableBar.SetCount(count);
             }
         }
 
