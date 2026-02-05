@@ -9,5 +9,7 @@ namespace Utils.ObjectFlowAnimator
         public void AddNewDestinationAction(DestinationActionProperties destinationActionProperties);
         public void AddNewDestinationAction(Vector3 startScreenPos, Vector3 endScreenPos, Sprite sprite, RectTransform parent, int particleCount,
             float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null);
+        public void AddNewDestinationAction(Vector3 startScreenPos, Func<Vector3> endScreenPosProvider, Sprite sprite, RectTransform parent, int particleCount,
+            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null);
     }
 }

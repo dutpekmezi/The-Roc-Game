@@ -1,4 +1,5 @@
 using Game.Installers;
+using System;
 using UnityEngine;
 using Utils.Logger;
 using Utils.LogicTimer;
@@ -65,23 +66,25 @@ namespace Game.Systems
             Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
 
 
-            var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
-            Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
-            Vector2 endScreenPos = playerScreenPos;
-
-            if (GameCanvas.Instance != null)
+            Func<Vector3> endScreenPosProvider = () =>
             {
-                endScreenPos = GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
-            }
+                if (GameCanvas.Instance != null)
+                {
+                    return GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
+                }
 
-             UIFlowAnimator.Instance.AddNewDestinationAction(
-                startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
-                endScreenPos: endScreenPos,
-                sprite: collectableConfig != null ? collectableConfig.Icon : null,
-                parent: GameInstaller.Instance.Canvas.transform as RectTransform,
-                particleCount: 1,
-                startDelay: collectableSystem.CollectableSettings.flyGoldStartDelay
-            );
+                var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
+                return Camera.main.WorldToScreenPoint(playerTransform.position);
+            };
+
+            UIFlowAnimator.Instance.AddNewDestinationAction(
+               startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
+               endScreenPosProvider: endScreenPosProvider,
+               sprite: collectableConfig != null ? collectableConfig.Icon : null,
+               parent: GameInstaller.Instance.Canvas.transform as RectTransform,
+               particleCount: 1,
+               startDelay: collectableSystem.CollectableSettings.flyGoldStartDelay
+           );
         }
 
         private static Vector2 GetScreenPoint(Canvas canvas, RectTransform rectTransform)
