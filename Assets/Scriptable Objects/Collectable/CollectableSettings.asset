@@ -16,5 +16,6 @@ MonoBehaviour:
   - {fileID: -4649295050493684701, guid: 7c0192ea38bb964478fd772fbcac57e4, type: 3}
   - {fileID: -4649295050493684701, guid: e41964f3095b62642857539989052e01, type: 3}
   - {fileID: -4649295050493684701, guid: 1cb5b578f4a1b7e42a5477194c1518e3, type: 3}
+  collectParticle: {fileID: 4522285013832878512, guid: 39f76c86c066a6144ac790b803f70da0, type: 3}
   collectableSpawnRate: 0.5
   coinSpawnRate: 0.8

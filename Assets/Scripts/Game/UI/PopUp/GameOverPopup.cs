@@ -59,7 +59,7 @@ namespace Game.UI
                     continue;
                 }
 
-                var endScreenPos = RectTransformUtility.WorldToScreenPoint(null, collectableBar.IconRectTransform.position);
+                var endScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, collectableBar.IconRectTransform.position);
                 CollectableSystem.Instance.FlyCollectedCollectablesToScreenPosition(config, endScreenPos, count);
                 collectableBar.SetCount(count);
             }

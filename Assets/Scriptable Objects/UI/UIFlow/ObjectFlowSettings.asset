@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b5cd56c1ab4f54f82c98f91ba63037, type: 3}
   m_Name: ObjectFlowSettings
   m_EditorClassIdentifier: 
-  defaultUIAnimParticle: {fileID: 8352278240520326355, guid: 9ac686416ead9184b9d83f4a7ea7c627, type: 3}
+  defaultUIAnimParticle: {fileID: 8580048115332197451, guid: 9ac686416ead9184b9d83f4a7ea7c627, type: 3}
   defaultDestinationActionData: {fileID: 11400000, guid: ae4a4591b240bbc4caaa2cd8292949db, type: 2}

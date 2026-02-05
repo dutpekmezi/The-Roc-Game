@@ -74,7 +74,7 @@ namespace Game.Systems
                 endScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, GameInstaller.Instance.CollectableFlyDestination.position);
             }
 
-            UIFlowAnimator.Instance.AddNewDestinationAction(
+             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
                 endScreenPos: endScreenPos,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
@@ -83,7 +83,7 @@ namespace Game.Systems
             );
         }
 
-        private void InitializePool(int preload, int capacity, ParticleSystem collectParticle)
+        private void InitializePool(int preload, int capacity, UnityEngine.ParticleSystem collectParticle)
         {
             if (collectParticle == null)
             {

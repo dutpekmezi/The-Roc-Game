@@ -7,7 +7,6 @@ using Utils.LogicTimer;
 using Utils.ObjectFlowAnimator;
 using Utils.Pools;
 using Utils.Signal;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Game.Systems
 {
@@ -79,7 +78,7 @@ namespace Game.Systems
             return collectedCounts.TryGetValue(collectableConfig, out count);
         }
 
-        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector3 endScreenPos, int count = 1)
+        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1)
         {
             if (count <= 0)
             {
@@ -89,7 +88,7 @@ namespace Game.Systems
             FlyCollectedCollectables(collectableConfig, endScreenPos, count);
         }
 
-        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Vector3 endScreenPos, int count = 1)
+        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1)
         {
             if (particlePool == null)
             {
