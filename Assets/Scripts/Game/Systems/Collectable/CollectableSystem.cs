@@ -1,5 +1,6 @@
 using Game.Installers;
 using Game.Systems;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils.Logger;
@@ -90,10 +91,25 @@ namespace Game.Systems
                 startDelay = CollectableSettings.flyCollectedStartDelay;
             }
 
-            FlyCollectedCollectables(collectableConfig, endScreenPos, count, startDelay);
+            FlyCollectedCollectables(collectableConfig, () => endScreenPos, count, startDelay);
         }
 
-        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1, float startDelay = 0f)
+        public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = -1f)
+        {
+            if (count <= 0)
+            {
+                return;
+            }
+
+            if (startDelay < 0f)
+            {
+                startDelay = CollectableSettings.flyCollectedStartDelay;
+            }
+
+            FlyCollectedCollectables(collectableConfig, endScreenPosProvider, count, startDelay);
+        }
+
+        private void FlyCollectedCollectables(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = 0f)
         {
             if (particlePool == null)
             {
@@ -112,9 +128,16 @@ namespace Game.Systems
             {
                 startScreenPos = GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
             }
+
+            Func<Vector3> endScreenPosProvider3d = null;
+            if (endScreenPosProvider != null)
+            {
+                endScreenPosProvider3d = () => endScreenPosProvider();
+            }
+
             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: startScreenPos,
-                endScreenPos: endScreenPos,
+                endScreenPosProvider: endScreenPosProvider3d,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: count,
