@@ -71,7 +71,7 @@ namespace Game.Systems
 
             if (GameCanvas.Instance != null)
             {
-                endScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, GameInstaller.Instance.CollectableFlyDestination.position);
+                endScreenPos = GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
             }
 
              UIFlowAnimator.Instance.AddNewDestinationAction(
@@ -81,6 +81,23 @@ namespace Game.Systems
                 parent: GameInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: 1
             );
+        }
+
+        private static Vector2 GetScreenPoint(Canvas canvas, RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+            {
+                return Vector2.zero;
+            }
+
+            Camera camera = null;
+
+            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                camera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+            }
+
+            return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
         }
 
         private void InitializePool(int preload, int capacity, UnityEngine.ParticleSystem collectParticle)
