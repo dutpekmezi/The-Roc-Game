@@ -9,7 +9,6 @@ namespace Game.Systems
 {
     public class Collectable : MonoBehaviour
     {
-        [SerializeField] protected ParticleSystem collectParticle;
         [SerializeField] protected CollectableConfig collectableConfig;
 
         private bool isCollected = false;
@@ -59,10 +58,10 @@ namespace Game.Systems
         {
             if (particlePool == null)
             {
-                InitializePool(DefaultPoolPreload, DefaultPoolCapacity, collectParticle);
+                InitializePool(DefaultPoolPreload, DefaultPoolCapacity, collectableSystem.CollectableSettings.collectParticle);
             }
 
-            var instance = Pools.Instance.Spawn(collectParticle, transform.position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
+            var instance = Pools.Instance.Spawn(collectableSystem.CollectableSettings.collectParticle, transform.position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
             Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
 
 

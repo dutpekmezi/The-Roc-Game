@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utils.Logger;
 using Utils.LogicTimer;
+using Utils.ObjectFlowAnimator;
 using Utils.Pools;
 using Utils.Signal;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 namespace Game.Systems
 {
@@ -19,6 +21,7 @@ namespace Game.Systems
         private const int DefaultPoolCapacity = 25;
         private const int DefaultPoolPreload = 1;
         private Pool collectablePool;
+        private Pool particlePool;
 
         private int collectedCollectablesCount;
         private readonly Dictionary<CollectableConfig, int> collectedCounts = new();
@@ -65,6 +68,34 @@ namespace Game.Systems
             DespawnCollectable(collectable);
         }
 
+        private void FlyCollectedCollectables(int count = 1)
+        {
+            if (particlePool == null)
+            {
+                InitializeParticlePool(DefaultPoolPreload, DefaultPoolCapacity, CollectableSettings.collectParticle);
+            }
+
+            var instance = Pools.Instance.Spawn(CollectableSettings.collectParticle, GameInstaller.Instance.CollectableFlyDestination.position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
+            Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
+
+
+            var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
+            Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
+            Vector2 startScreenPos = playerScreenPos;
+
+            if (GameCanvas.Instance != null)
+            {
+                startScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main, GameInstaller.Instance.CollectableFlyDestination.position);
+            }
+            UIFlowAnimator.Instance.AddNewDestinationAction(
+                startScreenPos: startScreenPos,
+                endScreenPos: ,
+                sprite: collectableConfig != null ? collectableConfig.Icon : null,
+                parent: GameInstaller.Instance.Canvas.transform as RectTransform,
+                particleCount: count
+            );
+        }
+
         [System.Obsolete]
         public void SpawnRandomCollectable(Vector2 spawnPos)
         {
@@ -100,7 +131,7 @@ namespace Game.Systems
 
             if (collectablePool == null)
             {
-                InitializePool(DefaultPoolPreload, DefaultPoolCapacity, collectablePrefab);
+                InitializeColletablePool(DefaultPoolPreload, DefaultPoolCapacity, collectablePrefab);
             }
 
             var collectableInstance = Pools.Instance.Spawn(collectablePrefab, position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
@@ -159,7 +190,7 @@ namespace Game.Systems
             return null;
         }
 
-        private void InitializePool(int preload, int capacity, Collectable collectablePrefab)
+        private void InitializeColletablePool(int preload, int capacity, Collectable collectablePrefab)
         {
             if (CollectableSettings.collectablePrefabs == null)
             {
@@ -174,6 +205,24 @@ namespace Game.Systems
             else
             {
                 collectablePool = Pools.Instance.InitializePool(collectablePrefab.gameObject, preload);
+            }
+        }
+
+        private void InitializeParticlePool(int preload, int capacity, ParticleSystem particle)
+        {
+            if (CollectableSettings.collectablePrefabs == null)
+            {
+                GameLogger.LogWarning("CollectableSystem cannot initialize pool without a collectable prefab.");
+                return;
+            }
+
+            if (capacity > 0)
+            {
+                collectablePool = Pools.Instance.InitializePool(particle.gameObject, preload, capacity);
+            }
+            else
+            {
+                collectablePool = Pools.Instance.InitializePool(particle.gameObject, preload);
             }
         }
 

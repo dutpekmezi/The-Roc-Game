@@ -8,6 +8,7 @@ namespace Game.Systems
     public class CollectableSettings : ScriptableObject
     {
         public List<Collectable> collectablePrefabs;
+        public ParticleSystem collectParticle;
 
         [MaxValue(1), MinValue(0)]
         public float collectableSpawnRate = 0.5f;
