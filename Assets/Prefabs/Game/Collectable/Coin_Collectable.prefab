@@ -125,7 +125,7 @@ MonoBehaviour:
     relative: 0
     snapping: 0
   rotate:
-    enabled: 1
+    enabled: 0
     duration: 2
     delay: 0
     startAt: 0
@@ -330,7 +330,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64c45b0998fc5a646b8f697278219c0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.Collectable
-  collectParticle: {fileID: 4522285013832878512, guid: 39f76c86c066a6144ac790b803f70da0, type: 3}
   collectableConfig: {fileID: 11400000, guid: 1f5d8c61ba7a41cc98f56becfa9d3333, type: 2}
 --- !u!61 &6524985221414123712
 BoxCollider2D:
@@ -366,7 +365,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0017579943, y: 0.00027240813}
+  m_Offset: {x: -0.0053083897, y: 0.0014501661}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -376,5 +375,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.25894853, y: 0.34144}
+  m_Size: {x: 0.66408813, y: 0.6500057}
   m_EdgeRadius: 0
