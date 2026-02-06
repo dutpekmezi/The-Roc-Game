@@ -65,6 +65,13 @@ namespace Game.Installers
             _collectableSystem = BindDisposable(new CollectableSystem(_collectableSettings));
             _gameCanvas = BindDisposable(new GameCanvas(_gameCanvasSettings));
 
+            if (GameState.Instance == null)
+            {
+                _ = new GameState();
+            }
+
+            GameState.Instance.SetState(GameFlowState.InGame);
+
             _logicTimer = BindDisposable(new LogicTimer(OnLogicTick));
             _logicTimer.Start();
 

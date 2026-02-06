@@ -1,6 +1,7 @@
 using Game.Systems;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils.Currency;
 using Utils.Popup;
 
 namespace Game.UI
@@ -17,6 +18,7 @@ namespace Game.UI
             base.Awake();
             CacheCollectableBars();
             PostAppear += FlyCollectedCollectablesToBars;
+            PostAppear += HandleGameOverState;
         }
 
         private void CacheCollectableBars()
@@ -90,6 +92,62 @@ namespace Game.UI
             }
 
             return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
+        }
+
+        private void HandleGameOverState()
+        {
+            if (GameState.Instance != null)
+            {
+                GameState.Instance.SetState(GameFlowState.GameOver);
+            }
+
+            if (CollectableSystem.Instance == null || CurrencyService.Instance == null)
+            {
+                return;
+            }
+
+            var collectedCounts = CollectableSystem.Instance.GetCollectedCounts();
+            if (collectedCounts == null || collectedCounts.Count == 0)
+            {
+                return;
+            }
+
+            var pendingRewards = new Dictionary<string, int>();
+
+            foreach (var collected in collectedCounts)
+            {
+                if (collected.Key == null || collected.Value <= 0)
+                {
+                    continue;
+                }
+
+                var currencyConfig = CurrencyService.Instance.GetCurrencyConfig(collected.Key.Id);
+                if (currencyConfig == null)
+                {
+                    continue;
+                }
+
+                if (pendingRewards.TryGetValue(currencyConfig.currencyId, out var currentAmount))
+                {
+                    pendingRewards[currencyConfig.currencyId] = currentAmount + collected.Value;
+                }
+                else
+                {
+                    pendingRewards[currencyConfig.currencyId] = collected.Value;
+                }
+            }
+
+            if (pendingRewards.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var reward in pendingRewards)
+            {
+                CurrencyService.Instance.ModifyCurrency(reward.Key, reward.Value);
+            }
+
+            GameState.Instance?.SetPendingCurrencyRewards(pendingRewards);
         }
     }
 }

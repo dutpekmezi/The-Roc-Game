@@ -13,6 +13,8 @@ namespace Game.UI
         [SerializeField, Dropdown(("GetSceneKeys"))]
         private string sceneId;
 
+        public string SceneId => sceneId;
+
         public override void BaseOnClick()
         {
             base.BaseOnClick();

@@ -1,3 +1,4 @@
+using Game.Systems;
 using UnityEngine;
 using Utils.Currency;
 using Utils.Level;
@@ -45,6 +46,7 @@ namespace Game.Installers
             InitializeSaveService();
             InitializeSceneService();
             InitializeCurrencyService();
+            InitializeGameState();
         }
 
         private static void InitializeSaveService()
@@ -89,6 +91,16 @@ namespace Game.Installers
             }
 
             _ = new CurrencyService(currencyServiceSettings);
+        }
+
+        private void InitializeGameState()
+        {
+            if (GameState.Instance != null)
+            {
+                return;
+            }
+
+            _ = new GameState();
         }
 
         /*private void InitializeLevelService()
