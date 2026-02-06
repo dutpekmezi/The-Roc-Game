@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Utils.Currency.CurrencyConfig
   currencyId: coin
   currencySprite: {fileID: 7675826601332790545, guid: fefc128260cae9e4fae26d318f60fd3d, type: 3}
-  currencyUIPrefab: {fileID: 15626377180415218, guid: 5c0941c31bc66a3449464ab504f4d08d, type: 3}
-  destinationActionData: {fileID: 11400000, guid: ae4a4591b240bbc4caaa2cd8292949db, type: 2}
+  currencyUIPrefab: {fileID: 8580048115332197451, guid: 9ac686416ead9184b9d83f4a7ea7c627, type: 3}
+  destinationActionData: {fileID: 11400000, guid: dfbe2262b0cb9214991054770b68f86d, type: 2}

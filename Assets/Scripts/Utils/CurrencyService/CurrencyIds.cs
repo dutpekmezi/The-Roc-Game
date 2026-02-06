@@ -8,6 +8,7 @@ namespace Utils.Currency
         public const string Coffee = "coffee";
         public const string Matcha = "matcha";
         public const string Coin = "coin";
+        public const string Cookie = "cookie";
 
         private static List<string> values = null;
 
@@ -17,7 +18,7 @@ namespace Utils.Currency
             {
                 values = new List<string>()
                 {
-                    Coffee, Matcha, Coin
+                    Coffee, Matcha, Coin, Cookie
                 };
             }
 

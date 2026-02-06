@@ -10,6 +10,8 @@ namespace Game.UI
 {
     public class MenuCurrencyRewardFlyer : MonoBehaviour
     {
+
+        [SerializeField] private List<CurrencyBar> currencyBarList = new List<CurrencyBar>();
         private Canvas menuCanvas;
 
         private void Awake()
@@ -45,12 +47,6 @@ namespace Game.UI
                 return;
             }
 
-            CurrencyBar[] currencyBars = GetComponentsInChildren<CurrencyBar>(true);
-            if (currencyBars.Length == 0)
-            {
-                return;
-            }
-
             var playButton = FindObjectsOfType<SceneChangeButton>(true)
                 .FirstOrDefault(button => button.SceneId == SceneKeys.GameScene);
 
@@ -61,7 +57,7 @@ namespace Game.UI
 
             var startScreenPos = GetScreenPoint(playButton.GetComponent<RectTransform>());
 
-            foreach (var currencyBar in currencyBars)
+            foreach (var currencyBar in currencyBarList)
             {
                 if (currencyBar == null)
                 {
@@ -91,7 +87,7 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPosProvider: () => GetScreenPoint(currencyBar.IconRectTransform),
+                    endScreenPos: GetScreenPoint(currencyBar.IconRectTransform),
                     sprite: currencyConfig.currencySprite,
                     parent: menuCanvas != null ? menuCanvas.transform as RectTransform : null,
                     particleCount: amount,

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 453755111577065620}
   - component: {fileID: 4821708432607485611}
   m_Layer: 5
-  m_Name: CurrencyBar
+  m_Name: CurrencyBarCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -117,9 +117,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120eac43aac54e6e990304f4bd31ceef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currencyConfig: {fileID: 0}
-  iconImage: {fileID: 0}
-  amountText: {fileID: 0}
+  currencyConfig: {fileID: 11400000, guid: de4c489dce44d864c9255d6a153d6327, type: 2}
+  iconImage: {fileID: 2495388625590450180}
+  amountText: {fileID: 37469751959018594}
 --- !u!1 &4293573778993159080
 GameObject:
   m_ObjectHideFlags: 0

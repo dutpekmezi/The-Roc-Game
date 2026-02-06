@@ -6,7 +6,7 @@ namespace Game.Systems
     {
         public const string Coin = "coin";
         public const string Coffee = "coffee";
-        public const string MatchaLatte = "matcha_latte";
+        public const string Matcha = "matcha";
         public const string Cookie = "cookie";
 
         public static List<string> GetCollectableIds()
@@ -15,7 +15,7 @@ namespace Game.Systems
             {
                 Coin,
                 Coffee,
-                MatchaLatte,
+                Matcha,
                 Cookie
             };
         }
