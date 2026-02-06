@@ -79,6 +79,11 @@ namespace Game.Systems
             return collectedCounts.TryGetValue(collectableConfig, out count);
         }
 
+        public IReadOnlyDictionary<CollectableConfig, int> GetCollectedCounts()
+        {
+            return new Dictionary<CollectableConfig, int>(collectedCounts);
+        }
+
         public void FlyCollectedCollectablesToScreenPosition(CollectableConfig collectableConfig, Vector2 endScreenPos, int count = 1, float startDelay = -1f, Action onReceivedItem = null)
         {
             if (count <= 0)

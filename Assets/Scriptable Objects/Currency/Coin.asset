@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a831a9d41ec4bc4499e5837e19059b70, type: 3}
   m_Name: Coin
   m_EditorClassIdentifier: Assembly-CSharp::Utils.Currency.CurrencyConfig
-  currencyId: matcha
+  currencyId: coin
   currencySprite: {fileID: 7675826601332790545, guid: fefc128260cae9e4fae26d318f60fd3d, type: 3}
   currencyUIPrefab: {fileID: 15626377180415218, guid: 5c0941c31bc66a3449464ab504f4d08d, type: 3}
   destinationActionData: {fileID: 11400000, guid: ae4a4591b240bbc4caaa2cd8292949db, type: 2}
