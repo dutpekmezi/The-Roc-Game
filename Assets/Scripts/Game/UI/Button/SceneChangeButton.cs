@@ -9,6 +9,7 @@ namespace Game.UI
 {
     public class SceneChangeButton : BaseButton
     {
+        [SerializeField] private RectTransform _rectTransform;
 
         [SerializeField, Dropdown(("GetSceneKeys"))]
         private string sceneId;
@@ -26,5 +27,7 @@ namespace Game.UI
         {
             return SceneKeys.GetValues();
         }
+
+        public RectTransform Transform => _rectTransform;
     }
 }

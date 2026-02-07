@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Game.Installers;
 using Game.Systems;
 using UnityEngine;
 using Utils.Currency;
@@ -10,18 +11,13 @@ namespace Game.UI
 {
     public class MenuCurrencyRewardFlyer : MonoBehaviour
     {
-
+        [SerializeField] private RectTransform canvas;
+        [SerializeField] private SceneChangeButton playButton;
         [SerializeField] private List<CurrencyBar> currencyBarList = new List<CurrencyBar>();
-        private Canvas menuCanvas;
 
         private void Awake()
         {
-            if (GameState.Instance != null)
-            {
-                GameState.Instance.SetState(GameFlowState.Menu);
-            }
-
-            menuCanvas = GetComponent<Canvas>();
+            GameState.Instance.SetState(GameFlowState.Menu);
         }
 
         private void Start()
@@ -47,15 +43,12 @@ namespace Game.UI
                 return;
             }
 
-            var playButton = FindObjectsOfType<SceneChangeButton>(true)
-                .FirstOrDefault(button => button.SceneId == SceneKeys.GameScene);
-
             if (playButton == null)
             {
                 return;
             }
 
-            var startScreenPos = GetScreenPoint(playButton.GetComponent<RectTransform>());
+            var startScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main ,playButton.Transform.position);
 
             foreach (var currencyBar in currencyBarList)
             {
@@ -87,9 +80,9 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPos: GetScreenPoint(currencyBar.IconRectTransform),
+                    endScreenPos: RectTransformUtility.WorldToScreenPoint(Camera.main ,currencyBar.IconRectTransform.position),
                     sprite: currencyConfig.currencySprite,
-                    parent: menuCanvas != null ? menuCanvas.transform as RectTransform : null,
+                    parent: canvas,
                     particleCount: amount,
                     destinationActionData: currencyConfig.destinationActionData,
                     prefab: currencyConfig.currencyUIPrefab,
@@ -101,21 +94,16 @@ namespace Game.UI
             }
         }
 
-        private Vector2 GetScreenPoint(RectTransform rectTransform)
+        /*private Vector2 GetScreenPoint(RectTransform rectTransform)
         {
             if (rectTransform == null)
             {
                 return Vector2.zero;
             }
 
-            Camera camera = null;
-
-            if (menuCanvas != null && menuCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-            {
-                camera = menuCanvas.worldCamera != null ? menuCanvas.worldCamera : Camera.main;
-            }
+            Camera camera = Camera.main;
 
             return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
-        }
+        }*/
     }
 }

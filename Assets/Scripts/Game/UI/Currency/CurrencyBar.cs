@@ -11,11 +11,12 @@ namespace Game.UI
         [SerializeField] private CurrencyConfig currencyConfig;
         [SerializeField] private Image iconImage;
         [SerializeField] private TextMeshProUGUI amountText;
+        [SerializeField] private RectTransform iconRectTransform;
 
         private bool subscribed;
 
         public CurrencyConfig CurrencyConfig => currencyConfig;
-        public RectTransform IconRectTransform => iconImage != null ? iconImage.rectTransform : null;
+        public RectTransform IconRectTransform => iconRectTransform;
 
         public void SetCurrencyConfig(CurrencyConfig config)
         {

@@ -120,6 +120,7 @@ MonoBehaviour:
   currencyConfig: {fileID: 11400000, guid: de4c489dce44d864c9255d6a153d6327, type: 2}
   iconImage: {fileID: 2495388625590450180}
   amountText: {fileID: 37469751959018594}
+  iconRectTransform: {fileID: 5281229347151813488}
 --- !u!1 &4293573778993159080
 GameObject:
   m_ObjectHideFlags: 0
