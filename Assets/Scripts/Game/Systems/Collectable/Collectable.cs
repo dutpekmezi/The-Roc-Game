@@ -68,7 +68,13 @@ namespace Game.Systems
 
             Func<Vector3> endScreenPosProvider = () =>
             {
-                if (GameCanvas.Instance != null)
+                if (GameCanvas.Instance != null && collectableConfig != null
+                    && GameCanvas.Instance.TryGetCollectableBarScreenPosition(collectableConfig, out var barScreenPos))
+                {
+                    return barScreenPos;
+                }
+
+                if (GameInstaller.Instance != null && GameInstaller.Instance.CollectableFlyDestination != null)
                 {
                     return GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
                 }
