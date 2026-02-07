@@ -108,12 +108,11 @@ namespace Game.UI
                 return Vector2.zero;
             }
 
-            var targetCanvas = rectTransform.GetComponentInParent<Canvas>();
             Camera camera = null;
 
-            if (targetCanvas != null && targetCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            if (menuCanvas != null && menuCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
             {
-                camera = targetCanvas.worldCamera != null ? targetCanvas.worldCamera : Camera.main;
+                camera = menuCanvas.worldCamera != null ? menuCanvas.worldCamera : Camera.main;
             }
 
             return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
