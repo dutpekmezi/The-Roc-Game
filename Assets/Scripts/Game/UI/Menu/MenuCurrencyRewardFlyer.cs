@@ -37,6 +37,21 @@ namespace Game.UI
                 LayoutRebuilder.ForceRebuildLayoutImmediate(canvas);
             }
 
+            for (int i = 0; i < currencyBarList.Count; i++)
+            {
+                var currencyBar = currencyBarList[i];
+                if (currencyBar == null)
+                {
+                    continue;
+                }
+
+                var rectTransform = currencyBar.GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+                }
+            }
+
             FlyPendingRewards();
         }
 
@@ -95,7 +110,7 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPos: RectTransformUtility.WorldToScreenPoint(cam, (Vector2)currencyBar.IconRectTransform.position),
+                    endScreenPos: GetIconScreenPosition(currencyBar.IconRectTransform),
                     sprite: currencyConfig.currencySprite,
                     parent: canvas,
                     particleCount: amount,
@@ -107,6 +122,18 @@ namespace Game.UI
                     }
                 );
             }
+        }
+
+        private Vector2 GetIconScreenPosition(RectTransform iconRectTransform)
+        {
+            if (iconRectTransform == null)
+            {
+                return Vector2.zero;
+            }
+
+            var targetCamera = cam != null ? cam : Camera.main;
+            var worldPosition = iconRectTransform.TransformPoint(iconRectTransform.rect.center);
+            return RectTransformUtility.WorldToScreenPoint(targetCamera, worldPosition);
         }
 
         /*private Vector2 GetScreenPoint(RectTransform rectTransform)
