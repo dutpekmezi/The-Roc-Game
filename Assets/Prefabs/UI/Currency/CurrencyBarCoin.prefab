@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currencyConfig: {fileID: 11400000, guid: de4c489dce44d864c9255d6a153d6327, type: 2}
+  parentTransform: {fileID: 36318084075940951}
   iconImage: {fileID: 2495388625590450180}
   amountText: {fileID: 37469751959018594}
   iconRectTransform: {fileID: 5281229347151813488}

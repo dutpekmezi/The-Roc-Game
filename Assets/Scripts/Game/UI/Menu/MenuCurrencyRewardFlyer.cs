@@ -45,7 +45,7 @@ namespace Game.UI
                     continue;
                 }
 
-                var rectTransform = currencyBar.GetComponent<RectTransform>();
+                var rectTransform = currencyBar.ParentRectTransform;
                 if (rectTransform != null)
                 {
                     LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);

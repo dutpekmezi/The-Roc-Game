@@ -9,6 +9,7 @@ namespace Game.UI
     public class CurrencyBar : MonoBehaviour
     {
         [SerializeField] private CurrencyConfig currencyConfig;
+        [SerializeField] private RectTransform parentTransform;
         [SerializeField] private Image iconImage;
         [SerializeField] private TextMeshProUGUI amountText;
         [SerializeField] private RectTransform iconRectTransform;
@@ -17,6 +18,7 @@ namespace Game.UI
 
         public CurrencyConfig CurrencyConfig => currencyConfig;
         public RectTransform IconRectTransform => iconRectTransform;
+        public RectTransform ParentRectTransform => parentTransform;
 
         public void SetCurrencyConfig(CurrencyConfig config)
         {
