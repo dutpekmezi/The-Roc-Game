@@ -12,6 +12,7 @@ namespace Game.UI
     public class MenuCurrencyRewardFlyer : MonoBehaviour
     {
         [SerializeField] private RectTransform canvas;
+        [SerializeField] private Camera cam;
         [SerializeField] private SceneChangeButton playButton;
         [SerializeField] private List<CurrencyBar> currencyBarList = new List<CurrencyBar>();
 
@@ -80,7 +81,7 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPos: RectTransformUtility.WorldToScreenPoint(Camera.main ,currencyBar.IconRectTransform.position),
+                    endScreenPos: RectTransformUtility.WorldToScreenPoint(cam, (Vector2)currencyBar.IconRectTransform.position),
                     sprite: currencyConfig.currencySprite,
                     parent: canvas,
                     particleCount: amount,

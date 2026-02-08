@@ -4,20 +4,24 @@ namespace Game.Systems
 {
     public static class CollectableIds
     {
-        public const string Coin = "coin";
         public const string Coffee = "coffee";
         public const string Matcha = "matcha";
+        public const string Coin = "coin";
         public const string Cookie = "cookie";
+
+        private static List<string> values = null;
 
         public static List<string> GetCollectableIds()
         {
-            return new List<string>
+            if (values == null)
             {
-                Coin,
-                Coffee,
-                Matcha,
-                Cookie
-            };
+                values = new List<string>()
+                {
+                    Coffee, Matcha, Coin, Cookie
+                };
+            }
+
+            return values;
         }
     }
 }
