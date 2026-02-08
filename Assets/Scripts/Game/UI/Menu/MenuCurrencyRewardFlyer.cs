@@ -1,8 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Game.Installers;
 using Game.Systems;
 using UnityEngine;
+using UnityEngine.UI;
 using Utils.Currency;
 using Utils.ObjectFlowAnimator;
 using Utils.Scene;
@@ -23,6 +24,19 @@ namespace Game.UI
 
         private void Start()
         {
+            StartCoroutine(FlyPendingRewardsAfterLayout());
+        }
+
+        private IEnumerator FlyPendingRewardsAfterLayout()
+        {
+            yield return new WaitForEndOfFrame();
+            Canvas.ForceUpdateCanvases();
+
+            if (canvas != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvas);
+            }
+
             FlyPendingRewards();
         }
 
