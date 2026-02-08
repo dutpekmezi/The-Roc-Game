@@ -78,7 +78,7 @@ namespace Game.UI
                 return;
             }
 
-            var startScreenPos = RectTransformUtility.WorldToScreenPoint(GetUiCamera(), playButton.Transform.position);
+            var startScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main ,playButton.Transform.position);
 
             foreach (var currencyBar in currencyBarList)
             {
@@ -131,33 +131,9 @@ namespace Game.UI
                 return Vector2.zero;
             }
 
-            var targetCamera = GetUiCamera();
+            var targetCamera = cam != null ? cam : Camera.main;
             var worldPosition = iconRectTransform.TransformPoint(iconRectTransform.rect.center);
             return RectTransformUtility.WorldToScreenPoint(targetCamera, worldPosition);
-        }
-
-        private Camera GetUiCamera()
-        {
-            if (cam != null)
-            {
-                return cam;
-            }
-
-            var canvasComponent = canvas != null ? canvas.GetComponentInParent<Canvas>() : null;
-            if (canvasComponent != null)
-            {
-                if (canvasComponent.renderMode == RenderMode.ScreenSpaceOverlay)
-                {
-                    return null;
-                }
-
-                if (canvasComponent.worldCamera != null)
-                {
-                    return canvasComponent.worldCamera;
-                }
-            }
-
-            return Camera.main;
         }
 
         /*private Vector2 GetScreenPoint(RectTransform rectTransform)
