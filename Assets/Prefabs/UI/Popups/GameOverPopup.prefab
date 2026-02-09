@@ -1635,7 +1635,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4030345414931367157, guid: 7df91a337d18fce41b76322a0c94d4eb, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 600
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4030345414931367157, guid: 7df91a337d18fce41b76322a0c94d4eb, type: 3}
       propertyPath: m_LocalScale.x
@@ -1679,7 +1679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4030345414931367157, guid: 7df91a337d18fce41b76322a0c94d4eb, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 888
+      value: 1340
       objectReference: {fileID: 0}
     - target: {fileID: 4030345414931367157, guid: 7df91a337d18fce41b76322a0c94d4eb, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1938,7 +1938,7 @@ MonoBehaviour:
     duration: 0.35
     delay: 0
     startAt: 1
-    ease: 6
+    ease: 4
     loops: 1
     loopType: 0
     infiniteLoopFallback: 999999
@@ -2080,7 +2080,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 2
-  m_VerticalFit: 0
+  m_VerticalFit: 2
 --- !u!224 &9039066776227582943 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4030345414931367157, guid: 7df91a337d18fce41b76322a0c94d4eb, type: 3}

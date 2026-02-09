@@ -24,38 +24,10 @@ namespace Game.UI
 
         private void Start()
         {
-            StartCoroutine(FlyPendingRewardsAfterLayout());
+            FlyRewards();
         }
 
-        private IEnumerator FlyPendingRewardsAfterLayout()
-        {
-            yield return new WaitForEndOfFrame();
-            Canvas.ForceUpdateCanvases();
-
-            if (canvas != null)
-            {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(canvas);
-            }
-
-            for (int i = 0; i < currencyBarList.Count; i++)
-            {
-                var currencyBar = currencyBarList[i];
-                if (currencyBar == null)
-                {
-                    continue;
-                }
-
-                var rectTransform = currencyBar.ParentRectTransform;
-                if (rectTransform != null)
-                {
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
-                }
-            }
-
-            FlyPendingRewards();
-        }
-
-        private void FlyPendingRewards()
+        private void FlyRewards()
         {
             if (GameState.Instance == null)
             {
@@ -110,7 +82,7 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPos: GetIconScreenPosition(currencyBar.IconRectTransform),
+                    endScreenPos: RectTransformUtility.WorldToScreenPoint(cam, currencyBar.IconRectTransform.TransformPoint(currencyBar.IconRectTransform.position)),
                     sprite: currencyConfig.currencySprite,
                     parent: canvas,
                     particleCount: amount,
@@ -122,18 +94,6 @@ namespace Game.UI
                     }
                 );
             }
-        }
-
-        private Vector2 GetIconScreenPosition(RectTransform iconRectTransform)
-        {
-            if (iconRectTransform == null)
-            {
-                return Vector2.zero;
-            }
-
-            var targetCamera = cam != null ? cam : Camera.main;
-            var worldPosition = iconRectTransform.TransformPoint(iconRectTransform.rect.center);
-            return RectTransformUtility.WorldToScreenPoint(targetCamera, worldPosition);
         }
 
         /*private Vector2 GetScreenPoint(RectTransform rectTransform)
