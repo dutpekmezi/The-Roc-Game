@@ -82,7 +82,7 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPos: RectTransformUtility.WorldToScreenPoint(cam, currencyBar.IconRectTransform.TransformPoint(currencyBar.IconRectTransform.position)),
+                    endScreenPosProvider: () => RectTransformUtility.WorldToScreenPoint(cam, currencyBar.IconRectTransform.position),
                     sprite: currencyConfig.currencySprite,
                     parent: canvas,
                     particleCount: amount,
