@@ -50,7 +50,9 @@ namespace Game.UI
                 return;
             }
 
-            var startScreenPos = RectTransformUtility.WorldToScreenPoint(Camera.main ,playButton.Transform.position);
+            EnsureLayoutIsUpToDate();
+
+            var startScreenPos = GetScreenPoint(playButton.Transform);
 
             foreach (var currencyBar in currencyBarList)
             {
@@ -82,7 +84,7 @@ namespace Game.UI
 
                 UIFlowAnimator.Instance.AddNewDestinationAction(
                     startScreenPos: startScreenPos,
-                    endScreenPosProvider: () => RectTransformUtility.WorldToScreenPoint(cam, currencyBar.IconRectTransform.position),
+                    endScreenPosProvider: () => GetScreenPoint(currencyBar.IconRectTransform),
                     sprite: currencyConfig.currencySprite,
                     parent: canvas,
                     particleCount: amount,
@@ -94,6 +96,43 @@ namespace Game.UI
                     }
                 );
             }
+        }
+
+        private void EnsureLayoutIsUpToDate()
+        {
+            Canvas.ForceUpdateCanvases();
+
+            if (canvas != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(canvas);
+            }
+
+            for (int i = 0; i < currencyBarList.Count; i++)
+            {
+                var currencyBar = currencyBarList[i];
+                if (currencyBar?.ParentRectTransform != null)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(currencyBar.ParentRectTransform);
+                }
+            }
+        }
+
+        private Vector2 GetScreenPoint(RectTransform targetRect)
+        {
+            if (targetRect == null)
+            {
+                return Vector2.zero;
+            }
+
+            var targetCanvas = targetRect.GetComponentInParent<Canvas>();
+            Camera targetCamera = null;
+
+            if (targetCanvas != null && targetCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                targetCamera = targetCanvas.worldCamera != null ? targetCanvas.worldCamera : cam;
+            }
+
+            return RectTransformUtility.WorldToScreenPoint(targetCamera, targetRect.position);
         }
 
         /*private Vector2 GetScreenPoint(RectTransform rectTransform)
