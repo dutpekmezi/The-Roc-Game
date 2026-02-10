@@ -1,6 +1,7 @@
 ﻿using System;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Anim
 {
@@ -38,6 +39,9 @@ namespace Game.Anim
 
         [Header("UI")]
         [SerializeField] private FadeSettings fade = new FadeSettings();
+
+        [Header("Color")]
+        [SerializeField] private ColorSettings color = new ColorSettings();
 
         private Sequence _sequence;
 
@@ -110,6 +114,7 @@ namespace Game.Anim
             hasTweens |= shakeAnchor.TryAdd(_sequence, resolvedTarget);
 
             hasTweens |= fade.TryAdd(_sequence, resolvedTarget);
+            hasTweens |= color.TryAdd(_sequence, resolvedTarget);
 
             if (!hasTweens)
             {
@@ -437,5 +442,47 @@ namespace Game.Anim
                 return true;
             }
         }
+
+        [Serializable]
+        public class ColorSettings : TweenSettingsBase
+        {
+            public Graphic graphic;
+            public SpriteRenderer spriteRenderer;
+
+            [Header("Colors")]
+            public bool setStartColorBeforeTween = true;
+            public Color startColor = Color.white;
+            public Color targetColor = Color.red;
+
+            public bool TryAdd(Sequence sequence, Transform defaultTarget)
+            {
+                if (!enabled || sequence == null) return false;
+
+                Graphic resolvedGraphic = graphic != null
+                    ? graphic
+                    : (defaultTarget != null ? defaultTarget.GetComponent<Graphic>() : null);
+
+                SpriteRenderer resolvedSpriteRenderer = spriteRenderer != null
+                    ? spriteRenderer
+                    : (defaultTarget != null ? defaultTarget.GetComponent<SpriteRenderer>() : null);
+
+                if (resolvedGraphic == null && resolvedSpriteRenderer == null) return false;
+
+                if (setStartColorBeforeTween)
+                {
+                    if (resolvedGraphic != null) resolvedGraphic.color = startColor;
+                    if (resolvedSpriteRenderer != null) resolvedSpriteRenderer.color = startColor;
+                }
+
+                Tween tween = resolvedGraphic != null
+                    ? resolvedGraphic.DOColor(targetColor, duration)
+                    : resolvedSpriteRenderer.DOColor(targetColor, duration);
+
+                ConfigureTween(tween, isInsideSequence: true);
+                AddToSequence(sequence, tween);
+                return true;
+            }
+        }
+
     }
 }
