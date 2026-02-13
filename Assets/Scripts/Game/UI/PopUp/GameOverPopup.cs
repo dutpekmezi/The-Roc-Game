@@ -8,7 +8,7 @@ namespace Game.UI
 {
     public class GameOverPopup : PopupBase
     {
-        public const string PopupKey = "game_over";
+        [SerializeField] public const string PopupKey = "game_over";
         [SerializeField] private List<CollectableBar> collectableBars = new();
 
         public override string PopupId => PopupKey;

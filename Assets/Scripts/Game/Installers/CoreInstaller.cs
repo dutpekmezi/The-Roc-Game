@@ -14,8 +14,9 @@ namespace Game.Installers
         [SerializeField] private CurrencyServiceSettings currencyServiceSettings;
         [SerializeField] private LevelSettings levelSettings;
         [SerializeField] private bool persistBetweenScenes = true;
+        [SerializeField] private Canvas canvas;
 
-        [SerializeField] public Canvas Canvas;
+        [SerializeField] public Canvas Canvas =>  canvas;
 
         private bool _initialized;
 

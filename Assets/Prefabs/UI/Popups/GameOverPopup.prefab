@@ -342,6 +342,21 @@ MonoBehaviour:
     placement: 0
     canvasGroup: {fileID: 0}
     alpha: 1
+  color:
+    enabled: 0
+    duration: 0.35
+    delay: 0
+    startAt: 0
+    ease: 6
+    loops: 1
+    loopType: 0
+    infiniteLoopFallback: 999999
+    placement: 0
+    graphic: {fileID: 0}
+    spriteRenderer: {fileID: 0}
+    setStartColorBeforeTween: 1
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    targetColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1000000020
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,6 +841,21 @@ MonoBehaviour:
     placement: 0
     canvasGroup: {fileID: 0}
     alpha: 1
+  color:
+    enabled: 0
+    duration: 0.35
+    delay: 0
+    startAt: 0
+    ease: 6
+    loops: 1
+    loopType: 0
+    infiniteLoopFallback: 999999
+    placement: 0
+    graphic: {fileID: 0}
+    spriteRenderer: {fileID: 0}
+    setStartColorBeforeTween: 1
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    targetColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &9141097646204367786
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,6 +1114,21 @@ MonoBehaviour:
     placement: 0
     canvasGroup: {fileID: 0}
     alpha: 1
+  color:
+    enabled: 0
+    duration: 0.35
+    delay: 0
+    startAt: 0
+    ease: 6
+    loops: 1
+    loopType: 0
+    infiniteLoopFallback: 999999
+    placement: 0
+    graphic: {fileID: 0}
+    spriteRenderer: {fileID: 0}
+    setStartColorBeforeTween: 1
+    startColor: {r: 1, g: 1, b: 1, a: 1}
+    targetColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1001 &1775283429817558930
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1749,6 +1794,34 @@ PrefabInstance:
     - target: {fileID: 254968264481083983, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
       propertyPath: sceneId
       value: menu_scene
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1000000004}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Disappear
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Game.UI.GameOverPopup, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1770469454643899933, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
       propertyPath: m_Name

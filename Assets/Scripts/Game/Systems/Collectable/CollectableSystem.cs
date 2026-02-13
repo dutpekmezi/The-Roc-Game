@@ -144,7 +144,7 @@ namespace Game.Systems
                 startScreenPos: startScreenPos,
                 endScreenPosProvider: endScreenPosProvider3d,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
-                parent: GameInstaller.Instance.Canvas.transform as RectTransform,
+                parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: count,
                 startDelay: startDelay,
                 onReceivedItem: onReceivedItem

@@ -87,7 +87,7 @@ namespace Game.Systems
                startScreenPos: Camera.main.WorldToScreenPoint(transform.position),
                endScreenPosProvider: endScreenPosProvider,
                sprite: collectableConfig != null ? collectableConfig.Icon : null,
-               parent: GameInstaller.Instance.Canvas.transform as RectTransform,
+               parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
                particleCount: 1,
                startDelay: collectableSystem.CollectableSettings.flyGoldStartDelay
            );

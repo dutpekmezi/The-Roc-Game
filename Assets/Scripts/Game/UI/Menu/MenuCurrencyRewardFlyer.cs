@@ -86,7 +86,7 @@ namespace Game.UI
                     startScreenPos: startScreenPos,
                     endScreenPosProvider: () => GetScreenPoint(currencyBar.IconRectTransform),
                     sprite: currencyConfig.currencySprite,
-                    parent: canvas,
+                    parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
                     particleCount: amount,
                     destinationActionData: currencyConfig.destinationActionData,
                     prefab: currencyConfig.currencyUIPrefab,
