@@ -12,6 +12,7 @@ namespace Game.UI
         [SerializeField] private Image priceImage;
         [SerializeField] private Image specialPriceImage;
 
+        [SerializeField] private TextMeshProUGUI productTitle;
         [SerializeField] private TextMeshProUGUI priceAmount;
         [SerializeField] private TextMeshProUGUI specialPriceAmount;
 
@@ -25,6 +26,7 @@ namespace Game.UI
             priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.priceCurrency).currencySprite;
             specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.specialPriceCurrency).currencySprite;
 
+            productTitle.text = $"{productConfig.Name}";
             priceAmount.text = $"{productConfig.priceAmount}";
             specialPriceAmount.text = $"{productConfig.specialPriceAmount}";
         }

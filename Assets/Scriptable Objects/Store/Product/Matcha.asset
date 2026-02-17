@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b97e6c66349c6274d8e1d7216b90f2e7, type: 3}
-  m_Name: Coffee
+  m_Name: Matcha
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ProductConfig
-  Sprite: {fileID: 4687309882487268517, guid: 76fbc01bac24712418ecebaeeafdfb11, type: 3}
-  Name: Coffee
+  Sprite: {fileID: -7002255698544018446, guid: e92a7f14ab9bb0a438e52f9ca936e538, type: 3}
+  Name: Matcha Latte
   Description: 
   priceCurrency: coin
   priceAmount: 100
-  specialPriceCurrency: coffee
+  specialPriceCurrency: matcha
   specialPriceAmount: 10

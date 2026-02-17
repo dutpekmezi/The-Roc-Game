@@ -1294,6 +1294,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7278191457852224596}
     m_Modifications:
+    - target: {fileID: 329394189460984989, guid: 95762d44a3f564b42adb32d8ace18ffb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1000000004}
+    - target: {fileID: 329394189460984989, guid: 95762d44a3f564b42adb32d8ace18ffb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Disappear
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95762d44a3f564b42adb32d8ace18ffb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Game.UI.GameOverPopup, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 329394189460984989, guid: 95762d44a3f564b42adb32d8ace18ffb, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1770469454643899933, guid: 95762d44a3f564b42adb32d8ace18ffb, type: 3}
       propertyPath: m_Name
       value: RestartButton

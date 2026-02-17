@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b97e6c66349c6274d8e1d7216b90f2e7, type: 3}
-  m_Name: Matcha
+  m_Name: Cookie
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ProductConfig
-  Sprite: {fileID: -7002255698544018446, guid: e92a7f14ab9bb0a438e52f9ca936e538, type: 3}
-  Name: Matcha
+  Sprite: {fileID: 21300000, guid: 6dd3f7166eb3f8c4cb2b067cd1949b05, type: 3}
+  Name: Chocolate Cookie
   Description: 
   priceCurrency: coin
   priceAmount: 100
-  specialPriceCurrency: matcha
+  specialPriceCurrency: cookie
   specialPriceAmount: 10

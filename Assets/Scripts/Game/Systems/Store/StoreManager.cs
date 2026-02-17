@@ -2,31 +2,20 @@ using UnityEngine;
 
 namespace Game.Systems
 {
-    public class StoreManager : BaseSystem
+    public class StoreManager : MonoBehaviour
     {
-        private StoreSettings storeSettings;
+        [SerializeField] private StoreSettings storeSettings;
         public StoreSettings StoreSettings => storeSettings;
         public static StoreManager Instance { get; private set; }
 
-        public StoreManager(StoreSettings storeSettings)
+        private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Instance.Dispose();
+                Destroy(Instance);
             }
 
             Instance = this;
-
-            this.storeSettings = storeSettings;
-        }
-        public override void Dispose()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void Tick()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
