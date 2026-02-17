@@ -5,6 +5,13 @@ using Utils.Currency;
 
 namespace Game.Systems
 {
+    public enum ProductSection
+    {
+        Matcha = 0,
+        Coffee = 1,
+        Dessert = 2
+    }
+
     [CreateAssetMenu(fileName = "ProductConfig", menuName = "Game/Product/Product Config")]
     public class ProductConfig : ScriptableObject
     {
@@ -20,6 +27,8 @@ namespace Game.Systems
         [Dropdown("GetCurrencyIds")]
         public string specialPriceCurrency;
         public int specialPriceAmount;
+
+        public ProductSection section;
 
         private List<string> GetCurrencyIds()
         {
