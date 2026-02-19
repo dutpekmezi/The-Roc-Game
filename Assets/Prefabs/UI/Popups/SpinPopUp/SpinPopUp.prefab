@@ -65,7 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinPopUp
   extensionBases: []
   canvasGroup: {fileID: 1000000003}
-  framesRoot: {fileID: 1000000011}
+  framesRoot: {fileID: 8727238394632909782}
 --- !u!1 &1000000010
 GameObject:
   m_ObjectHideFlags: 0
