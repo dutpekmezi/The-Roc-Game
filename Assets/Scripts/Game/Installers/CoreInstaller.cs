@@ -15,6 +15,7 @@ namespace Game.Installers
         [SerializeField] private LevelSettings levelSettings;
         [SerializeField] private bool persistBetweenScenes = true;
         [SerializeField] private Canvas canvas;
+        [SerializeField] private CollectableSettings collectableSettings;
 
         [SerializeField] public Canvas Canvas =>  canvas;
 
@@ -48,6 +49,7 @@ namespace Game.Installers
             InitializeSceneService();
             InitializeCurrencyService();
             InitializeGameState();
+            InitializeCollectableSystem();
         }
 
         private static void InitializeSaveService()
@@ -104,6 +106,22 @@ namespace Game.Installers
             _ = new GameState();
         }
 
+
+        private void InitializeCollectableSystem()
+        {
+            if (CollectableSystem.Instance != null)
+            {
+                return;
+            }
+
+            if (collectableSettings == null)
+            {
+                Debug.LogWarning("[CoreInstaller] CollectableSettings is not assigned.");
+                return;
+            }
+
+            _ = new CollectableSystem(collectableSettings);
+        }
         /*private void InitializeLevelService()
         {
             if (LevelService.Instance != null)

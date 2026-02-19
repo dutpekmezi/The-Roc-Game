@@ -12,7 +12,7 @@ namespace Game.UI
             base.BaseOnClick();
 
             var popupService = PopupService.Instance;
-            if (popupService != null && popupService.Get(StorePopUp.PopupKey) == null)
+            if (popupService != null && popupService.Get(SpinPopUp.PopupKey) == null)
             {
                 SpinPopUp instance = (SpinPopUp)popupService.Create(SpinPopUp.PopupKey);
             }
