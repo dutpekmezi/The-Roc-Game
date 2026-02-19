@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4821708432607485611}
   - component: {fileID: 7415212297068572198}
   - component: {fileID: 2233397934964847342}
+  - component: {fileID: 389274401568681538}
   m_Layer: 5
   m_Name: CurrencyBarCoin
   m_TagString: Untagged
@@ -137,6 +138,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 1
   m_AspectRatio: 2.3651571
+--- !u!114 &389274401568681538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3024096840567322720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -10}
+  m_UseGraphicAlpha: 1
 --- !u!1 &4293573778993159080
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +189,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 15, y: 0}
-  m_SizeDelta: {x: 106.76489, y: 0}
+  m_SizeDelta: {x: 429.7876, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4318451935564265769
 CanvasRenderer:
@@ -319,7 +335,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.3
+  m_fontSize: 238.85
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
