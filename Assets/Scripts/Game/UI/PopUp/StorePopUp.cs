@@ -19,13 +19,12 @@ namespace Game.UI
         protected override void Awake()
         {
             base.Awake();
-            PostAppear += DisplayProducts;
-            PostDisappear += HideProducts;
+            PostDisappear += ClearProducts;
         }
 
         private void DisplayProducts()
         {
-            HideProducts();
+            ClearProducts();
 
             var settings = StoreManager.Instance.StoreSettings;
 
@@ -47,7 +46,7 @@ namespace Game.UI
             ApplySectionBackground(settings.ProductConfigs);
         }
 
-        private void HideProducts()
+        private void ClearProducts()
         {
             for (int i = 0; i < displayingProducts.Count; i++)
             {
@@ -57,22 +56,7 @@ namespace Game.UI
             displayingProducts.Clear();
         }
 
-        public void SelectMatchaSection()
-        {
-            SelectSection(ProductSection.Matcha);
-        }
-
-        public void SelectCoffeeSection()
-        {
-            SelectSection(ProductSection.Coffee);
-        }
-
-        public void SelectDessertSection()
-        {
-            SelectSection(ProductSection.Dessert);
-        }
-
-        private void SelectSection(ProductSection section)
+        public void SelectSection(ProductSection section)
         {
             selectedSection = section;
             DisplayProducts();

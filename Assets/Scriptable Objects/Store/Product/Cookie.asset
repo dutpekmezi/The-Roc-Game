@@ -19,3 +19,4 @@ MonoBehaviour:
   priceAmount: 100
   specialPriceCurrency: cookie
   specialPriceAmount: 10
+  section: 2

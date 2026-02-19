@@ -66,6 +66,8 @@ MonoBehaviour:
   extensionBases: []
   canvasGroup: {fileID: 1000000003}
   productsParent: {fileID: 3105964245851679795}
+  backgroundImage: {fileID: 5787398367611071495}
+  selectedSection: 0
 --- !u!1 &3139640238190105
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,8 +708,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -90}
-  m_SizeDelta: {x: 880, y: 1130}
+  m_AnchoredPosition: {x: 0, y: -100}
+  m_SizeDelta: {x: 880, y: 1000}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &1920794025220933735
 CanvasRenderer:

@@ -151,7 +151,7 @@ GameObject:
   - component: {fileID: 8045997487428338968}
   - component: {fileID: 648602797231646377}
   m_Layer: 0
-  m_Name: MatchaSectionCanvas 1
+  m_Name: MatchaSectionCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &648602797231646377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -380,3 +380,4 @@ MonoBehaviour:
   scale: 0
   duration: 0
   ease: 0
+  section: 0

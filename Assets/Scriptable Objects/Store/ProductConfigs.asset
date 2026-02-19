@@ -16,3 +16,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03cc8d886a66ef54cb4cca974cb22b63, type: 2}
   - {fileID: 11400000, guid: de1a87b514b316a4ab880f21182fc5c1, type: 2}
   - {fileID: 11400000, guid: 561763d07cd94e44c965db777061f138, type: 2}
+  sectionConfigs:
+  - section: 0
+    color: {r: 0.043137256, g: 0.7176471, b: 0, a: 1}
+  - section: 1
+    color: {r: 0.6, g: 0.227451, b: 0, a: 1}
+  - section: 0
+    color: {r: 0.91372555, g: 0.6039216, b: 0, a: 1}

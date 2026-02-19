@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 43c6986368847c941a4329016e6bb533
+timeCreated: 1471546033
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 69849
+  packageName: Spin Wheel
+  packageVersion: 1.0
+  assetPath: Assets/SPin/Demo/WheelManager.cs
+  uploadId: 133192
