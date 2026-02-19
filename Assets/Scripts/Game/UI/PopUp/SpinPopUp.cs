@@ -1,7 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils.Currency;
 using Utils.Popup;
 using Game.Systems;
 
@@ -13,11 +15,35 @@ namespace Game.UI
         public override string PopupId => PopupKey;
 
         [SerializeField] private Transform framesRoot;
+        [SerializeField] private Transform wheelTransform;
+        [SerializeField] private Button spinButton;
+        [SerializeField] private int rewardAmountPerSpin = 1;
+        [SerializeField] private float spinDuration = 2.5f;
+        [SerializeField] private int minFullRotations = 4;
+        [SerializeField] private int maxFullRotations = 6;
+
+        private readonly List<CollectableConfig> spinRewards = new();
+        private bool isSpinning;
 
         protected override void Awake()
         {
             base.Awake();
             PostAppear += RefreshFrames;
+            EnsureSpinButton();
+
+            if (spinButton != null)
+            {
+                spinButton.onClick.RemoveListener(OnSpinButtonClicked);
+                spinButton.onClick.AddListener(OnSpinButtonClicked);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (spinButton != null)
+            {
+                spinButton.onClick.RemoveListener(OnSpinButtonClicked);
+            }
         }
 
         private void RefreshFrames()
@@ -27,21 +53,144 @@ namespace Game.UI
                 framesRoot = transform;
             }
 
-            var rewardSystem = SpinRewardSystem.TryGetInstance();
-            if (rewardSystem == null || rewardSystem.Rewards == null || rewardSystem.Rewards.Count == 0)
+            if (wheelTransform == null)
+            {
+                wheelTransform = framesRoot;
+            }
+
+            BuildSpinRewards();
+            if (spinRewards.Count == 0)
             {
                 return;
             }
 
-            List<Transform> spinFrames = new();
-            CollectSpinFrames(framesRoot, spinFrames);
+            List<Transform> frameTransforms = new();
+            CollectSpinFrames(framesRoot, frameTransforms);
 
-            for (int i = 0; i < spinFrames.Count; i++)
+            for (int i = 0; i < frameTransforms.Count; i++)
             {
-                var frame = spinFrames[i];
-                var reward = rewardSystem.Rewards[i % rewardSystem.Rewards.Count];
+                var frame = frameTransforms[i];
+                var reward = spinRewards[i % spinRewards.Count];
+                ApplyFrame(frame, reward, rewardAmountPerSpin);
+            }
+        }
 
-                ApplyFrame(frame, reward);
+        private void OnSpinButtonClicked()
+        {
+            if (isSpinning || spinRewards.Count == 0)
+            {
+                return;
+            }
+
+            StartCoroutine(SpinWheel());
+        }
+
+        private IEnumerator SpinWheel()
+        {
+            isSpinning = true;
+            if (spinButton != null)
+            {
+                spinButton.interactable = false;
+            }
+
+            var rewardIndex = Random.Range(0, spinRewards.Count);
+            var reward = spinRewards[rewardIndex];
+
+            var frameAngle = 360f / spinRewards.Count;
+            var extraTurns = Random.Range(minFullRotations, maxFullRotations + 1) * 360f;
+            var currentZ = wheelTransform != null ? wheelTransform.localEulerAngles.z : 0f;
+            var targetZ = currentZ + extraTurns + (frameAngle * rewardIndex);
+
+            float elapsed = 0f;
+            while (elapsed < spinDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / spinDuration);
+                var eased = 1f - Mathf.Pow(1f - t, 3f);
+                float z = Mathf.LerpAngle(currentZ, targetZ, eased);
+
+                if (wheelTransform != null)
+                {
+                    wheelTransform.localRotation = Quaternion.Euler(0f, 0f, z);
+                }
+
+                yield return null;
+            }
+
+            if (wheelTransform != null)
+            {
+                wheelTransform.localRotation = Quaternion.Euler(0f, 0f, targetZ);
+            }
+
+            GiveReward(reward);
+
+            if (spinButton != null)
+            {
+                spinButton.interactable = true;
+            }
+
+            isSpinning = false;
+        }
+
+        private void GiveReward(CollectableConfig reward)
+        {
+            if (reward == null || CurrencyService.Instance == null)
+            {
+                return;
+            }
+
+            CurrencyService.Instance.ModifyCurrency(reward.Id, rewardAmountPerSpin);
+        }
+
+        private void BuildSpinRewards()
+        {
+            spinRewards.Clear();
+
+            var collectableSystem = CollectableSystem.Instance;
+            var collectableSettings = collectableSystem != null ? collectableSystem.CollectableSettings : null;
+            if (collectableSettings?.collectablePrefabs == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < collectableSettings.collectablePrefabs.Count; i++)
+            {
+                var collectable = collectableSettings.collectablePrefabs[i];
+                if (collectable == null || collectable.CollectableConfig == null)
+                {
+                    continue;
+                }
+
+                var config = collectable.CollectableConfig;
+                if (!spinRewards.Contains(config))
+                {
+                    spinRewards.Add(config);
+                }
+            }
+        }
+
+        private void EnsureSpinButton()
+        {
+            if (spinButton != null)
+            {
+                return;
+            }
+
+            var spinCenter = transform.Find("Panel/SpinPlack");
+            if (spinCenter == null)
+            {
+                return;
+            }
+
+            spinButton = spinCenter.GetComponent<Button>();
+            if (spinButton == null)
+            {
+                spinButton = spinCenter.gameObject.AddComponent<Button>();
+                var image = spinCenter.GetComponent<Image>();
+                if (image != null)
+                {
+                    image.raycastTarget = true;
+                }
             }
         }
 
@@ -60,7 +209,7 @@ namespace Game.UI
             }
         }
 
-        private static void ApplyFrame(Transform frame, SpinRewardConfig reward)
+        private static void ApplyFrame(Transform frame, CollectableConfig reward, int amount)
         {
             if (frame == null || reward == null)
             {
@@ -70,11 +219,6 @@ namespace Game.UI
             var frameImage = frame.GetComponent<Image>();
             if (frameImage != null)
             {
-                if (reward.Background != null)
-                {
-                    frameImage.sprite = reward.Background;
-                }
-
                 frameImage.color = reward.Color;
             }
 
@@ -93,12 +237,12 @@ namespace Game.UI
             var texts = frame.GetComponentsInChildren<TextMeshProUGUI>(true);
             if (texts.Length > 0)
             {
-                texts[0].text = reward.Amount.ToString();
+                texts[0].text = amount.ToString();
             }
 
             if (texts.Length > 1)
             {
-                texts[1].text = reward.RewardName;
+                texts[1].text = reward.Name;
             }
         }
     }
