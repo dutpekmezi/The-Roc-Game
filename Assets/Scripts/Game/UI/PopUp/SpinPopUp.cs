@@ -172,7 +172,82 @@ namespace Game.UI
             if (reward == null) return;
             if (CurrencyService.Instance == null) return;
 
+            if (TryFlyRewardToCurrencyBar(reward)) return;
+
             CurrencyService.Instance.ModifyCurrency(reward.Id, rewardAmountPerSpin);
+        }
+
+        private bool TryFlyRewardToCurrencyBar(CollectableConfig reward)
+        {
+            if (reward == null || UIFlowAnimator.Instance == null) return false;
+            if (!TryGetRewardStartScreenPosition(reward, out var startScreenPos)) return false;
+
+            UIFlowAnimator.Instance.AddNewDestinationAction(
+                startScreenPos: startScreenPos,
+                endScreenPosProvider: () => GetRewardEndScreenPosition(reward, startScreenPos),
+                sprite: reward.Icon,
+                parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
+                particleCount: rewardAmountPerSpin,
+                onReceivedItem: () => CurrencyService.Instance?.ModifyCurrency(reward.Id, 1)
+            );
+
+            return true;
+        }
+
+        private bool TryGetRewardStartScreenPosition(CollectableConfig reward, out Vector3 startScreenPos)
+        {
+            startScreenPos = Vector3.zero;
+            if (spinFrames == null || spinFrames.Count == 0) return false;
+
+            for (int i = 0; i < spinFrames.Count; i++)
+            {
+                var frame = spinFrames[i];
+                if (frame == null || frame.RewardConfig != reward) continue;
+
+                if (frame.transform is RectTransform rectTransform)
+                {
+                    startScreenPos = GetScreenPoint(rectTransform);
+                    return true;
+                }
+
+                startScreenPos = Camera.main.WorldToScreenPoint(frame.transform.position);
+                return true;
+            }
+
+            return false;
+        }
+
+        private Vector3 GetRewardEndScreenPosition(CollectableConfig reward, Vector3 fallback)
+        {
+            if (GameCanvas.Instance != null && GameCanvas.Instance.TryGetCollectableBarScreenPosition(reward, out var barScreenPos))
+            {
+                return barScreenPos;
+            }
+
+            if (GameInstaller.Instance != null && GameInstaller.Instance.CollectableFlyDestination != null)
+            {
+                return GetScreenPoint(GameInstaller.Instance.CollectableFlyDestination);
+            }
+
+            return fallback;
+        }
+
+        private Vector2 GetScreenPoint(RectTransform rectTransform)
+        {
+            if (rectTransform == null)
+            {
+                return Vector2.zero;
+            }
+
+            var targetCanvas = rectTransform.GetComponentInParent<Canvas>();
+            Camera targetCamera = null;
+
+            if (targetCanvas != null && targetCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            {
+                targetCamera = targetCanvas.worldCamera != null ? targetCanvas.worldCamera : Camera.main;
+            }
+
+            return RectTransformUtility.WorldToScreenPoint(targetCamera, rectTransform.position);
         }
 
         private void BuildSpinRewards()
