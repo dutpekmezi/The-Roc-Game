@@ -183,6 +183,11 @@ namespace Game.UI
             if (reward == null || UIFlowAnimator.Instance == null) return false;
             if (!TryGetRewardStartScreenPosition(reward, out var startScreenPos)) return false;
 
+            if (reward.Id == CollectableIds.Coin && MenuCurrencyRewardFlyer.Instance != null)
+            {
+                return MenuCurrencyRewardFlyer.Instance.FlyGold(startScreenPos, rewardAmountPerSpin);
+            }
+
             var rewardCurrencyConfig = GetRewardCurrencyConfig(reward);
             if (rewardCurrencyConfig == null) return false;
 
