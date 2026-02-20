@@ -107,7 +107,7 @@ namespace Game.UI
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.Clamp01(elapsed / spinDuration);
                 var eased = 1f - Mathf.Pow(1f - t, 3f);
-                float z = Mathf.LerpAngle(currentZ, targetZ, eased);
+                float z = Mathf.Lerp(currentZ, targetZ, eased);
 
                 if (wheelTransform != null)
                 {

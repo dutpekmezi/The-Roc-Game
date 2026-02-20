@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9554479, g: 1, b: 0.6773585, a: 1}
+  m_Color: {r: 0.837673, g: 1, b: 0.6622641, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -495,7 +495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9528302, g: 0.9238158, b: 0.5258544, a: 1}
+  m_Color: {r: 1, g: 0.9357798, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1554,6 +1554,9 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4259701793773160512, guid: 95a79ef4927ffd7439fbca755b4e7b01, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 3999585837158845386}
+    - targetCorrespondingSourceObject: {fileID: 4259701793773160512, guid: 95a79ef4927ffd7439fbca755b4e7b01, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 8597023331001644613}
     - targetCorrespondingSourceObject: {fileID: 4259701793773160512, guid: 95a79ef4927ffd7439fbca755b4e7b01, type: 3}
       insertIndex: -1
@@ -1573,9 +1576,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4259701793773160512, guid: 95a79ef4927ffd7439fbca755b4e7b01, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3845967654335589550}
-    - targetCorrespondingSourceObject: {fileID: 4259701793773160512, guid: 95a79ef4927ffd7439fbca755b4e7b01, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3999585837158845386}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95a79ef4927ffd7439fbca755b4e7b01, type: 3}
 --- !u!224 &8727238394632909782 stripped
