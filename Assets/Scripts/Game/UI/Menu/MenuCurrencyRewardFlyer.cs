@@ -38,6 +38,59 @@ namespace Game.UI
             FlyRewards();
         }
 
+        public bool FlyGold(Vector2 startScreenPos, int amount = 1)
+        {
+            return FlyCurrency(CollectableIds.Coin, startScreenPos, amount);
+        }
+
+        public bool FlyCurrency(string currencyId, Vector2 startScreenPos, int amount = 1)
+        {
+            if (string.IsNullOrEmpty(currencyId) || amount <= 0)
+            {
+                return false;
+            }
+
+            EnsureLayoutIsUpToDate();
+
+            var currencyBar = GetCurrencyBar(currencyId);
+            if (currencyBar == null)
+            {
+                return false;
+            }
+
+            var currencyConfig = currencyBar.CurrencyConfig;
+            if (currencyConfig == null || currencyBar.IconRectTransform == null)
+            {
+                return false;
+            }
+
+            if (UIFlowAnimator.Instance == null)
+            {
+                return false;
+            }
+
+            if (CurrencyService.Instance != null)
+            {
+                CurrencyService.Instance.AddFakeCurrency(currencyConfig.currencyId, -amount);
+            }
+
+            UIFlowAnimator.Instance.AddNewDestinationAction(
+                startScreenPos: startScreenPos,
+                endScreenPosProvider: () => GetScreenPoint(currencyBar.IconRectTransform),
+                sprite: currencyConfig.currencySprite,
+                parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
+                particleCount: amount,
+                destinationActionData: currencyConfig.destinationActionData,
+                prefab: currencyConfig.currencyUIPrefab,
+                onReceivedItem: () =>
+                {
+                    CurrencyService.Instance?.AddFakeCurrency(currencyConfig.currencyId, 1);
+                }
+            );
+
+            return true;
+        }
+
         private void FlyRewards()
         {
             if (GameState.Instance == null)
@@ -88,25 +141,32 @@ namespace Game.UI
                     continue;
                 }
 
-                if (CurrencyService.Instance != null)
+                FlyCurrency(currencyConfig.currencyId, startScreenPos, amount);
+            }
+        }
+
+        private CurrencyBar GetCurrencyBar(string currencyId)
+        {
+            if (string.IsNullOrEmpty(currencyId) || currencyBarList == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < currencyBarList.Count; i++)
+            {
+                var currencyBar = currencyBarList[i];
+                if (currencyBar == null || currencyBar.CurrencyConfig == null)
                 {
-                    CurrencyService.Instance.AddFakeCurrency(currencyConfig.currencyId, -amount);
+                    continue;
                 }
 
-                UIFlowAnimator.Instance.AddNewDestinationAction(
-                    startScreenPos: startScreenPos,
-                    endScreenPosProvider: () => GetScreenPoint(currencyBar.IconRectTransform),
-                    sprite: currencyConfig.currencySprite,
-                    parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
-                    particleCount: amount,
-                    destinationActionData: currencyConfig.destinationActionData,
-                    prefab: currencyConfig.currencyUIPrefab,
-                    onReceivedItem: () =>
-                    {
-                        CurrencyService.Instance?.AddFakeCurrency(currencyConfig.currencyId, 1);
-                    }
-                );
+                if (currencyBar.CurrencyConfig.currencyId == currencyId)
+                {
+                    return currencyBar;
+                }
             }
+
+            return null;
         }
 
         private void EnsureLayoutIsUpToDate()
