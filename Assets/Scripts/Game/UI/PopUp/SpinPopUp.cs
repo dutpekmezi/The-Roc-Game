@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils.Currency;
@@ -17,6 +16,7 @@ namespace Game.UI
         [SerializeField] private Transform framesRoot;
         [SerializeField] private Transform wheelTransform;
         [SerializeField] private Button spinButton;
+        [SerializeField] private List<SpinFrame> spinFrames = new();
         [SerializeField] private int rewardAmountPerSpin = 1;
         [SerializeField] private float spinDuration = 2.5f;
         [SerializeField] private int minFullRotations = 4;
@@ -59,19 +59,21 @@ namespace Game.UI
             }
 
             BuildSpinRewards();
-            if (spinRewards.Count == 0)
+            if (spinRewards.Count == 0 || spinFrames.Count == 0)
             {
                 return;
             }
 
-            List<Transform> frameTransforms = new();
-            CollectSpinFrames(framesRoot, frameTransforms);
-
-            for (int i = 0; i < frameTransforms.Count; i++)
+            for (int i = 0; i < spinFrames.Count; i++)
             {
-                var frame = frameTransforms[i];
+                var frame = spinFrames[i];
+                if (frame == null)
+                {
+                    continue;
+                }
+
                 var reward = spinRewards[i % spinRewards.Count];
-                ApplyFrame(frame, reward, rewardAmountPerSpin);
+                frame.Initialize(reward, rewardAmountPerSpin);
             }
         }
 
@@ -194,56 +196,5 @@ namespace Game.UI
             }
         }
 
-        private static void CollectSpinFrames(Transform root, List<Transform> result)
-        {
-            for (int i = 0; i < root.childCount; i++)
-            {
-                var child = root.GetChild(i);
-
-                if (child.name.StartsWith("SpinFrame"))
-                {
-                    result.Add(child);
-                }
-
-                CollectSpinFrames(child, result);
-            }
-        }
-
-        private static void ApplyFrame(Transform frame, CollectableConfig reward, int amount)
-        {
-            if (frame == null || reward == null)
-            {
-                return;
-            }
-
-            var frameImage = frame.GetComponent<Image>();
-            if (frameImage != null)
-            {
-                frameImage.color = reward.Color;
-            }
-
-            var allImages = frame.GetComponentsInChildren<Image>(true);
-            for (int i = 0; i < allImages.Length; i++)
-            {
-                if (allImages[i].transform == frame)
-                {
-                    continue;
-                }
-
-                allImages[i].sprite = reward.Icon;
-                break;
-            }
-
-            var texts = frame.GetComponentsInChildren<TextMeshProUGUI>(true);
-            if (texts.Length > 0)
-            {
-                texts[0].text = amount.ToString();
-            }
-
-            if (texts.Length > 1)
-            {
-                texts[1].text = reward.Name;
-            }
-        }
     }
 }
