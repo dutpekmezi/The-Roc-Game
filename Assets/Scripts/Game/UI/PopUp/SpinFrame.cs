@@ -14,6 +14,8 @@ namespace Game.UI
         private CollectableConfig rewardConfig;
         public CollectableConfig RewardConfig => rewardConfig;
 
+        public RectTransform IconRectTransform => rewardImage.rectTransform;
+
         public void Initialize(CollectableConfig reward, int amount)
         {
             rewardConfig = reward;

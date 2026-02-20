@@ -204,9 +204,9 @@ namespace Game.UI
                 var frame = spinFrames[i];
                 if (frame == null || frame.RewardConfig != reward) continue;
 
-                if (frame.transform is RectTransform rectTransform)
+                if (frame.IconRectTransform != null)
                 {
-                    startScreenPos = GetScreenPoint(rectTransform);
+                    startScreenPos = GetScreenPoint(frame.IconRectTransform);
                     return true;
                 }
 
