@@ -15,4 +15,4 @@ MonoBehaviour:
   Icon: {fileID: -7002255698544018446, guid: e92a7f14ab9bb0a438e52f9ca936e538, type: 3}
   Id: matcha
   Name: Matcha
-  Color: {r: 0, g: 0, b: 0, a: 0}
+  Color: {r: 0.45139453, g: 1, b: 0.2924527, a: 1}

@@ -15,4 +15,4 @@ MonoBehaviour:
   Icon: {fileID: 7675826601332790545, guid: fefc128260cae9e4fae26d318f60fd3d, type: 3}
   Id: coin
   Name: Coin
-  Color: {r: 0, g: 0, b: 0, a: 0}
+  Color: {r: 1, g: 0.9686502, b: 0.13396227, a: 1}
