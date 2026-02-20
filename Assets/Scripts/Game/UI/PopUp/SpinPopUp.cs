@@ -23,6 +23,7 @@ namespace Game.UI
         [SerializeField] private Transform wheelTransform;
         [SerializeField] private Button spinButton;
         [SerializeField] private List<SpinFrame> spinFrames = new();
+        [SerializeField] private List<CurrencyBar> currencyBarList = new();
 
         [Header("Gameplay")]
         [SerializeField] private int rewardAmountPerSpin = 1;
@@ -182,16 +183,46 @@ namespace Game.UI
             if (reward == null || UIFlowAnimator.Instance == null) return false;
             if (!TryGetRewardStartScreenPosition(reward, out var startScreenPos)) return false;
 
+            var rewardCurrencyConfig = GetRewardCurrencyConfig(reward);
+            if (rewardCurrencyConfig == null) return false;
+
             UIFlowAnimator.Instance.AddNewDestinationAction(
                 startScreenPos: startScreenPos,
-                endScreenPosProvider: () => GetRewardEndScreenPosition(reward, startScreenPos),
-                sprite: reward.Icon,
+                endScreenPosProvider: () => GetRewardEndScreenPosition(reward, rewardCurrencyConfig, startScreenPos),
+                sprite: rewardCurrencyConfig.currencySprite != null ? rewardCurrencyConfig.currencySprite : reward.Icon,
                 parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
                 particleCount: rewardAmountPerSpin,
+                destinationActionData: rewardCurrencyConfig.destinationActionData,
+                prefab: rewardCurrencyConfig.currencyUIPrefab,
                 onReceivedItem: () => CurrencyService.Instance?.ModifyCurrency(reward.Id, 1)
             );
 
             return true;
+        }
+
+        private CurrencyConfig GetRewardCurrencyConfig(CollectableConfig reward)
+        {
+            if (reward == null || CurrencyService.Instance == null || CurrencyService.Instance.Settings == null)
+            {
+                return null;
+            }
+
+            var currencyConfigs = CurrencyService.Instance.Settings.currencyConfigs;
+            if (currencyConfigs == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < currencyConfigs.Count; i++)
+            {
+                var currencyConfig = currencyConfigs[i];
+                if (currencyConfig != null && currencyConfig.currencyId == reward.Id)
+                {
+                    return currencyConfig;
+                }
+            }
+
+            return null;
         }
 
         private bool TryGetRewardStartScreenPosition(CollectableConfig reward, out Vector3 startScreenPos)
@@ -217,8 +248,13 @@ namespace Game.UI
             return false;
         }
 
-        private Vector3 GetRewardEndScreenPosition(CollectableConfig reward, Vector3 fallback)
+        private Vector3 GetRewardEndScreenPosition(CollectableConfig reward, CurrencyConfig rewardCurrencyConfig, Vector3 fallback)
         {
+            if (TryGetCurrencyBarScreenPosition(rewardCurrencyConfig, out var currencyBarScreenPos))
+            {
+                return currencyBarScreenPos;
+            }
+
             if (GameCanvas.Instance != null && GameCanvas.Instance.TryGetCollectableBarScreenPosition(reward, out var barScreenPos))
             {
                 return barScreenPos;
@@ -230,6 +266,75 @@ namespace Game.UI
             }
 
             return fallback;
+        }
+
+        private bool TryGetCurrencyBarScreenPosition(CurrencyConfig rewardCurrencyConfig, out Vector3 barScreenPos)
+        {
+            barScreenPos = Vector3.zero;
+            if (rewardCurrencyConfig == null)
+            {
+                return false;
+            }
+
+            EnsureCurrencyBarList();
+            if (currencyBarList == null || currencyBarList.Count == 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < currencyBarList.Count; i++)
+            {
+                var currencyBar = currencyBarList[i];
+                if (currencyBar == null)
+                {
+                    continue;
+                }
+
+                var currencyConfig = currencyBar.CurrencyConfig;
+                if (currencyConfig == null || currencyConfig.currencyId != rewardCurrencyConfig.currencyId)
+                {
+                    continue;
+                }
+
+                var iconRectTransform = currencyBar.IconRectTransform;
+                if (iconRectTransform == null)
+                {
+                    continue;
+                }
+
+                barScreenPos = GetScreenPoint(iconRectTransform);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void EnsureCurrencyBarList()
+        {
+            if (currencyBarList != null && currencyBarList.Count > 0)
+            {
+                return;
+            }
+
+            var existingCurrencyBars = FindObjectsByType<CurrencyBar>(FindObjectsSortMode.None);
+            if (existingCurrencyBars == null || existingCurrencyBars.Length == 0)
+            {
+                return;
+            }
+
+            if (currencyBarList == null)
+            {
+                currencyBarList = new List<CurrencyBar>();
+            }
+
+            for (int i = 0; i < existingCurrencyBars.Length; i++)
+            {
+                var currencyBar = existingCurrencyBars[i];
+                if (currencyBar != null && !currencyBarList.Contains(currencyBar))
+                {
+                    currencyBarList.Add(currencyBar);
+                }
+            }
         }
 
         private Vector2 GetScreenPoint(RectTransform rectTransform)
