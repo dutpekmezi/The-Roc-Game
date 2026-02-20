@@ -17,8 +17,19 @@ namespace Game.UI
         [SerializeField] private SceneChangeButton playButton;
         [SerializeField] private List<CurrencyBar> currencyBarList = new List<CurrencyBar>();
 
+        public List<CurrencyBar> CurrencyBarList => currencyBarList;
+
+        public static MenuCurrencyRewardFlyer Instance {  get; private set; }
+
         private void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(Instance);
+            }
+
+            Instance = this;
+
             GameState.Instance.SetState(GameFlowState.Menu);
         }
 
