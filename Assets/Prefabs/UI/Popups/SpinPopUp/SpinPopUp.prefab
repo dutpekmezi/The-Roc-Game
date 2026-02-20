@@ -68,10 +68,21 @@ MonoBehaviour:
   framesRoot: {fileID: 8727238394632909782}
   wheelTransform: {fileID: 8727238394632909782}
   spinButton: {fileID: 5925118301082728349}
+  spinFrames:
+  - {fileID: 2890910146801339032}
+  - {fileID: 7552873563657271063}
+  - {fileID: 863227807669957852}
+  - {fileID: 5775286330420774405}
+  - {fileID: 6937694749114094485}
+  - {fileID: 3728786128171864110}
+  - {fileID: 4451502542830002596}
+  - {fileID: 3080583514579758588}
   rewardAmountPerSpin: 1
   spinDuration: 8
-  minFullRotations: 4
-  maxFullRotations: 6
+  minFullRotations: 8
+  maxFullRotations: 10
+  angleOffset: 0
+  clockwise: 1
 --- !u!1 &1000000010
 GameObject:
   m_ObjectHideFlags: 0
@@ -939,6 +950,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+--- !u!114 &863227807669957852 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 1070851435642688408}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!224 &1469647137591260558 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
@@ -1146,6 +1168,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+--- !u!114 &2890910146801339032 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 3258411355378658780}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!224 &3999585837158845386 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
@@ -1248,6 +1281,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+--- !u!114 &3080583514579758588 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 3451673529654201016}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!224 &3845967654335589550 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
@@ -1355,6 +1399,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
   m_PrefabInstance: {fileID: 3934439156973680490}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3728786128171864110 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 3934439156973680490}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!1001 &4098356274607572704
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1457,6 +1512,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
   m_PrefabInstance: {fileID: 4098356274607572704}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4451502542830002596 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 4098356274607572704}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!1001 &4756048746218732438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1685,6 +1751,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
   m_PrefabInstance: {fileID: 6125828955111776577}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5775286330420774405 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 6125828955111776577}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!1001 &7305124704737752273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1782,6 +1859,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+--- !u!114 &6937694749114094485 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 7305124704737752273}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!224 &9212207368155828935 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
@@ -1884,6 +1972,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+--- !u!114 &7552873563657271063 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 371160675887294276, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}
+  m_PrefabInstance: {fileID: 7923963518609641555}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af47d09f9ff4da3afe5417337e3ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SpinFrame
 --- !u!224 &8597023331001644613 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1925660466940012054, guid: 67dcfde57e03c1341a8382641d7e4115, type: 3}

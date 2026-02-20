@@ -10,10 +10,14 @@ namespace Game.UI
         [SerializeField] private Image frameImage;
         [SerializeField] private Image rewardImage;
         [SerializeField] private TextMeshProUGUI amountText;
-        [SerializeField] private TextMeshProUGUI rewardNameText;
+
+        private CollectableConfig rewardConfig;
+        public CollectableConfig RewardConfig => rewardConfig;
 
         public void Initialize(CollectableConfig reward, int amount)
         {
+            rewardConfig = reward;
+
             if (reward == null)
             {
                 return;
@@ -32,11 +36,6 @@ namespace Game.UI
             if (amountText != null)
             {
                 amountText.text = amount.ToString();
-            }
-
-            if (rewardNameText != null)
-            {
-                rewardNameText.text = reward.Name;
             }
         }
     }
