@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Coffee
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ProductConfig
   Sprite: {fileID: 4687309882487268517, guid: 76fbc01bac24712418ecebaeeafdfb11, type: 3}
+  Id: coffee
   Name: The Roc Coffee
   Description: 
   priceCurrency: coin

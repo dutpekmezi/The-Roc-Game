@@ -359,10 +359,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4186379827434605542, guid: 648ea9155fb95c14f969138695fac661, type: 3}
       propertyPath: _settings.popupBases.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4186379827434605542, guid: 648ea9155fb95c14f969138695fac661, type: 3}
       propertyPath: '_settings.popupBases.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1700705232140958950, guid: a6129b3f2b917d94498ee975f5fcc8b3, type: 3}
+    - target: {fileID: 4186379827434605542, guid: 648ea9155fb95c14f969138695fac661, type: 3}
+      propertyPath: '_settings.popupBases.Array.data[4]'
       value: 
       objectReference: {fileID: 6953073848110281026, guid: d4595b75a52eec441a9e489c902be8a1, type: 3}
     - target: {fileID: 6015406618692548204, guid: 648ea9155fb95c14f969138695fac661, type: 3}

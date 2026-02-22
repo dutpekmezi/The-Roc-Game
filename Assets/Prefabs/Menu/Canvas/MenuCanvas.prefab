@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4635819617532381855}
   - component: {fileID: 1049075284433093164}
   - component: {fileID: 6527368498028915759}
-  - component: {fileID: 4154812928485379727}
+  - component: {fileID: 3821297834366916791}
   m_Layer: 5
   m_Name: ProductCartButton
   m_TagString: Untagged
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4154812928485379727
+--- !u!114 &3821297834366916791
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,17 +131,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1603533420453549417}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91d577537c0163248822b09a23d2d1ff, type: 3}
+  m_Script: {fileID: 11500000, guid: f185e3e34fba1e24da20dcb64c5c9b00, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.SceneChangeButton
+  m_EditorClassIdentifier: Assembly-CSharp::Game.UI.ProductCartButton
   buttonId: product_cart_button
-  button: {fileID: 0}
+  button: {fileID: 6527368498028915759}
   animate: 0
   scale: 0
   duration: 0
   ease: 0
-  _rectTransform: {fileID: 0}
-  sceneId: initial_scene
 --- !u!1 &2239651519419014719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1508,7 +1506,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2068881462814330206, guid: ac21d4e1e8e725c4ca4d2b9b22239550, type: 3}
       propertyPath: m_fontSize
-      value: 41.55
+      value: 42.6
       objectReference: {fileID: 0}
     - target: {fileID: 3581397275338101414, guid: ac21d4e1e8e725c4ca4d2b9b22239550, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1536,7 +1534,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3582530251521417875, guid: ac21d4e1e8e725c4ca4d2b9b22239550, type: 3}
       propertyPath: m_text
-      value: 38
+      value: 138
       objectReference: {fileID: 0}
     - target: {fileID: 4648749739980228514, guid: ac21d4e1e8e725c4ca4d2b9b22239550, type: 3}
       propertyPath: m_AnchorMax.y
