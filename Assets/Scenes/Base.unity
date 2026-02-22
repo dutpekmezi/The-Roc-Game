@@ -213,6 +213,7 @@ MonoBehaviour:
   persistBetweenScenes: 1
   canvas: {fileID: 1695940406}
   collectableSettings: {fileID: 11400000, guid: 86e8569471c9a7a46b0d6eab6a58409f, type: 2}
+  debugShortcutCurrencyAmount: 100
 --- !u!1 &912297837
 GameObject:
   m_ObjectHideFlags: 0

@@ -55,7 +55,7 @@ namespace Game.Installers
 
         private void Update()
         {
-            if (CurrencyService.Instance == null || !Input.GetKey(KeyCode.G))
+            if (CurrencyService.Instance == null)
             {
                 return;
             }
@@ -63,6 +63,10 @@ namespace Game.Installers
             if (Input.GetKeyDown(KeyCode.M))
             {
                 CurrencyService.Instance.ModifyCurrency(CurrencyIds.Matcha, debugShortcutCurrencyAmount);
+            }
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Coin, debugShortcutCurrencyAmount);
             }
             else if (Input.GetKeyDown(KeyCode.C))
             {
