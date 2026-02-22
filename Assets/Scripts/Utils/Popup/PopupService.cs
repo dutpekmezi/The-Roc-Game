@@ -9,8 +9,7 @@ namespace Utils.Popup
     public class PopupService : Singleton<PopupService>
     {
         [SerializeField] private Settings _settings;
-        private readonly Queue<PopupBase> _popupQueue = new();
-        private PopupBase _activePopup;
+        private readonly List<PopupBase> _activePopups = new();
 
         public T Create<T>() where T : PopupBase
         {
@@ -20,20 +19,13 @@ namespace Utils.Popup
 
         public void Close<T>() where T : PopupBase
         {
-            if (_activePopup is T)
-            {
-                _activePopup.Disappear();
-            }
+            var popup = _activePopups.LastOrDefault(x => x is T);
+            popup?.Disappear();
         }
 
         public T Get<T>() where T : PopupBase
         {
-            if (_activePopup != null && _activePopup is T)
-            {
-                return (T)_activePopup;
-            }
-
-            return null;
+            return _activePopups.LastOrDefault(x => x is T) as T;
         }
 
         public PopupBase Create(string popupId)
@@ -45,49 +37,33 @@ namespace Utils.Popup
 
         public PopupBase Get(string popupId)
         {
-            if (_activePopup != null && _activePopup.PopupId == popupId)
-                return _activePopup;
-
-            return null;
+            return _activePopups.LastOrDefault(x => x.PopupId == popupId);
         }
 
         public void CloseActivePopup()
         {
-            if (_activePopup != null)
-            {
-                _activePopup.Disappear();
-            }
+            var popup = _activePopups.LastOrDefault();
+            popup?.Disappear();
         }
 
         private PopupBase Create(Type popupType)
         {
             var popupBase = _settings.popupBases.Find(x => x.GetType() == popupType);
             var instantiatedPopup = Instantiate(popupBase, transform);
-            //instantiatedPopup.transform.SetAsFirstSibling();
-
-            if (_activePopup)
-                _popupQueue.Enqueue(instantiatedPopup);
-            else
-                ShowPopup(instantiatedPopup);
+            ShowPopup(instantiatedPopup);
             return instantiatedPopup;
         }
 
         private void ShowPopup(PopupBase popup)
         {
-            _activePopup = popup;
+            _activePopups.Add(popup);
             popup.Appear();
-            popup.PostDisappear += HandleClosePopup;
+            popup.PostDisappear += () => HandleClosePopup(popup);
         }
 
-        private void HandleClosePopup()
+        private void HandleClosePopup(PopupBase popup)
         {
-            _activePopup = null;
-
-            if (_popupQueue.Count <= 0)
-                return;
-
-            var nextPopup = _popupQueue.Dequeue();
-            ShowPopup(nextPopup);
+            _activePopups.Remove(popup);
         }
 
         [Serializable]
