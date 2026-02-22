@@ -16,6 +16,7 @@ namespace Game.Installers
         [SerializeField] private bool persistBetweenScenes = true;
         [SerializeField] private Canvas canvas;
         [SerializeField] private CollectableSettings collectableSettings;
+        [SerializeField] private int debugShortcutCurrencyAmount = 1;
 
         [SerializeField] public Canvas Canvas =>  canvas;
 
@@ -50,6 +51,27 @@ namespace Game.Installers
             InitializeCurrencyService();
             InitializeGameState();
             InitializeCollectableSystem();
+        }
+
+        private void Update()
+        {
+            if (CurrencyService.Instance == null || !Input.GetKey(KeyCode.G))
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Matcha, debugShortcutCurrencyAmount);
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Coffee, debugShortcutCurrencyAmount);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Cookie, debugShortcutCurrencyAmount);
+            }
         }
 
         private static void InitializeSaveService()
