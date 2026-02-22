@@ -1,23 +1,28 @@
+using Game.Systems;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Game.Systems;
-using Utils.Currency;
 using Utils.Popup;
+using Utils.Currency;
 
 namespace Game.UI
 {
-    public class ProductCard : MonoBehaviour
+    public class ProductCardPopUp : PopupBase
     {
+        public const string PopupKey = "product_card";
+        public override string PopupId => PopupKey;
+
         [SerializeField] private Image productImage;
         [SerializeField] private Image priceImage;
         [SerializeField] private Image specialPriceImage;
+        [SerializeField] private Image cardImage;
 
         [SerializeField] private TextMeshProUGUI productTitle;
-        [SerializeField] private TextMeshProUGUI priceAmount;
-        [SerializeField] private TextMeshProUGUI specialPriceAmount;
+        [SerializeField] private TextMeshProUGUI priceAmountText;
+        [SerializeField] private TextMeshProUGUI specialPriceAmountText;
 
         private ProductConfig productConfig;
+        public ProductConfig ProductConfig => productConfig;
 
         public void Init(ProductConfig productConfig)
         {
@@ -27,19 +32,14 @@ namespace Game.UI
             priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.priceCurrency).currencySprite;
             specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.specialPriceCurrency).currencySprite;
 
-            productTitle.text = $"{productConfig.Name}";
-            priceAmount.text = $"{productConfig.priceAmount}";
-            specialPriceAmount.text = $"{productConfig.specialPriceAmount}";
-        }
-
-        public void OnClick()
-        {
-            var popupService = PopupService.Instance;
-            if (popupService != null && popupService.Get(ProductCardPopUp.PopupKey) == null)
+            if (StoreManager.Instance.StoreSettings.ProductConfigs.TryGetSectionColor(productConfig.section, out Color sectionColor))
             {
-                ProductCardPopUp instance = (ProductCardPopUp)popupService.Create(ProductCardPopUp.PopupKey);
-                instance.Init(productConfig);
+                //cardImage.color = sectionColor;
             }
+
+            productTitle.text = productConfig.Name;
+            priceAmountText.text = $"{productConfig.priceAmount}";
+            specialPriceAmountText.text = $"{productConfig.specialPriceAmount}";
         }
     }
 }

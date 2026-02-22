@@ -63,7 +63,7 @@ namespace Utils.Popup
         {
             var popupBase = _settings.popupBases.Find(x => x.GetType() == popupType);
             var instantiatedPopup = Instantiate(popupBase, transform);
-            instantiatedPopup.transform.SetAsFirstSibling();
+            //instantiatedPopup.transform.SetAsFirstSibling();
 
             if (_activePopup)
                 _popupQueue.Enqueue(instantiatedPopup);
