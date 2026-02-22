@@ -1,5 +1,6 @@
 using Game.Systems;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Utils.Currency;
 using Utils.Level;
 using Utils.Save;
@@ -61,19 +62,25 @@ namespace Game.Installers
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.M))
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+            {
+                return;
+            }
+
+            if (keyboard.mKey.wasPressedThisFrame)
             {
                 CurrencyService.Instance.ModifyCurrency(CurrencyIds.Matcha, debugShortcutCurrencyAmount);
             }
-            else if (Input.GetKeyDown(KeyCode.G))
+            else if (keyboard.gKey.wasPressedThisFrame)
             {
                 CurrencyService.Instance.ModifyCurrency(CurrencyIds.Coin, debugShortcutCurrencyAmount);
             }
-            else if (Input.GetKeyDown(KeyCode.C))
+            else if (keyboard.cKey.wasPressedThisFrame)
             {
                 CurrencyService.Instance.ModifyCurrency(CurrencyIds.Coffee, debugShortcutCurrencyAmount);
             }
-            else if (Input.GetKeyDown(KeyCode.D))
+            else if (keyboard.dKey.wasPressedThisFrame)
             {
                 CurrencyService.Instance.ModifyCurrency(CurrencyIds.Cookie, debugShortcutCurrencyAmount);
             }
