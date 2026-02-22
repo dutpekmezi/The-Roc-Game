@@ -17,6 +17,7 @@ namespace Game.Systems
     {
         public Sprite Sprite;
 
+        public string Id;
         public string Name;
         public string Description;
 

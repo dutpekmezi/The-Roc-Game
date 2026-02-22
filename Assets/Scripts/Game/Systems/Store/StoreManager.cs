@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Systems
@@ -6,6 +7,8 @@ namespace Game.Systems
     {
         [SerializeField] private StoreSettings storeSettings;
         public StoreSettings StoreSettings => storeSettings;
+
+        private List<string> purchasedProductIds;
         public static StoreManager Instance { get; private set; }
 
         private void Awake()
@@ -16,6 +19,16 @@ namespace Game.Systems
             }
 
             Instance = this;
+        }
+
+        public string RegisterPurchasedProduct(string productId)
+        {
+            if (!string.IsNullOrEmpty(productId))
+            {
+                purchasedProductIds.Add(productId);
+            }
+
+            return productId;
         }
     }
 }
