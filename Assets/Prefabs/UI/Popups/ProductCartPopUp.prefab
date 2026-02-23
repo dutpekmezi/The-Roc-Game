@@ -237,8 +237,8 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 356.6667, y: 535}
-  m_Spacing: {x: 170, y: 200}
+  m_CellSize: {x: 297.22223, y: 445.83334}
+  m_Spacing: {x: 250, y: 200}
   m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!114 &2047856842692481624
@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResponsiveGridCellSizer
   referenceScreenWidth: 1080
-  referenceCellWidth: 300
+  referenceCellWidth: 250
   aspectRatio: 0.6666667
 --- !u!114 &3360476619509743191
 MonoBehaviour:
