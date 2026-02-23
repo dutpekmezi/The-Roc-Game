@@ -64,6 +64,11 @@ namespace Utils.Scene
         {
             try
             {
+                if (IsSceneLoaded(sceneKey))
+                {
+                    await RemoveScene(sceneKey);
+                }
+
                 var config = _settings.GetSceneConfig(sceneKey);
                 var removeOtherScenes = config != null && config.RemoveAllOtherScenes;
 
