@@ -179,6 +179,26 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 822468794208399123, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
+      propertyPath: playButton
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 822468794208399123, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
+      propertyPath: 'currencyBarList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 822468794208399123, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
+      propertyPath: 'currencyBarList.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 822468794208399123, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
+      propertyPath: 'currencyBarList.Array.data[2]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 822468794208399123, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
+      propertyPath: 'currencyBarList.Array.data[3]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 981991348635357641, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -799,7 +819,8 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 822468794208399123, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
     m_RemovedGameObjects:
     - {fileID: 1198176347151042887, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}
     - {fileID: 1603533420453549417, guid: 8582ae4435937024aa1a1c342c2ed125, type: 3}

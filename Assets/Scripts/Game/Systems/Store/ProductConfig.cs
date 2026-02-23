@@ -35,16 +35,7 @@ namespace Game.Systems
         public string Name;
         public string Description;
 
-        [FormerlySerializedAs("priceCurrency")]
-        [SerializeField] private string legacyPriceCurrency;
-        [FormerlySerializedAs("priceAmount")]
-        [SerializeField] private int legacyPriceAmount;
-
         public List<ProductPrice> prices = new List<ProductPrice>();
-
-        [Dropdown("GetCurrencyIds")]
-        public string specialPriceCurrency;
-        public int specialPriceAmount;
 
         public ProductSection section;
 
@@ -69,35 +60,6 @@ namespace Game.Systems
         private List<string> GetCurrencyIds()
         {
             return CurrencyIds.GetCurrencyIds();
-        }
-
-        private void OnEnable()
-        {
-            SyncLegacyPrice();
-        }
-
-        private void OnValidate()
-        {
-            SyncLegacyPrice();
-        }
-
-        private void SyncLegacyPrice()
-        {
-            fallbackPrices.Clear();
-
-            if (!string.IsNullOrEmpty(legacyPriceCurrency))
-            {
-                fallbackPrices.Add(new ProductPrice
-                {
-                    currency = legacyPriceCurrency,
-                    amount = legacyPriceAmount
-                });
-
-                if (prices == null || prices.Count == 0)
-                {
-                    prices = new List<ProductPrice>(fallbackPrices);
-                }
-            }
         }
     }
 }
