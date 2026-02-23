@@ -6,14 +6,34 @@ namespace Game.UI
 {
     public class RestartButton : BaseButton
     {
+        private bool _isRestarting;
+
         public override void BaseOnClick()
         {
             base.BaseOnClick();
 
-            GameInstaller.Instance.Clear();
+            if (_isRestarting)
+            {
+                return;
+            }
 
-            _ = SceneService.Instance.RemoveScene(SceneKeys.GameScene);
-            _ = SceneService.Instance.LoadScene(SceneKeys.GameScene);
+            _ = RestartGameScene();
+        }
+
+        private async System.Threading.Tasks.Task RestartGameScene()
+        {
+            _isRestarting = true;
+            try
+            {
+                GameInstaller.Instance.Clear();
+
+                await SceneService.Instance.RemoveScene(SceneKeys.GameScene);
+                await SceneService.Instance.LoadScene(SceneKeys.GameScene);
+            }
+            finally
+            {
+                _isRestarting = false;
+            }
         }
     }
 }
