@@ -24,11 +24,11 @@ namespace Game.UI
             this.productConfig = productConfig;
 
             productImage.sprite = productConfig.Sprite;
-            priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.priceCurrency).currencySprite;
+            priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.PriceCurrency).currencySprite;
             specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.specialPriceCurrency).currencySprite;
 
             productTitle.text = $"{productConfig.Name}";
-            priceAmount.text = $"{productConfig.priceAmount}";
+            priceAmount.text = $"{productConfig.PriceAmount}";
             specialPriceAmount.text = $"{productConfig.specialPriceAmount}";
         }
 

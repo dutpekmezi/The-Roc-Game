@@ -18,10 +18,22 @@ namespace Game.UI
                 return;
             }
 
-            if (CurrencyService.Instance.TryPurchase(productConfig.priceCurrency, productConfig.priceAmount))
+            var prices = productConfig.Prices;
+
+            for (int i = 0; i < prices.Count; i++)
             {
-                StoreManager.Instance.RegisterPurchasedProduct(productConfig.Id);
+                if (!CurrencyService.Instance.CanPurchase(prices[i].currency, prices[i].amount))
+                {
+                    return;
+                }
             }
+
+            for (int i = 0; i < prices.Count; i++)
+            {
+                CurrencyService.Instance.TryPurchase(prices[i].currency, prices[i].amount);
+            }
+
+            StoreManager.Instance.RegisterPurchasedProduct(productConfig.Id);
         }
     }
 }
