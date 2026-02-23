@@ -26,7 +26,7 @@ namespace Game.UI
             var popupService = PopupService.Instance;
             if (popupService != null && popupService.Get(QRPopUp.PopupKey) == null)
             {
-                QRPopUp instance = (QRPopUp)popupService.Create(ProductCardPopUp.PopupKey);
+                QRPopUp instance = (QRPopUp)popupService.Create(QRPopUp.PopupKey);
                 instance.Init(productConfig.Id);
             }
         }

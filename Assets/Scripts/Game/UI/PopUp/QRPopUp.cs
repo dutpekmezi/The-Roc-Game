@@ -9,7 +9,7 @@ namespace Game.UI
 {
     public class QRPopUp : PopupBase
     {
-        public const string PopupKey = "product_card";
+        public const string PopupKey = "QR";
         public override string PopupId => PopupKey;
 
         [SerializeField] private Image productImage;
@@ -22,6 +22,11 @@ namespace Game.UI
             //this.productConfig = productConfig;
 
             //productImage.sprite = productConfig.Sprite;
+        }
+
+        public void OnClick()
+        {
+            Disappear();
         }
     }
 }
