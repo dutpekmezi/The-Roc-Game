@@ -16,8 +16,9 @@ MonoBehaviour:
   Id: cookie
   Name: Chocolate Cookie
   Description: 
-  priceCurrency: coin
-  priceAmount: 100
-  specialPriceCurrency: cookie
-  specialPriceAmount: 10
+  prices:
+  - currency: coin
+    amount: 100
+  - currency: cookie
+    amount: 10
   section: 2

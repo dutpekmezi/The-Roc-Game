@@ -22,14 +22,30 @@ namespace Game.UI
         public void Init(ProductConfig productConfig)
         {
             this.productConfig = productConfig;
+            var prices = productConfig.Prices;
 
             productImage.sprite = productConfig.Sprite;
-            priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.PriceCurrency).currencySprite;
-            specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.specialPriceCurrency).currencySprite;
+            if (prices.Count > 0)
+            {
+                priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(prices[0].currency).currencySprite;
+                priceAmount.text = $"{prices[0].amount}";
+            }
+            else
+            {
+                priceAmount.text = "0";
+            }
+
+            if (prices.Count > 1)
+            {
+                specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(prices[1].currency).currencySprite;
+                specialPriceAmount.text = $"{prices[1].amount}";
+            }
+            else
+            {
+                specialPriceAmount.text = "0";
+            }
 
             productTitle.text = $"{productConfig.Name}";
-            priceAmount.text = $"{productConfig.PriceAmount}";
-            specialPriceAmount.text = $"{productConfig.specialPriceAmount}";
         }
 
         public void OnClick()

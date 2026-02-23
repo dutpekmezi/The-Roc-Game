@@ -16,13 +16,9 @@ MonoBehaviour:
   Id: coffee
   Name: The Roc Coffee
   Description: 
-  legacyPriceCurrency: coin
-  legacyPriceAmount: 100
   prices:
   - currency: coin
     amount: 100
   - currency: coffee
     amount: 10
-  specialPriceCurrency: coffee
-  specialPriceAmount: 10
   section: 1

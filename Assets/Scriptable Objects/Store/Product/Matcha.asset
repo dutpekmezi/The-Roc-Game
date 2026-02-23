@@ -16,8 +16,9 @@ MonoBehaviour:
   Id: matcha
   Name: Matcha Latte
   Description: 
-  priceCurrency: coin
-  priceAmount: 100
-  specialPriceCurrency: matcha
-  specialPriceAmount: 10
+  prices:
+  - currency: coin
+    amount: 100
+  - currency: matcha
+    amount: 10
   section: 0
