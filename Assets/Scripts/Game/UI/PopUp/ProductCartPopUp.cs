@@ -1,5 +1,4 @@
 using Game.Systems;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils.Popup;
@@ -14,7 +13,7 @@ namespace Game.UI
         public const string PopupKey = "product_cart";
         public override string PopupId => PopupKey;
 
-        private List<string> displayingCards = new List<string>();
+        private readonly List<string> displayingCards = new List<string>();
 
         protected override void Awake()
         {
@@ -27,15 +26,28 @@ namespace Game.UI
         {
             var purchasedProductIds = StoreManager.Instance.PurchasedProductIds;
 
-            if (purchasedProductIds != null)
+            if (purchasedProductIds == null)
             {
-                for (int i = 0; i < purchasedProductIds.Count; i++)
-                {
-                    var productConfig = StoreManager.Instance.GetProductConfigById(purchasedProductIds[i]);
+                return;
+            }
 
-                    var instance = Instantiate(purchasedProductCardPrefab, productParent);
-                    instance.Init(productConfig);
+            for (int i = 0; i < purchasedProductIds.Count; i++)
+            {
+                string productId = purchasedProductIds[i];
+                if (displayingCards.Contains(productId))
+                {
+                    continue;
                 }
+
+                var productConfig = StoreManager.Instance.GetProductConfigById(productId);
+                if (productConfig == null)
+                {
+                    continue;
+                }
+
+                var instance = Instantiate(purchasedProductCardPrefab, productParent);
+                instance.Init(productConfig);
+                displayingCards.Add(productId);
             }
         }
     }

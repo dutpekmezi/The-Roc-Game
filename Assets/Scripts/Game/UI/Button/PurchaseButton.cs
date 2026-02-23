@@ -1,5 +1,4 @@
 using Game.Systems;
-using UnityEngine;
 using Utils.Buttons;
 using Utils.Currency;
 using Utils.Popup;
@@ -13,6 +12,11 @@ namespace Game.UI
             base.BaseOnClick();
 
             var productConfig = PopupService.Instance.Get<ProductCardPopUp>().ProductConfig;
+
+            if (StoreManager.Instance.IsProductPurchased(productConfig.Id))
+            {
+                return;
+            }
 
             if (CurrencyService.Instance.TryPurchase(productConfig.priceCurrency, productConfig.priceAmount))
             {
