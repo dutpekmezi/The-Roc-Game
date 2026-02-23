@@ -86,9 +86,9 @@ namespace Game.Installers
 
         public Task Clear()
         {
-            for (int i = 0; i < _initializables.Count; i++)
+            /*for (int i = 0; i < _initializables.Count; i++)
                 _initializables[i].Dispose();
-            _initializables.Clear();
+            _initializables.Clear();*/
 
             for (int i = 0; i < _disposables.Count; i++)
                 _disposables[i].Dispose();

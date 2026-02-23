@@ -111,7 +111,7 @@ namespace Game.Installers
 
             _ = new SceneService(sceneServiceSettings);
 
-            _ = SceneService.Instance.LoadScene(SceneKeys.InitialScene);
+            _ = SceneService.Instance.LoadScene(SceneKeys.MenuBaseScene);
         }
 
         private void InitializeCurrencyService()

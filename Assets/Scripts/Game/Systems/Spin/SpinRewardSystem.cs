@@ -25,12 +25,12 @@ namespace Game.Systems
 
         public override void Dispose()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public override void Tick()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public bool TryGetReward(int index, out SpinRewardConfig reward)
