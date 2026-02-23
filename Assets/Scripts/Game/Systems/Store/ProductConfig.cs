@@ -1,7 +1,6 @@
 using NaughtyAttributes;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utils.Currency;
 
 namespace Game.Systems
@@ -39,23 +38,7 @@ namespace Game.Systems
 
         public ProductSection section;
 
-        public IReadOnlyList<ProductPrice> Prices
-        {
-            get
-            {
-                if (prices != null && prices.Count > 0)
-                {
-                    return prices;
-                }
-
-                return fallbackPrices;
-            }
-        }
-
-        public string PriceCurrency => Prices.Count > 0 ? Prices[0].currency : string.Empty;
-        public int PriceAmount => Prices.Count > 0 ? Prices[0].amount : 0;
-
-        private readonly List<ProductPrice> fallbackPrices = new List<ProductPrice>();
+        public IReadOnlyList<ProductPrice> Prices => prices;
 
         private List<string> GetCurrencyIds()
         {
