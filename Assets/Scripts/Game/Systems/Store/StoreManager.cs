@@ -3,24 +3,25 @@ using UnityEngine;
 
 namespace Game.Systems
 {
-    public class StoreManager : MonoBehaviour
+    public class StoreManager : BaseSystem
     {
-        [SerializeField] private StoreSettings storeSettings;
+        private StoreSettings storeSettings;
         public StoreSettings StoreSettings => storeSettings;
 
         private List<string> purchasedProductIds = new List<string>();
         public List<string> PurchasedProductIds => purchasedProductIds;
         public static StoreManager Instance { get; private set; }
 
-        private void Awake()
+        public StoreManager(StoreSettings storeSettings) 
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(gameObject);
-                return;
+                Instance.Dispose();
             }
 
             Instance = this;
+
+            this.storeSettings = storeSettings;
         }
 
         public string RegisterPurchasedProduct(string productId)
@@ -36,6 +37,16 @@ namespace Game.Systems
         public ProductConfig GetProductConfigById(string Id)
         {
             return storeSettings.ProductConfigs.configs.Find(x => x.Id == Id);
+        }
+
+        public override void Tick()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
