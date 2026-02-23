@@ -29,7 +29,7 @@ namespace Game.UI
             this.productConfig = productConfig;
 
             productImage.sprite = productConfig.Sprite;
-            priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.priceCurrency).currencySprite;
+            priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.PriceCurrency).currencySprite;
             specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(productConfig.specialPriceCurrency).currencySprite;
 
             if (StoreManager.Instance.StoreSettings.ProductConfigs.TryGetSectionColor(productConfig.section, out Color sectionColor))
@@ -38,7 +38,7 @@ namespace Game.UI
             }
 
             productTitle.text = productConfig.Name;
-            priceAmountText.text = $"{productConfig.priceAmount}";
+            priceAmountText.text = $"{productConfig.PriceAmount}";
             specialPriceAmountText.text = $"{productConfig.specialPriceAmount}";
         }
     }
