@@ -16,11 +16,21 @@ namespace Game.UI
 
         public string SceneId => sceneId;
 
-        public override void BaseOnClick()
+        public override async void BaseOnClick()
         {
             base.BaseOnClick();
 
-            _ = SceneService.Instance.LoadScene(sceneId);
+            if (SceneService.Instance == null)
+            {
+                return;
+            }
+
+            if (sceneId == SceneKeys.StoreScene)
+            {
+                await SceneService.Instance.RemoveScene(SceneKeys.MenuScene);
+            }
+
+            await SceneService.Instance.LoadScene(sceneId);
         }
 
         private List<string> GetSceneKeys()
