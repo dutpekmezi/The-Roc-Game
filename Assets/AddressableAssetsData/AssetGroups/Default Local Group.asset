@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d032ceb27f1118b4ca9e7472613141f9
+    m_Address: Assets/Scenes/MenuBase.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d4f2230d91c81d445ac0e2ff0ffcb305
     m_Address: Assets/Scenes/Base.unity
     m_ReadOnly: 0

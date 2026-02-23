@@ -17,10 +17,10 @@ namespace Game.Systems
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
+                return;
             }
 
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         public string RegisterPurchasedProduct(string productId)

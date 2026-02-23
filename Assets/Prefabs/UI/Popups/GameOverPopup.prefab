@@ -1809,7 +1809,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 254968264481083983, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
       propertyPath: sceneId
-      value: menu_scene
+      value: menu_base_scene
       objectReference: {fileID: 0}
     - target: {fileID: 329394189460984989, guid: 95d21cc6556e76246b3296726ec57dbb, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
