@@ -65,13 +65,9 @@ namespace Utils.Scene
             try
             {
                 var config = _settings.GetSceneConfig(sceneKey);
+                var removeOtherScenes = config != null && config.RemoveAllOtherScenes;
 
                 SignalBus.Get<OnSceneTransitionStarted>().Invoke(config);
-
-                if (config.RemoveAllOtherScenes)
-                {
-                    Clear();
-                }
 
                 // Find prefab or load scene
                 var loadResult = await LoadSceneResource(sceneKey);
@@ -85,6 +81,12 @@ namespace Utils.Scene
                 if (loadResult.HasSceneInstance)
                 {
                     _loadedSceneInstances[sceneKey] = loadResult.SceneInstance;
+
+                    if (removeOtherScenes)
+                    {
+                        await ClearExcept(sceneKey);
+                    }
+
                     SignalBus.Get<OnSceneTransitionEnded>().Invoke(config);
                     return null;
                 }
@@ -99,6 +101,11 @@ namespace Utils.Scene
                     await sceneObject.Initialize();
                 }
 
+                if (removeOtherScenes)
+                {
+                    await ClearExcept(sceneKey);
+                }
+
                 SignalBus.Get<OnSceneTransitionEnded>().Invoke(config);
 
                 return currentScene;
@@ -107,6 +114,36 @@ namespace Utils.Scene
             {
                 GameLogger.Log(e.ToString());   
                 return null;
+            }
+        }
+
+        public bool IsSceneLoaded(string sceneKey)
+        {
+            return _loadedScenes.ContainsKey(sceneKey) || _loadedSceneInstances.ContainsKey(sceneKey);
+        }
+
+        private async Task ClearExcept(string sceneToKeep)
+        {
+            var loadedSceneKeys = new List<string>(_loadedScenes.Keys);
+            for (int i = 0; i < loadedSceneKeys.Count; i++)
+            {
+                if (loadedSceneKeys[i] == sceneToKeep)
+                {
+                    continue;
+                }
+
+                await RemoveScene(loadedSceneKeys[i]);
+            }
+
+            var loadedSceneInstanceKeys = new List<string>(_loadedSceneInstances.Keys);
+            for (int i = 0; i < loadedSceneInstanceKeys.Count; i++)
+            {
+                if (loadedSceneInstanceKeys[i] == sceneToKeep)
+                {
+                    continue;
+                }
+
+                await RemoveScene(loadedSceneInstanceKeys[i]);
             }
         }
 

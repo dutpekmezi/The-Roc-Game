@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1127cc6cd78db384b92dd2a1ba8de230, type: 3}
   m_Name: MenuBase
   m_EditorClassIdentifier: Assembly-CSharp::Utils.Scene.SceneConfig
-  <SceneKey>k__BackingField: menu_scene
+  <SceneKey>k__BackingField: menu_base_scene
   <SceneReference>k__BackingField:
     m_AssetGUID: d032ceb27f1118b4ca9e7472613141f9
     m_SubObjectName: 
