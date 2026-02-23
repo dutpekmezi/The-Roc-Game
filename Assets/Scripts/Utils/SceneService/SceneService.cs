@@ -124,10 +124,17 @@ namespace Utils.Scene
 
         private async Task ClearExcept(string sceneToKeep)
         {
+            var shouldKeepMenuBaseScene = sceneToKeep != SceneKeys.GameScene;
+
             var loadedSceneKeys = new List<string>(_loadedScenes.Keys);
             for (int i = 0; i < loadedSceneKeys.Count; i++)
             {
                 if (loadedSceneKeys[i] == sceneToKeep)
+                {
+                    continue;
+                }
+
+                if (shouldKeepMenuBaseScene && loadedSceneKeys[i] == SceneKeys.MenuBaseScene)
                 {
                     continue;
                 }
@@ -139,6 +146,11 @@ namespace Utils.Scene
             for (int i = 0; i < loadedSceneInstanceKeys.Count; i++)
             {
                 if (loadedSceneInstanceKeys[i] == sceneToKeep)
+                {
+                    continue;
+                }
+
+                if (shouldKeepMenuBaseScene && loadedSceneInstanceKeys[i] == SceneKeys.MenuBaseScene)
                 {
                     continue;
                 }
