@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /currencies/{currencyId} {
+        allow read: if isOwner(userId);
+
+        // Balance can only be changed by a signed-in owner app request
+        // and never go below zero.
+        allow create, update: if isOwner(userId)
+          && request.resource.data.amount is int
+          && request.resource.data.amount >= 0;
+
+        allow delete: if false;
+      }
+
+      match /QRCodes/{qrId} {
+        allow read: if isOwner(userId);
+
+        // QR is write-once from store flow.
+        allow create: if isOwner(userId)
+          && request.resource.data.userId == userId
+          && request.resource.data.status == 'active';
+
+        // Scanner flow can only switch to redeemed/revoked.
+        allow update: if isOwner(userId)
+          && resource.data.status == 'active'
+          && request.resource.data.status in ['redeemed', 'revoked'];
+
+        allow delete: if false;
+      }
+
+      match /purchasedProducts/{productId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && !exists(/databases/$(database)/documents/users/$(userId)/purchasedProducts/$(productId));
+        allow update, delete: if false;
+      }
+    }
+  }
+}
