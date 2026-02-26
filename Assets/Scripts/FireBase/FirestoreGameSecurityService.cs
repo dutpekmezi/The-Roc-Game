@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase;
+using Firebase.Auth;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using Game.Systems;
@@ -9,8 +10,6 @@ using UnityEngine;
 
 public class FirestoreGameSecurityService : MonoBehaviour
 {
-    [SerializeField] private string debugUserId = "testUser";
-
     private const string UsersCollection = "users";
     private const string CurrenciesCollection = "currencies";
     private const string QrCodesCollection = "QRCodes";
@@ -21,15 +20,15 @@ public class FirestoreGameSecurityService : MonoBehaviour
     public bool IsReady { get; private set; }
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
 
-
+    // --------------------------------------------------
+    // AUTO BOOTSTRAP
+    // --------------------------------------------------
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Bootstrap()
     {
-        if (Instance != null)
-        {
-            return;
-        }
+        if (Instance != null) return;
 
         GameObject serviceObject = new GameObject("FirestoreGameSecurityService");
         serviceObject.AddComponent<FirestoreGameSecurityService>();
@@ -47,9 +46,12 @@ public class FirestoreGameSecurityService : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    // --------------------------------------------------
+    // FIREBASE INIT + AUTH
+    // --------------------------------------------------
     private void Start()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(async task =>
         {
             if (task.Result != DependencyStatus.Available)
             {
@@ -57,37 +59,59 @@ public class FirestoreGameSecurityService : MonoBehaviour
                 return;
             }
 
+            auth = FirebaseAuth.DefaultInstance;
             db = FirebaseFirestore.DefaultInstance;
+
+            try
+            {
+                var authResult = await auth.SignInAnonymouslyAsync();
+                Debug.Log("✅ Firebase Auth UID: " + authResult.User.UserId);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("❌ Auth failed: " + e);
+                return;
+            }
+
             IsReady = true;
 
-            _ = EnsureUserDocumentAsync(GetUserId());
+            try
+            {
+                await EnsureUserDocumentAsync(GetUserId());
+                Debug.Log("✅ User document ensured");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("EnsureUserDocumentAsync error: " + e);
+            }
         });
     }
 
     public string GetUserId()
     {
-        return string.IsNullOrWhiteSpace(debugUserId) ? "testUser" : debugUserId;
+        return auth?.CurrentUser?.UserId;
     }
 
+    // --------------------------------------------------
+    // USER DOC
+    // --------------------------------------------------
     public async Task EnsureUserDocumentAsync(string userId)
     {
-        if (!IsReady)
-        {
+        if (!IsReady || string.IsNullOrEmpty(userId))
             return;
-        }
 
-        DocumentReference userRef = db.Collection(UsersCollection).Document(userId);
-        DocumentSnapshot userSnap = await userRef.GetSnapshotAsync();
+        DocumentReference userRef =
+            db.Collection(UsersCollection).Document(userId);
 
-        if (!userSnap.Exists)
+        DocumentSnapshot snap = await userRef.GetSnapshotAsync();
+
+        if (!snap.Exists)
         {
-            Dictionary<string, object> userData = new Dictionary<string, object>
+            await userRef.SetAsync(new Dictionary<string, object>
             {
                 { "createdAt", FieldValue.ServerTimestamp },
                 { "lastSeenAt", FieldValue.ServerTimestamp }
-            };
-
-            await userRef.SetAsync(userData, SetOptions.MergeAll);
+            });
         }
         else
         {
@@ -98,125 +122,144 @@ public class FirestoreGameSecurityService : MonoBehaviour
         }
     }
 
+    // --------------------------------------------------
+    // PURCHASE TRANSACTION
+    // --------------------------------------------------
     public async Task<PurchaseResult> TryPurchaseProductAsync(ProductConfig productConfig)
     {
         if (!IsReady)
-        {
             return PurchaseResult.Failed("Firebase hazır değil");
-        }
 
         string userId = GetUserId();
+
         await EnsureUserDocumentAsync(userId);
 
         string qrId = Guid.NewGuid().ToString("N");
         string qrPayload = BuildQrPayload(userId, productConfig.Id, qrId);
 
-        DocumentReference userRef = db.Collection(UsersCollection).Document(userId);
-        DocumentReference purchasedRef = userRef.Collection(PurchasedProductsCollection).Document(productConfig.Id);
-        DocumentReference qrRef = userRef.Collection(QrCodesCollection).Document(qrId);
+        DocumentReference userRef =
+            db.Collection(UsersCollection).Document(userId);
+
+        DocumentReference purchasedRef =
+            userRef.Collection(PurchasedProductsCollection)
+                   .Document(productConfig.Id);
+
+        DocumentReference qrRef =
+            userRef.Collection(QrCodesCollection)
+                   .Document(qrId);
 
         try
         {
-            bool transactionResult = await db.RunTransactionAsync(async transaction =>
+            bool success = await db.RunTransactionAsync(async transaction =>
             {
-                DocumentSnapshot purchasedSnap = await transaction.GetSnapshotAsync(purchasedRef);
-                if (purchasedSnap.Exists)
-                {
-                    return false;
-                }
+                DocumentSnapshot purchasedSnap =
+                    await transaction.GetSnapshotAsync(purchasedRef);
 
+                if (purchasedSnap.Exists)
+                    return false;
+
+                // CHECK BALANCE
                 foreach (var price in productConfig.Prices)
                 {
-                    DocumentReference currencyRef = userRef.Collection(CurrenciesCollection).Document(price.currency);
-                    DocumentSnapshot currencySnap = await transaction.GetSnapshotAsync(currencyRef);
+                    var currencyRef =
+                        userRef.Collection(CurrenciesCollection)
+                               .Document(price.currency);
+
+                    var currencySnap =
+                        await transaction.GetSnapshotAsync(currencyRef);
 
                     int currentBalance = 0;
-                    if (currencySnap.Exists && currencySnap.TryGetValue("amount", out long amountAsLong))
+
+                    if (currencySnap.Exists &&
+                        currencySnap.TryGetValue("amount", out long amount))
                     {
-                        currentBalance = Convert.ToInt32(amountAsLong);
+                        currentBalance = Convert.ToInt32(amount);
                     }
 
                     if (currentBalance < price.amount)
-                    {
                         return false;
-                    }
                 }
 
+                // DEDUCT BALANCE
                 foreach (var price in productConfig.Prices)
                 {
-                    DocumentReference currencyRef = userRef.Collection(CurrenciesCollection).Document(price.currency);
-                    DocumentSnapshot currencySnap = await transaction.GetSnapshotAsync(currencyRef);
+                    var currencyRef =
+                        userRef.Collection(CurrenciesCollection)
+                               .Document(price.currency);
+
+                    var currencySnap =
+                        await transaction.GetSnapshotAsync(currencyRef);
 
                     int currentBalance = 0;
-                    if (currencySnap.Exists && currencySnap.TryGetValue("amount", out long amountAsLong))
+
+                    if (currencySnap.Exists &&
+                        currencySnap.TryGetValue("amount", out long amount))
                     {
-                        currentBalance = Convert.ToInt32(amountAsLong);
+                        currentBalance = Convert.ToInt32(amount);
                     }
 
-                    int newBalance = Math.Max(0, currentBalance - price.amount);
-                    transaction.Set(currencyRef, new Dictionary<string, object>
-                    {
-                        { "amount", newBalance },
-                        { "updatedAt", FieldValue.ServerTimestamp }
-                    }, SetOptions.MergeAll);
+                    transaction.Set(currencyRef,
+                        new Dictionary<string, object>
+                        {
+                            { "amount", Math.Max(0, currentBalance - price.amount) },
+                            { "updatedAt", FieldValue.ServerTimestamp }
+                        },
+                        SetOptions.MergeAll);
                 }
 
-                Dictionary<string, object> purchaseData = new Dictionary<string, object>
-                {
-                    { "productId", productConfig.Id },
-                    { "qrId", qrId },
-                    { "qrPayload", qrPayload },
-                    { "createdAt", FieldValue.ServerTimestamp },
-                    { "status", "purchased" }
-                };
+                // PURCHASE DOC
+                transaction.Set(purchasedRef,
+                    new Dictionary<string, object>
+                    {
+                        { "productId", productConfig.Id },
+                        { "qrId", qrId },
+                        { "qrPayload", qrPayload },
+                        { "createdAt", FieldValue.ServerTimestamp },
+                        { "status", "purchased" }
+                    });
 
-                transaction.Set(purchasedRef, purchaseData, SetOptions.MergeAll);
-
-                Dictionary<string, object> qrData = new Dictionary<string, object>
-                {
-                    { "id", qrId },
-                    { "productId", productConfig.Id },
-                    { "userId", userId },
-                    { "payload", qrPayload },
-                    { "createdAt", FieldValue.ServerTimestamp },
-                    { "status", "active" },
-                    { "source", "store_purchase" }
-                };
-
-                transaction.Set(qrRef, qrData, SetOptions.MergeAll);
+                // QR DOC
+                transaction.Set(qrRef,
+                    new Dictionary<string, object>
+                    {
+                        { "id", qrId },
+                        { "productId", productConfig.Id },
+                        { "userId", userId },
+                        { "payload", qrPayload },
+                        { "createdAt", FieldValue.ServerTimestamp },
+                        { "status", "active" },
+                        { "source", "store_purchase" }
+                    });
 
                 return true;
             });
 
-            if (!transactionResult)
-            {
-                return PurchaseResult.Failed("Satın alma doğrulanamadı (yetersiz bakiye / ürün zaten alınmış)");
-            }
+            if (!success)
+                return PurchaseResult.Failed("Yetersiz bakiye veya ürün alınmış");
 
             return PurchaseResult.Success(qrPayload);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Debug.LogError("TryPurchaseProductAsync error: " + ex);
-            return PurchaseResult.Failed("Satın alma işlemi sırasında hata oluştu");
+            Debug.LogError("Transaction error: " + e);
+            return PurchaseResult.Failed("Transaction hata");
         }
     }
 
+    // --------------------------------------------------
+    // SYNC CURRENCY
+    // --------------------------------------------------
     public async Task SyncCurrencyAmountAsync(string currencyId, int amount)
     {
-        if (!IsReady)
-        {
-            return;
-        }
+        if (!IsReady) return;
 
         string userId = GetUserId();
-        await EnsureUserDocumentAsync(userId);
 
-        DocumentReference currencyRef = db
-            .Collection(UsersCollection)
-            .Document(userId)
-            .Collection(CurrenciesCollection)
-            .Document(currencyId);
+        DocumentReference currencyRef =
+            db.Collection(UsersCollection)
+              .Document(userId)
+              .Collection(CurrenciesCollection)
+              .Document(currencyId);
 
         await currencyRef.SetAsync(new Dictionary<string, object>
         {
@@ -225,25 +268,31 @@ public class FirestoreGameSecurityService : MonoBehaviour
         }, SetOptions.MergeAll);
     }
 
+    // --------------------------------------------------
+    // QR PAYLOAD
+    // --------------------------------------------------
     private static string BuildQrPayload(string userId, string productId, string qrId)
     {
         return $"rocqr:v1:{userId}:{productId}:{qrId}";
     }
 }
 
+// --------------------------------------------------
+// RESULT STRUCT
+// --------------------------------------------------
 public struct PurchaseResult
 {
     public bool IsSuccess;
     public string QrPayload;
     public string Error;
 
-    public static PurchaseResult Success(string qrPayload)
+    public static PurchaseResult Success(string payload)
     {
         return new PurchaseResult
         {
             IsSuccess = true,
-            QrPayload = qrPayload,
-            Error = string.Empty
+            QrPayload = payload,
+            Error = ""
         };
     }
 
@@ -252,8 +301,8 @@ public struct PurchaseResult
         return new PurchaseResult
         {
             IsSuccess = false,
-            QrPayload = string.Empty,
-            Error = error
+            Error = error,
+            QrPayload = ""
         };
     }
 }
