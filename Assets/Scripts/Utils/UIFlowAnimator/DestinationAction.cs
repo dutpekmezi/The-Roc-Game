@@ -217,5 +217,20 @@ namespace Utils.ObjectFlowAnimator
             return numberOfDiedParticles >= actionProperties.particleCount;
         }
 
+        public void Cancel()
+        {
+            for (int i = 0; i < spawnedObjects.Count; i++)
+            {
+                if (spawnedObjects[i].particle != null)
+                {
+                    Pools.Pools.Instance.Despawn(spawnedObjects[i].particle);
+                }
+            }
+
+            spawnedObjects.Clear();
+            numberOfDiedParticles = actionProperties.particleCount;
+            numberOfSpawnedParticles = actionProperties.particleCount;
+        }
+
     }
 }

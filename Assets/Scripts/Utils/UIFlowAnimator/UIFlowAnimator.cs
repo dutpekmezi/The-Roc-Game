@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using Utils.Scene;
+using Utils.Signal;
 using Utils.Singleton;
 
 namespace Utils.ObjectFlowAnimator
@@ -13,6 +15,16 @@ namespace Utils.ObjectFlowAnimator
         private List<DestinationAction> destinationActions = new();
 
         public UIFlowAnimatorSettings Settings => settings;
+
+        private void Start()
+        {
+            SignalBus.Get<OnSceneTransitionStarted>().Subscribe(OnSceneTransitionStarted);
+        }
+
+        private void OnDestroy()
+        {
+            SignalBus.Get<OnSceneTransitionStarted>().Unsubscribe(OnSceneTransitionStarted);
+        }
 
         public void AddNewDestinationAction(Vector3 startScreenPos, Vector3 endScreenPos, Sprite sprite, RectTransform parent, int particleCount,
             float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null)
@@ -95,6 +107,18 @@ namespace Utils.ObjectFlowAnimator
                     --i;
                 }
             }
+        }
+
+        private void OnSceneTransitionStarted(SceneConfig _)
+        {
+            StopAllCoroutines();
+
+            for (int i = 0; i < destinationActions.Count; i++)
+            {
+                destinationActions[i].Cancel();
+            }
+
+            destinationActions.Clear();
         }
     }
 }
