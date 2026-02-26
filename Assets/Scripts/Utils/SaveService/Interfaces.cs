@@ -12,6 +12,8 @@ namespace Utils.Save
         string LoadData(string key);
 
         bool CheckKeyExist(string key);
+
+        void DeleteData(string key);
     }
 
     // Anything saveable must implement this.
