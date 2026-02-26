@@ -64,7 +64,7 @@ namespace Game.Systems
             purchasedProductQRCodesById = purchasedProducts.purchasedProductQRCodesById ?? new Dictionary<string, string>();
         }
 
-        public string RegisterPurchasedProduct(string productId)
+        public string RegisterPurchasedProduct(string productId, string qrPayload = null)
         {
             if (!purchasedProductIds.Contains(productId))
             {
@@ -72,7 +72,9 @@ namespace Game.Systems
 
                 if (!purchasedProductQRCodesById.ContainsKey(productId))
                 {
-                    purchasedProductQRCodesById[productId] = $"{productId}-{Guid.NewGuid():N}";
+                    purchasedProductQRCodesById[productId] = string.IsNullOrEmpty(qrPayload)
+                        ? $"{productId}-{Guid.NewGuid():N}"
+                        : qrPayload;
                 }
 
                 var purchasedProducts = purchasedProductsRepo.Get();

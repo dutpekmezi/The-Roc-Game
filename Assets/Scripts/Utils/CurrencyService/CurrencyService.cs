@@ -60,6 +60,18 @@ namespace Utils.Currency
             currencyRepo.Load();
         }
 
+
+        private void SyncCurrencyToCloud(string currencyId, int amount)
+        {
+            FirestoreGameSecurityService firebaseService = FirestoreGameSecurityService.Instance;
+            if (firebaseService == null || !firebaseService.IsReady)
+            {
+                return;
+            }
+
+            _ = firebaseService.SyncCurrencyAmountAsync(currencyId, amount);
+        }
+
         public bool CanPurchase(string currencyId, int amount)
         {
             CurrenciesEntity ce = currencyRepo.Get();
@@ -82,6 +94,7 @@ namespace Utils.Currency
                 data.currencies[currencyId] = Mathf.Clamp(data.currencies[currencyId], 0, int.MaxValue);
 
                 currencyRepo.Save(data);
+                SyncCurrencyToCloud(currencyId, data.currencies[currencyId]);
 
                 SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currencyId, GetCurrencyForUI(currencyId));
                 SignalBus.Get<OnCurrencyChangedUISignal>().Invoke(currencyId, GetCurrencyForUI(currencyId));
@@ -179,6 +192,7 @@ namespace Utils.Currency
             }
 
             currencyRepo.Save(data);
+            SyncCurrencyToCloud(currencyId, data.currencies[currencyId]);
 
             SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currencyId, data.currencies[currencyId]);
         }
@@ -222,6 +236,7 @@ namespace Utils.Currency
                 }
 
                 currencyRepo.Save(data);
+                SyncCurrencyToCloud(currency.Key, data.currencies[currency.Key]);
 
                 SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currency.Key, data.currencies[currency.Key]);
             }
