@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>TikTokLive_Sharp</id>
+    <version>1.2.3</version>
+    <authors>Frank van Hoof</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="file">LICENSE.md</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <icon>icon.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/frankvHoof93/TikTokLiveSharp</projectUrl>
+    <description>Port of TikTokLive client for C#</description>
+    <copyright>2024 Frank van Hoof</copyright>
+    <tags>TikTok Live</tags>
+    <repository type="Library" url="https://github.com/frankvHoof93/TikTokLiveSharp" commit="6a7465a877df9da6e201c8250641962843efb5d6" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
+        <dependency id="protobuf-net" version="3.2.26" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
