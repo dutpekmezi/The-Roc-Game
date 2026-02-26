@@ -190,12 +190,28 @@ public class FirestoreGameSecurityService : MonoBehaviour
                 if (purchasedSnap.Exists)
                     return false;
 
-                // CHECK BALANCE
+                var totalCostByCurrency = new Dictionary<string, int>();
+
                 foreach (var price in productConfig.Prices)
+                {
+                    if (totalCostByCurrency.TryGetValue(price.currency, out int existingAmount))
+                    {
+                        totalCostByCurrency[price.currency] = existingAmount + price.amount;
+                    }
+                    else
+                    {
+                        totalCostByCurrency[price.currency] = price.amount;
+                    }
+                }
+
+                var balanceByCurrency = new Dictionary<string, int>();
+
+                // CHECK BALANCE
+                foreach (var currencyCost in totalCostByCurrency)
                 {
                     var currencyRef =
                         userRef.Collection(CurrenciesCollection)
-                               .Document(price.currency);
+                               .Document(currencyCost.Key);
 
                     var currencySnap =
                         await transaction.GetSnapshotAsync(currencyRef);
@@ -208,32 +224,25 @@ public class FirestoreGameSecurityService : MonoBehaviour
                         currentBalance = Convert.ToInt32(amount);
                     }
 
-                    if (currentBalance < price.amount)
+                    if (currentBalance < currencyCost.Value)
                         return false;
+
+                    balanceByCurrency[currencyCost.Key] = currentBalance;
                 }
 
                 // DEDUCT BALANCE
-                foreach (var price in productConfig.Prices)
+                foreach (var currencyCost in totalCostByCurrency)
                 {
                     var currencyRef =
                         userRef.Collection(CurrenciesCollection)
-                               .Document(price.currency);
+                               .Document(currencyCost.Key);
 
-                    var currencySnap =
-                        await transaction.GetSnapshotAsync(currencyRef);
-
-                    int currentBalance = 0;
-
-                    if (currencySnap.Exists &&
-                        currencySnap.TryGetValue("amount", out long amount))
-                    {
-                        currentBalance = Convert.ToInt32(amount);
-                    }
+                    int currentBalance = balanceByCurrency[currencyCost.Key];
 
                     transaction.Set(currencyRef,
                         new Dictionary<string, object>
                         {
-                            { "amount", Math.Max(0, currentBalance - price.amount) },
+                            { "amount", Math.Max(0, currentBalance - currencyCost.Value) },
                             { "updatedAt", FieldValue.ServerTimestamp }
                         },
                         SetOptions.MergeAll);
