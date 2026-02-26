@@ -72,6 +72,17 @@ namespace Utils.Save
             return fileNameSafeString;
         }
 
+
+        public void DeleteData(string saveKey)
+        {
+            string encryptedKey = EncryptDecryptForFileName(saveKey);
+            string savePath = Path.Combine(Application.persistentDataPath, encryptedKey);
+
+            if (FileUtilities.CheckFileExist(savePath))
+            {
+                File.Delete(savePath);
+            }
+        }
         public bool CheckKeyExist(string saveKey)
         {
             saveKey = EncryptDecryptForFileName(saveKey);

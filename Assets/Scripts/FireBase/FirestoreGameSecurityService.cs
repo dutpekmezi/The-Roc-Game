@@ -92,6 +92,38 @@ public class FirestoreGameSecurityService : MonoBehaviour
         return auth?.CurrentUser?.UserId;
     }
 
+    public async Task ClearCurrentUserDataAsync()
+    {
+        if (!IsReady)
+        {
+            return;
+        }
+
+        string userId = GetUserId();
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        DocumentReference userRef = db.Collection(UsersCollection).Document(userId);
+
+        await DeleteCollectionDocumentsAsync(userRef.Collection(CurrenciesCollection));
+        await DeleteCollectionDocumentsAsync(userRef.Collection(QrCodesCollection));
+        await DeleteCollectionDocumentsAsync(userRef.Collection(PurchasedProductsCollection));
+
+        await userRef.DeleteAsync();
+    }
+
+    private static async Task DeleteCollectionDocumentsAsync(CollectionReference collectionReference)
+    {
+        QuerySnapshot snapshot = await collectionReference.GetSnapshotAsync();
+
+        foreach (DocumentSnapshot document in snapshot.Documents)
+        {
+            await document.Reference.DeleteAsync();
+        }
+    }
+
     // --------------------------------------------------
     // USER DOC
     // --------------------------------------------------
