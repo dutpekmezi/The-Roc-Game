@@ -23,7 +23,6 @@ public class FirestoreGameSecurityService : MonoBehaviour
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private string activeUserId;
-    private const string UseAuthEmulatorEnvVar = "USE_AUTH_EMULATOR";
     private const int EnsureUserDocMaxRetryCount = 3;
 
     // --------------------------------------------------
@@ -49,10 +48,6 @@ public class FirestoreGameSecurityService : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(UseAuthEmulatorEnvVar)))
-        {
-            Environment.SetEnvironmentVariable(UseAuthEmulatorEnvVar, "0");
-        }
     }
 
     // --------------------------------------------------
@@ -74,7 +69,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
             try
             {
                 activeUserId = await ResolveActiveUserIdAsync();
-                await EnsureFreshAuthTokenAsync();
+                await WarmupAuthSessionAsync();
             }
             catch (Exception e)
             {
@@ -176,6 +171,50 @@ public class FirestoreGameSecurityService : MonoBehaviour
         }
 
         Debug.Log($"✅ Firebase auth token refreshed for uid: {auth.CurrentUser.UserId}");
+    }
+
+    private async Task WarmupAuthSessionAsync()
+    {
+        try
+        {
+            await EnsureFreshAuthTokenAsync();
+            return;
+        }
+        catch (Exception firstException)
+        {
+            Debug.LogWarning($"⚠️ Forced token refresh failed. Trying soft refresh... {firstException.Message}");
+        }
+
+        if (auth?.CurrentUser == null)
+        {
+            throw new InvalidOperationException("Auth warmup failed because CurrentUser is null.");
+        }
+
+        try
+        {
+            string token = await auth.CurrentUser.TokenAsync(false);
+            if (!string.IsNullOrEmpty(token))
+            {
+                Debug.Log($"✅ Firebase auth soft token refresh succeeded for uid: {auth.CurrentUser.UserId}");
+                return;
+            }
+        }
+        catch (Exception secondException)
+        {
+            Debug.LogWarning($"⚠️ Soft token refresh failed. Recreating anonymous session... {secondException.Message}");
+        }
+
+        auth.SignOut();
+        var authResult = await auth.SignInAnonymouslyAsync();
+        if (authResult?.User == null || string.IsNullOrEmpty(authResult.User.UserId))
+        {
+            throw new InvalidOperationException("Auth warmup failed: Could not create fallback anonymous user.");
+        }
+
+        activeUserId = authResult.User.UserId;
+        SaveLocalUserId(activeUserId);
+        await EnsureFreshAuthTokenAsync();
+        Debug.Log($"✅ Firebase auth session recreated for uid: {activeUserId}");
     }
 
     private static void SaveLocalUserId(string userId)
