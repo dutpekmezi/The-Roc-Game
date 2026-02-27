@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
-using Firebase.Extensions;
 using Firebase.Firestore;
 using Game.Systems;
 using UnityEngine;
@@ -53,42 +52,37 @@ public class FirestoreGameSecurityService : MonoBehaviour
     // --------------------------------------------------
     // FIREBASE INIT + AUTH
     // --------------------------------------------------
-    private void Start()
+    private async void Start()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(async task =>
+        await InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        try
         {
-            if (task.Result != DependencyStatus.Available)
+            DependencyStatus dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
+            if (dependencyStatus != DependencyStatus.Available)
             {
-                Debug.LogError("Firebase init failed: " + task.Result);
+                Debug.LogError("Firebase init failed: " + dependencyStatus);
                 return;
             }
 
             auth = FirebaseAuth.DefaultInstance;
             db = FirebaseFirestore.DefaultInstance;
 
-            try
-            {
-                activeUserId = await ResolveActiveUserIdAsync();
-                await WarmupAuthSessionAsync();
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("❌ Auth failed: " + e);
-                return;
-            }
+            activeUserId = await ResolveActiveUserIdAsync();
+            await WarmupAuthSessionAsync();
 
             IsReady = true;
 
-            try
-            {
-                await EnsureUserDocumentAsync(GetUserId());
-                Debug.Log("✅ User document ensured");
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("EnsureUserDocumentAsync error: " + e);
-            }
-        });
+            await EnsureUserDocumentAsync(GetUserId());
+            Debug.Log("✅ User document ensured");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("❌ Firebase initialize failed: " + e);
+        }
     }
 
     public string GetUserId()
