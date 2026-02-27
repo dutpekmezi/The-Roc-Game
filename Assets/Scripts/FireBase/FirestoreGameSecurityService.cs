@@ -139,16 +139,10 @@ public class FirestoreGameSecurityService : MonoBehaviour
         }
 
         Debug.LogWarning(
-            $"⚠️ Saved user id ({savedUserId}) and Firebase auth user ({currentUserId}) mismatch. Creating a brand new anonymous user to avoid selecting another existing user.");
+            $"⚠️ Saved user id ({savedUserId}) and Firebase auth user ({currentUserId}) mismatch. Continuing with Firebase current user and updating local cache.");
 
-        auth.SignOut();
-        var freshAuthResult = await auth.SignInAnonymouslyAsync();
-        string newUserId = freshAuthResult.User.UserId;
-
-        SaveLocalUserId(newUserId);
-        Debug.Log("✅ Firebase fresh anonymous user created: " + newUserId);
-
-        return newUserId;
+        SaveLocalUserId(currentUserId);
+        return currentUserId;
     }
 
     private async Task EnsureFreshAuthTokenAsync()
