@@ -112,18 +112,15 @@ namespace Utils.Currency
             }
 
             bool isLocalDataUpdatedFromServer = false;
-            var changedCurrencyIds = new List<string>();
+            var syncedCurrencyIds = new List<string>();
 
             foreach (var currencyEntry in data.currencies)
             {
                 if (serverCurrencies.TryGetValue(currencyEntry.Key, out int serverAmount))
                 {
-                    if (currencyEntry.Value != serverAmount)
-                    {
-                        data.currencies[currencyEntry.Key] = serverAmount;
-                        isLocalDataUpdatedFromServer = true;
-                        changedCurrencyIds.Add(currencyEntry.Key);
-                    }
+                    data.currencies[currencyEntry.Key] = serverAmount;
+                    isLocalDataUpdatedFromServer = true;
+                    syncedCurrencyIds.Add(currencyEntry.Key);
 
                     continue;
                 }
@@ -138,7 +135,7 @@ namespace Utils.Currency
 
             currencyRepo.Save(data);
 
-            foreach (string currencyId in changedCurrencyIds)
+            foreach (string currencyId in syncedCurrencyIds)
             {
                 SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currencyId, data.currencies[currencyId]);
                 SignalBus.Get<OnCurrencyChangedUISignal>().Invoke(currencyId, GetCurrencyForUI(currencyId));
