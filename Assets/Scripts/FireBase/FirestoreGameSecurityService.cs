@@ -23,6 +23,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private string activeUserId;
+    private const string UseAuthEmulatorEnvVar = "USE_AUTH_EMULATOR";
 
     // --------------------------------------------------
     // AUTO BOOTSTRAP
@@ -46,6 +47,11 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(UseAuthEmulatorEnvVar)))
+        {
+            Environment.SetEnvironmentVariable(UseAuthEmulatorEnvVar, "0");
+        }
     }
 
     // --------------------------------------------------
