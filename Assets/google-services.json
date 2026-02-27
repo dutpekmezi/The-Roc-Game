@@ -2,7 +2,8 @@
   "project_info": {
     "project_number": "35631047429",
     "project_id": "matcha-birdy",
-    "storage_bucket": "matcha-birdy.firebasestorage.app"
+    "storage_bucket": "matcha-birdy.firebasestorage.app",
+    "firebase_url": "https://matcha-birdy-default-rtdb.firebaseio.com"
   },
   "client": [
     {
