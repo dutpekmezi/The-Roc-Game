@@ -99,9 +99,23 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
         if (currentUser == null)
         {
-            var authResult = await auth.SignInAnonymouslyAsync();
-            currentUser = authResult.User;
-            Debug.Log("✅ Firebase anonymous user created: " + currentUser.UserId);
+            try
+            {
+                Debug.Log("ℹ️ Firebase current user not found. Trying anonymous sign-in...");
+                var authResult = await auth.SignInAnonymouslyAsync();
+                currentUser = authResult.User;
+                Debug.Log("✅ Firebase anonymous user created: " + currentUser.UserId);
+            }
+            catch (Exception e)
+            {
+                string message =
+                    "❌ Firebase anonymous sign-in failed. " +
+                    "Firebase Console > Authentication > Sign-in method ekranında Anonymous provider'ı etkinleştir ve tekrar dene. " +
+                    "Detay: " + e;
+
+                Debug.LogError(message);
+                throw;
+            }
         }
 
         if (currentUser == null || string.IsNullOrEmpty(currentUser.UserId))
@@ -195,6 +209,17 @@ public class FirestoreGameSecurityService : MonoBehaviour
     {
         if (db == null || string.IsNullOrEmpty(userId))
             return;
+
+        if (auth == null || auth.CurrentUser == null)
+        {
+            Debug.LogError("❌ EnsureUserDocumentAsync skipped: Auth current user is null.");
+            return;
+        }
+
+        if (auth.CurrentUser.UserId != userId)
+        {
+            Debug.LogWarning($"⚠️ EnsureUserDocumentAsync userId mismatch. auth: {auth.CurrentUser.UserId}, requested: {userId}");
+        }
 
         DocumentReference userRef =
             db.Collection(UsersCollection).Document(userId);
