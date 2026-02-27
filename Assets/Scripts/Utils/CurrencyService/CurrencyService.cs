@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using Utils.Save;
 using Utils.Signal;
@@ -58,6 +59,67 @@ namespace Utils.Currency
             SaveService.Instance.Register<CurrenciesEntity>("currencies");
             currencyRepo = SaveService.Instance.GetRepository<CurrenciesEntity>();
             currencyRepo.Load();
+
+            _ = EnsureDefaultCurrenciesSyncedAsync();
+        }
+
+        private async Task EnsureDefaultCurrenciesSyncedAsync()
+        {
+            if (settings == null || settings.currencyConfigs == null)
+            {
+                return;
+            }
+
+            CurrenciesEntity data = currencyRepo.Get();
+            if (data.currencies == null)
+            {
+                data.currencies = new Dictionary<string, int>();
+            }
+
+            foreach (CurrencyConfig config in settings.currencyConfigs)
+            {
+                if (config == null || string.IsNullOrEmpty(config.currencyId))
+                {
+                    continue;
+                }
+
+                if (!data.currencies.ContainsKey(config.currencyId))
+                {
+                    data.currencies[config.currencyId] = 0;
+                }
+            }
+
+            currencyRepo.Save(data);
+
+            FirestoreGameSecurityService firebaseService = await WaitForFirebaseServiceAsync();
+            if (firebaseService == null)
+            {
+                Debug.LogWarning("[CurrencyService] Firebase hazır olmadığı için varsayılan currency'ler cloud'a yazılamadı.");
+                return;
+            }
+
+            foreach (var currencyEntry in data.currencies)
+            {
+                await firebaseService.SyncCurrencyAmountAsync(currencyEntry.Key, currencyEntry.Value);
+            }
+        }
+
+        private static async Task<FirestoreGameSecurityService> WaitForFirebaseServiceAsync()
+        {
+            const int maxAttempts = 100;
+
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                FirestoreGameSecurityService service = FirestoreGameSecurityService.Instance;
+                if (service != null && service.IsReady)
+                {
+                    return service;
+                }
+
+                await Task.Delay(100);
+            }
+
+            return null;
         }
 
 
