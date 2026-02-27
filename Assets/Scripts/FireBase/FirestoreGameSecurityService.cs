@@ -24,6 +24,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
     private FirebaseAuth auth;
     private string activeUserId;
     private const string UseAuthEmulatorEnvVar = "USE_AUTH_EMULATOR";
+    private const int EnsureUserDocMaxRetryCount = 3;
 
     // --------------------------------------------------
     // AUTO BOOTSTRAP
@@ -73,6 +74,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
             try
             {
                 activeUserId = await ResolveActiveUserIdAsync();
+                await EnsureFreshAuthTokenAsync();
             }
             catch (Exception e)
             {
@@ -160,6 +162,22 @@ public class FirestoreGameSecurityService : MonoBehaviour
         return newUserId;
     }
 
+    private async Task EnsureFreshAuthTokenAsync()
+    {
+        if (auth?.CurrentUser == null)
+        {
+            throw new InvalidOperationException("Auth token refresh failed because CurrentUser is null.");
+        }
+
+        string token = await auth.CurrentUser.TokenAsync(true);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new InvalidOperationException("Auth token refresh returned an empty token.");
+        }
+
+        Debug.Log($"✅ Firebase auth token refreshed for uid: {auth.CurrentUser.UserId}");
+    }
+
     private static void SaveLocalUserId(string userId)
     {
         PlayerPrefs.SetString(LocalUserIdPrefsKey, userId);
@@ -230,12 +248,42 @@ public class FirestoreGameSecurityService : MonoBehaviour
         DocumentReference userRef =
             db.Collection(UsersCollection).Document(userId);
 
-        await userRef.SetAsync(new Dictionary<string, object>
+        Dictionary<string, object> userPayload = new Dictionary<string, object>
         {
             { "userId", userId },
             { "createdAt", FieldValue.ServerTimestamp },
             { "lastSeenAt", FieldValue.ServerTimestamp }
-        }, SetOptions.MergeAll);
+        };
+
+        Exception lastException = null;
+
+        for (int attempt = 1; attempt <= EnsureUserDocMaxRetryCount; attempt++)
+        {
+            try
+            {
+                await userRef.SetAsync(userPayload, SetOptions.MergeAll);
+                Debug.Log($"✅ EnsureUserDocumentAsync success (attempt {attempt}) for uid: {userId}");
+                return;
+            }
+            catch (Exception e)
+            {
+                lastException = e;
+                string currentAuthUserId = auth?.CurrentUser?.UserId ?? "<null>";
+                Debug.LogWarning(
+                    $"⚠️ EnsureUserDocumentAsync attempt {attempt}/{EnsureUserDocMaxRetryCount} failed. " +
+                    $"requestedUid={userId}, authUid={currentAuthUserId}, error={e.Message}");
+
+                if (attempt < EnsureUserDocMaxRetryCount)
+                {
+                    await EnsureFreshAuthTokenAsync();
+                    await Task.Delay(300 * attempt);
+                }
+            }
+        }
+
+        throw new InvalidOperationException(
+            $"EnsureUserDocumentAsync failed after {EnsureUserDocMaxRetryCount} attempts for uid {userId}.",
+            lastException);
     }
 
     // --------------------------------------------------
