@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 using Utils.Save;
@@ -62,6 +63,97 @@ namespace Game.Systems
             var purchasedProducts = purchasedProductsRepo.Get();
             purchasedProductIds = purchasedProducts.purchasedProductIds ?? new List<string>();
             purchasedProductQRCodesById = purchasedProducts.purchasedProductQRCodesById ?? new Dictionary<string, string>();
+
+            _ = ReconcilePurchasedProductsWithServerAsync();
+        }
+
+        private async Task ReconcilePurchasedProductsWithServerAsync()
+        {
+            FirestoreGameSecurityService firebaseService = await WaitForFirebaseServiceAsync();
+            if (firebaseService == null)
+            {
+                return;
+            }
+
+            Dictionary<string, string> activePurchasedProducts = await firebaseService.GetActivePurchasedProductsAsync();
+            if (activePurchasedProducts == null)
+            {
+                return;
+            }
+
+            bool hasChanges = false;
+
+            for (int i = purchasedProductIds.Count - 1; i >= 0; i--)
+            {
+                string productId = purchasedProductIds[i];
+                if (!activePurchasedProducts.ContainsKey(productId))
+                {
+                    purchasedProductIds.RemoveAt(i);
+                    hasChanges = true;
+                }
+            }
+
+            var qrKeys = new List<string>(purchasedProductQRCodesById.Keys);
+            foreach (string productId in qrKeys)
+            {
+                if (!activePurchasedProducts.TryGetValue(productId, out string activeQrPayload))
+                {
+                    purchasedProductQRCodesById.Remove(productId);
+                    hasChanges = true;
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(activeQrPayload) &&
+                    (!purchasedProductQRCodesById.TryGetValue(productId, out string localPayload) || localPayload != activeQrPayload))
+                {
+                    purchasedProductQRCodesById[productId] = activeQrPayload;
+                    hasChanges = true;
+                }
+            }
+
+            foreach (var activePurchasedProduct in activePurchasedProducts)
+            {
+                if (!purchasedProductIds.Contains(activePurchasedProduct.Key))
+                {
+                    purchasedProductIds.Add(activePurchasedProduct.Key);
+                    hasChanges = true;
+                }
+
+                if (!string.IsNullOrEmpty(activePurchasedProduct.Value))
+                {
+                    if (!purchasedProductQRCodesById.TryGetValue(activePurchasedProduct.Key, out string localPayload) ||
+                        localPayload != activePurchasedProduct.Value)
+                    {
+                        purchasedProductQRCodesById[activePurchasedProduct.Key] = activePurchasedProduct.Value;
+                        hasChanges = true;
+                    }
+                }
+            }
+
+            if (!hasChanges)
+            {
+                return;
+            }
+
+            SavePurchasedProducts();
+        }
+
+        private static async Task<FirestoreGameSecurityService> WaitForFirebaseServiceAsync()
+        {
+            const int maxAttempts = 100;
+
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                FirestoreGameSecurityService service = FirestoreGameSecurityService.Instance;
+                if (service != null && service.IsReady)
+                {
+                    return service;
+                }
+
+                await Task.Delay(100);
+            }
+
+            return null;
         }
 
         public string RegisterPurchasedProduct(string productId, string qrPayload = null)
@@ -77,15 +169,20 @@ namespace Game.Systems
                         : qrPayload;
                 }
 
-                var purchasedProducts = purchasedProductsRepo.Get();
-                purchasedProducts.purchasedProductIds = purchasedProductIds;
-                purchasedProducts.purchasedProductQRCodesById = purchasedProductQRCodesById;
-                purchasedProductsRepo.Save(purchasedProducts);
+                SavePurchasedProducts();
             }
 
             return productId;
         }
 
+
+        private void SavePurchasedProducts()
+        {
+            var purchasedProducts = purchasedProductsRepo.Get();
+            purchasedProducts.purchasedProductIds = purchasedProductIds;
+            purchasedProducts.purchasedProductQRCodesById = purchasedProductQRCodesById;
+            purchasedProductsRepo.Save(purchasedProducts);
+        }
 
         public bool IsProductPurchased(string productId)
         {
