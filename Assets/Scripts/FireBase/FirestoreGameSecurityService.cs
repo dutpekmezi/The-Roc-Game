@@ -321,6 +321,24 @@ public class FirestoreGameSecurityService : MonoBehaviour
         if (!IsReady)
             return PurchaseResult.Failed("Firebase hazır değil");
 
+        if (productConfig == null || string.IsNullOrEmpty(productConfig.Id))
+        {
+            return PurchaseResult.Failed("Geçersiz ürün");
+        }
+
+        if (productConfig.Prices == null || productConfig.Prices.Count == 0)
+        {
+            return PurchaseResult.Failed("Geçersiz fiyatlandırma");
+        }
+
+        foreach (var price in productConfig.Prices)
+        {
+            if (price == null || string.IsNullOrEmpty(price.currency) || price.amount <= 0)
+            {
+                return PurchaseResult.Failed("Geçersiz fiyatlandırma");
+            }
+        }
+
         string userId = GetUserId();
 
         await EnsureUserDocumentAsync(userId);
@@ -353,6 +371,11 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
                 foreach (var price in productConfig.Prices)
                 {
+                    if (price.amount <= 0 || string.IsNullOrEmpty(price.currency))
+                    {
+                        return false;
+                    }
+
                     if (totalCostByCurrency.TryGetValue(price.currency, out int existingAmount))
                     {
                         totalCostByCurrency[price.currency] = existingAmount + price.amount;
@@ -368,6 +391,11 @@ public class FirestoreGameSecurityService : MonoBehaviour
                 // CHECK BALANCE
                 foreach (var currencyCost in totalCostByCurrency)
                 {
+                    if (currencyCost.Value <= 0)
+                    {
+                        return false;
+                    }
+
                     var currencyRef =
                         userRef.Collection(CurrenciesCollection)
                                .Document(currencyCost.Key);
