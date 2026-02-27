@@ -98,9 +98,50 @@ namespace Utils.Currency
                 return;
             }
 
+            Dictionary<string, int> serverCurrencies = await firebaseService.GetCurrencyAmountsAsync();
+            if (serverCurrencies == null)
+            {
+                Debug.LogWarning("[CurrencyService] Server currency verisi alınamadı. Local currency verileri cloud ile eşitleniyor.");
+
+                foreach (var currencyEntry in data.currencies)
+                {
+                    await firebaseService.SyncCurrencyAmountAsync(currencyEntry.Key, currencyEntry.Value);
+                }
+
+                return;
+            }
+
+            bool isLocalDataUpdatedFromServer = false;
+            var changedCurrencyIds = new List<string>();
+
             foreach (var currencyEntry in data.currencies)
             {
+                if (serverCurrencies.TryGetValue(currencyEntry.Key, out int serverAmount))
+                {
+                    if (currencyEntry.Value != serverAmount)
+                    {
+                        data.currencies[currencyEntry.Key] = serverAmount;
+                        isLocalDataUpdatedFromServer = true;
+                        changedCurrencyIds.Add(currencyEntry.Key);
+                    }
+
+                    continue;
+                }
+
                 await firebaseService.SyncCurrencyAmountAsync(currencyEntry.Key, currencyEntry.Value);
+            }
+
+            if (!isLocalDataUpdatedFromServer)
+            {
+                return;
+            }
+
+            currencyRepo.Save(data);
+
+            foreach (string currencyId in changedCurrencyIds)
+            {
+                SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currencyId, data.currencies[currencyId]);
+                SignalBus.Get<OnCurrencyChangedUISignal>().Invoke(currencyId, GetCurrencyForUI(currencyId));
             }
         }
 

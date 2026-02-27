@@ -468,6 +468,119 @@ public class FirestoreGameSecurityService : MonoBehaviour
         }, SetOptions.MergeAll);
     }
 
+    public async Task<Dictionary<string, int>> GetCurrencyAmountsAsync()
+    {
+        if (!IsReady)
+        {
+            return null;
+        }
+
+        string userId = GetUserId();
+        if (string.IsNullOrEmpty(userId))
+        {
+            return null;
+        }
+
+        DocumentReference userRef = db.Collection(UsersCollection).Document(userId);
+        QuerySnapshot snapshot = await userRef.Collection(CurrenciesCollection).GetSnapshotAsync();
+
+        var currencies = new Dictionary<string, int>();
+
+        foreach (DocumentSnapshot document in snapshot.Documents)
+        {
+            if (!document.Exists)
+            {
+                continue;
+            }
+
+            int amount = 0;
+
+            if (document.TryGetValue("amount", out long amountLong))
+            {
+                amount = Convert.ToInt32(amountLong);
+            }
+            else if (document.TryGetValue("amount", out int amountInt))
+            {
+                amount = amountInt;
+            }
+
+            currencies[document.Id] = Mathf.Clamp(amount, 0, int.MaxValue);
+        }
+
+        return currencies;
+    }
+
+    public async Task<Dictionary<string, string>> GetActivePurchasedProductsAsync()
+    {
+        if (!IsReady)
+        {
+            return null;
+        }
+
+        string userId = GetUserId();
+        if (string.IsNullOrEmpty(userId))
+        {
+            return null;
+        }
+
+        DocumentReference userRef = db.Collection(UsersCollection).Document(userId);
+
+        QuerySnapshot purchasedSnapshot =
+            await userRef.Collection(PurchasedProductsCollection).GetSnapshotAsync();
+
+        var activeProducts = new Dictionary<string, string>();
+
+        foreach (DocumentSnapshot purchasedDocument in purchasedSnapshot.Documents)
+        {
+            if (!purchasedDocument.Exists)
+            {
+                continue;
+            }
+
+            string productId = purchasedDocument.Id;
+            if (purchasedDocument.TryGetValue("productId", out string productIdField) && !string.IsNullOrEmpty(productIdField))
+            {
+                productId = productIdField;
+            }
+
+            string qrId = string.Empty;
+            purchasedDocument.TryGetValue("qrId", out qrId);
+
+            string qrPayload = string.Empty;
+            purchasedDocument.TryGetValue("qrPayload", out qrPayload);
+
+            if (string.IsNullOrEmpty(qrId))
+            {
+                continue;
+            }
+
+            DocumentSnapshot qrSnapshot =
+                await userRef.Collection(QrCodesCollection).Document(qrId).GetSnapshotAsync();
+
+            if (!qrSnapshot.Exists)
+            {
+                continue;
+            }
+
+            string status = string.Empty;
+            qrSnapshot.TryGetValue("status", out status);
+
+            if (!string.Equals(status, "active", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(qrPayload) && qrSnapshot.TryGetValue("payload", out string payloadFromQr))
+            {
+                qrPayload = payloadFromQr;
+            }
+
+            activeProducts[productId] = qrPayload;
+        }
+
+        return activeProducts;
+    }
+
     // --------------------------------------------------
     // QR PAYLOAD
     // --------------------------------------------------
