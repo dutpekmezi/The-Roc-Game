@@ -14,6 +14,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
     private const string CurrenciesCollection = "currencies";
     private const string QrCodesCollection = "QRCodes";
     private const string PurchasedProductsCollection = "purchasedProducts";
+    private const string LocalUserIdPrefsKey = "FirestoreGameSecurityService.UserId";
 
     public static FirestoreGameSecurityService Instance { get; private set; }
 
@@ -21,6 +22,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
+    private string activeUserId;
 
     // --------------------------------------------------
     // AUTO BOOTSTRAP
@@ -64,18 +66,7 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
             try
             {
-                FirebaseUser currentUser = auth.CurrentUser;
-
-                if (currentUser == null)
-                {
-                    var authResult = await auth.SignInAnonymouslyAsync();
-                    currentUser = authResult.User;
-                    Debug.Log("✅ Firebase anonymous user created: " + currentUser.UserId);
-                }
-                else
-                {
-                    Debug.Log("✅ Firebase existing user restored: " + currentUser.UserId);
-                }
+                activeUserId = await ResolveActiveUserIdAsync();
             }
             catch (Exception e)
             {
@@ -99,7 +90,55 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
     public string GetUserId()
     {
-        return auth?.CurrentUser?.UserId;
+        return activeUserId;
+    }
+
+    private async Task<string> ResolveActiveUserIdAsync()
+    {
+        FirebaseUser currentUser = auth.CurrentUser;
+
+        if (currentUser == null)
+        {
+            var authResult = await auth.SignInAnonymouslyAsync();
+            currentUser = authResult.User;
+            Debug.Log("✅ Firebase anonymous user created: " + currentUser.UserId);
+        }
+        else
+        {
+            Debug.Log("✅ Firebase existing user restored: " + currentUser.UserId);
+        }
+
+        string savedUserId = PlayerPrefs.GetString(LocalUserIdPrefsKey, string.Empty);
+        string currentUserId = currentUser.UserId;
+
+        if (string.IsNullOrEmpty(savedUserId))
+        {
+            SaveLocalUserId(currentUserId);
+            return currentUserId;
+        }
+
+        if (savedUserId == currentUserId)
+        {
+            return savedUserId;
+        }
+
+        Debug.LogWarning(
+            $"⚠️ Saved user id ({savedUserId}) and Firebase auth user ({currentUserId}) mismatch. Creating a brand new anonymous user to avoid selecting another existing user.");
+
+        auth.SignOut();
+        var freshAuthResult = await auth.SignInAnonymouslyAsync();
+        string newUserId = freshAuthResult.User.UserId;
+
+        SaveLocalUserId(newUserId);
+        Debug.Log("✅ Firebase fresh anonymous user created: " + newUserId);
+
+        return newUserId;
+    }
+
+    private static void SaveLocalUserId(string userId)
+    {
+        PlayerPrefs.SetString(LocalUserIdPrefsKey, userId);
+        PlayerPrefs.Save();
     }
 
     public async Task ClearCurrentUserDataAsync()
