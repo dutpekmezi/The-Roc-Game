@@ -103,6 +103,11 @@ public class FirestoreGameSecurityService : MonoBehaviour
             currentUser = authResult.User;
             Debug.Log("✅ Firebase anonymous user created: " + currentUser.UserId);
         }
+
+        if (currentUser == null || string.IsNullOrEmpty(currentUser.UserId))
+        {
+            throw new InvalidOperationException("Firebase anonymous sign-in did not return a valid user.");
+        }
         else
         {
             Debug.Log("✅ Firebase existing user restored: " + currentUser.UserId);
@@ -188,29 +193,18 @@ public class FirestoreGameSecurityService : MonoBehaviour
     // --------------------------------------------------
     public async Task EnsureUserDocumentAsync(string userId)
     {
-        if (!IsReady || string.IsNullOrEmpty(userId))
+        if (db == null || string.IsNullOrEmpty(userId))
             return;
 
         DocumentReference userRef =
             db.Collection(UsersCollection).Document(userId);
 
-        DocumentSnapshot snap = await userRef.GetSnapshotAsync();
-
-        if (!snap.Exists)
+        await userRef.SetAsync(new Dictionary<string, object>
         {
-            await userRef.SetAsync(new Dictionary<string, object>
-            {
-                { "createdAt", FieldValue.ServerTimestamp },
-                { "lastSeenAt", FieldValue.ServerTimestamp }
-            });
-        }
-        else
-        {
-            await userRef.UpdateAsync(new Dictionary<string, object>
-            {
-                { "lastSeenAt", FieldValue.ServerTimestamp }
-            });
-        }
+            { "userId", userId },
+            { "createdAt", FieldValue.ServerTimestamp },
+            { "lastSeenAt", FieldValue.ServerTimestamp }
+        }, SetOptions.MergeAll);
     }
 
     // --------------------------------------------------
