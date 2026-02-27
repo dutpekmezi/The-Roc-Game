@@ -64,8 +64,18 @@ public class FirestoreGameSecurityService : MonoBehaviour
 
             try
             {
-                var authResult = await auth.SignInAnonymouslyAsync();
-                Debug.Log("✅ Firebase Auth UID: " + authResult.User.UserId);
+                FirebaseUser currentUser = auth.CurrentUser;
+
+                if (currentUser == null)
+                {
+                    var authResult = await auth.SignInAnonymouslyAsync();
+                    currentUser = authResult.User;
+                    Debug.Log("✅ Firebase anonymous user created: " + currentUser.UserId);
+                }
+                else
+                {
+                    Debug.Log("✅ Firebase existing user restored: " + currentUser.UserId);
+                }
             }
             catch (Exception e)
             {
