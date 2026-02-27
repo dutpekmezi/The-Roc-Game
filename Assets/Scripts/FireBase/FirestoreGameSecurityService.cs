@@ -161,6 +161,16 @@ public class FirestoreGameSecurityService : MonoBehaviour
         await DeleteCollectionDocumentsAsync(userRef.Collection(PurchasedProductsCollection));
 
         await userRef.DeleteAsync();
+
+        PlayerPrefs.DeleteKey(LocalUserIdPrefsKey);
+        PlayerPrefs.Save();
+
+        auth.SignOut();
+
+        activeUserId = await ResolveActiveUserIdAsync();
+        await EnsureUserDocumentAsync(activeUserId);
+
+        Debug.Log("✅ Current user data cleared and a new anonymous user was created: " + activeUserId);
     }
 
     private static async Task DeleteCollectionDocumentsAsync(CollectionReference collectionReference)
