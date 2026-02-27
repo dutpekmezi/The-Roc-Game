@@ -39,6 +39,8 @@ namespace Utils.Currency
 
     public class CurrencyService : ICurrencyService
     {
+        private const string LocalCurrencyUserIdPrefsKey = "CurrencyService.LastUserId";
+
         private CurrencyServiceSettings settings;
         private Dictionary<string, float> FakeCurrencyDecrease = new();
         private SaveRepository<CurrenciesEntity> currencyRepo;
@@ -98,6 +100,9 @@ namespace Utils.Currency
                 return;
             }
 
+            string currentUserId = firebaseService.GetUserId();
+            HandleUserSwitch(currentUserId, data);
+
             Dictionary<string, int> serverCurrencies = await firebaseService.GetCurrencyAmountsAsync();
             if (serverCurrencies == null)
             {
@@ -140,6 +145,46 @@ namespace Utils.Currency
                 SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currencyId, data.currencies[currencyId]);
                 SignalBus.Get<OnCurrencyChangedUISignal>().Invoke(currencyId, GetCurrencyForUI(currencyId));
             }
+        }
+
+        private void HandleUserSwitch(string currentUserId, CurrenciesEntity data)
+        {
+            if (string.IsNullOrEmpty(currentUserId) || data?.currencies == null)
+            {
+                return;
+            }
+
+            string lastUserId = PlayerPrefs.GetString(LocalCurrencyUserIdPrefsKey, string.Empty);
+            if (string.IsNullOrEmpty(lastUserId))
+            {
+                SaveCurrencyUserId(currentUserId);
+                return;
+            }
+
+            if (lastUserId == currentUserId)
+            {
+                return;
+            }
+
+            var currencyIds = new List<string>(data.currencies.Keys);
+            foreach (string currencyId in currencyIds)
+            {
+                data.currencies[currencyId] = 0;
+
+                SignalBus.Get<OnCurrencyChangedSignal>().Invoke(currencyId, 0);
+                SignalBus.Get<OnCurrencyChangedUISignal>().Invoke(currencyId, GetCurrencyForUI(currencyId));
+            }
+
+            currencyRepo.Save(data);
+            SaveCurrencyUserId(currentUserId);
+
+            Debug.Log($"[CurrencyService] Firebase kullanıcı değişti ({lastUserId} -> {currentUserId}). Local currency kayıtları sıfırlandı.");
+        }
+
+        private static void SaveCurrencyUserId(string userId)
+        {
+            PlayerPrefs.SetString(LocalCurrencyUserIdPrefsKey, userId);
+            PlayerPrefs.Save();
         }
 
         private static async Task<FirestoreGameSecurityService> WaitForFirebaseServiceAsync()
