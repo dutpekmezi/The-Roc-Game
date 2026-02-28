@@ -74,9 +74,9 @@ public class FirestoreGameSecurityService : MonoBehaviour
             activeUserId = await ResolveActiveUserIdAsync();
             await WarmupAuthSessionAsync();
 
-            await EnsureUserDocumentAsync(GetUserId());
             IsReady = true;
 
+            await EnsureUserDocumentAsync(GetUserId());
             Debug.Log("✅ User document ensured");
         }
         catch (Exception e)

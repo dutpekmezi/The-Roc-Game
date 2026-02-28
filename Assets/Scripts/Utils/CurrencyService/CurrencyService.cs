@@ -194,7 +194,7 @@ namespace Utils.Currency
             for (int i = 0; i < maxAttempts; i++)
             {
                 FirestoreGameSecurityService service = FirestoreGameSecurityService.Instance;
-                if (service != null && service.IsReady && !string.IsNullOrEmpty(service.GetUserId()))
+                if (service != null && service.IsReady)
                 {
                     return service;
                 }
