@@ -625,7 +625,7 @@ GameObject:
   - component: {fileID: 1325509038}
   - component: {fileID: 1325509037}
   m_Layer: 0
-  m_Name: GameInstaller
+  m_Name: RunGameInstaller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
