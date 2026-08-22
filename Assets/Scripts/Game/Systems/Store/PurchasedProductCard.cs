@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utils.Currency;
 using Utils.Popup;
+using VContainer;
 
 namespace Game.UI
 {
@@ -13,6 +14,13 @@ namespace Game.UI
         [SerializeField] private Image productImage;
 
         private ProductConfig productConfig;
+        private PopupService _popupService;
+
+        [Inject]
+        private void Construct(PopupService popupService)
+        {
+            _popupService = popupService;
+        }
 
         public void Init(ProductConfig productConfig)
         {
@@ -23,7 +31,7 @@ namespace Game.UI
 
         public void OnClick()
         {
-            var popupService = PopupService.Instance;
+            var popupService = _popupService ?? PopupService.Instance;
             if (popupService != null && popupService.Get(QRPopUp.PopupKey) == null)
             {
                 QRPopUp instance = (QRPopUp)popupService.Create(QRPopUp.PopupKey);

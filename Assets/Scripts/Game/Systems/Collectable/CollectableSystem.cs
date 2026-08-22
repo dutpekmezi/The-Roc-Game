@@ -1,4 +1,5 @@
 using Game.Installers;
+using GameLift.Audio;
 using Game.Systems;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,14 @@ namespace Game.Systems
 {
     public class CollectableSystem : BaseSystem
     {
+        private const string CollectSoundName = "Collect";
+        private const string CollectSpecialSoundName = "Collect_Special";
+
         public CollectableSettings CollectableSettings { get; private set; }
 
         private List<Collectable> createdCollectables = new();
         private float timer;
+        private bool movementStopped;
 
         private const int DefaultPoolCapacity = 25;
         private const int DefaultPoolPreload = 1;
@@ -25,10 +30,11 @@ namespace Game.Systems
 
         private int collectedCollectablesCount;
         private readonly Dictionary<CollectableConfig, int> collectedCounts = new();
+        private readonly IAudioService audioService;
 
         public static CollectableSystem Instance { get; private set; }
 
-        public CollectableSystem(CollectableSettings collectableSettings)
+        public CollectableSystem(CollectableSettings collectableSettings, IAudioService audioService)
         {
             if (Instance != null && Instance != this)
             {
@@ -38,10 +44,25 @@ namespace Game.Systems
             Instance = this;
 
             CollectableSettings = collectableSettings;
+            this.audioService = audioService;
+            movementStopped = true;
+            SignalBus.Get<GameplayStartedSignal>().Subscribe(HandleGameplayStarted);
+            SignalBus.Get<GameplayStoppedSignal>().Subscribe(HandleGameplayStopped);
+            WarmUpPools();
         }
 
         public override void Tick()
         {
+            if (createdCollectables == null)
+            {
+                return;
+            }
+
+            if (movementStopped)
+            {
+                return;
+            }
+
             for (int i = 0; i < createdCollectables.Count; i++)
             {
                 if (createdCollectables[i] != null) createdCollectables[i].Tick();
@@ -50,33 +71,69 @@ namespace Game.Systems
 
         public void Collect(Collectable collectable)
         {
-            collectedCollectablesCount++;
-
             var collectableConfig = collectable.CollectableConfig;
+            var collectSoundName = collectableConfig != null && collectableConfig.Id == CollectableIds.Coin
+                ? CollectSoundName
+                : CollectSpecialSoundName;
+            audioService?.Play(collectSoundName);
+
             if (collectableConfig == null)
             {
                 GameLogger.LogWarning("CollectableSystem collected item without a collectable config.");
             }
             else
             {
-                collectedCounts.TryGetValue(collectableConfig, out var currentAmount);
-                currentAmount++;
-                collectedCounts[collectableConfig] = currentAmount;
-                SignalBus.Get<CollectableCollected>().Invoke(collectableConfig, currentAmount);
+                AddCollectedCount(collectableConfig, 1);
             }
 
             DespawnCollectable(collectable);
         }
 
+        public void AddCollectedCount(CollectableConfig collectableConfig, int amount)
+        {
+            if (collectableConfig == null || amount <= 0)
+            {
+                return;
+            }
+
+            var key = GetCollectedCountKey(collectableConfig);
+            collectedCounts.TryGetValue(key, out var currentAmount);
+            currentAmount += amount;
+            collectedCounts[key] = currentAmount;
+            collectedCollectablesCount += amount;
+            SignalBus.Get<CollectableCollected>().Invoke(key, currentAmount);
+        }
+
         public bool TryGetCollectedCount(CollectableConfig collectableConfig, out int count)
         {
+            count = 0;
+
             if (collectableConfig == null)
             {
-                count = 0;
                 return false;
             }
 
-            return collectedCounts.TryGetValue(collectableConfig, out count);
+            if (collectedCounts.TryGetValue(collectableConfig, out count))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrEmpty(collectableConfig.Id))
+            {
+                return false;
+            }
+
+            foreach (var collectedCount in collectedCounts)
+            {
+                if (collectedCount.Key == null || collectedCount.Key.Id != collectableConfig.Id)
+                {
+                    continue;
+                }
+
+                count += collectedCount.Value;
+            }
+
+            return count > 0;
         }
 
         public IReadOnlyDictionary<CollectableConfig, int> GetCollectedCounts()
@@ -93,7 +150,7 @@ namespace Game.Systems
 
             if (startDelay < 0f)
             {
-                startDelay = CollectableSettings.flyCollectedStartDelay;
+                startDelay = CollectableSettings != null ? CollectableSettings.flyCollectedStartDelay : 0f;
             }
 
             FlyCollectedCollectables(collectableConfig, () => endScreenPos, count, startDelay, onReceivedItem);
@@ -108,7 +165,7 @@ namespace Game.Systems
 
             if (startDelay < 0f)
             {
-                startDelay = CollectableSettings.flyCollectedStartDelay;
+                startDelay = CollectableSettings != null ? CollectableSettings.flyCollectedStartDelay : 0f;
             }
 
             FlyCollectedCollectables(collectableConfig, endScreenPosProvider, count, startDelay, onReceivedItem);
@@ -116,22 +173,32 @@ namespace Game.Systems
 
         private void FlyCollectedCollectables(CollectableConfig collectableConfig, Func<Vector2> endScreenPosProvider, int count = 1, float startDelay = 0f, Action onReceivedItem = null)
         {
-            if (particlePool == null)
+            var canvas = GetActiveCanvas();
+            var flyDestination = GetCollectableFlyDestination();
+
+            if (CollectableSettings != null && CollectableSettings.collectParticle != null)
             {
-                InitializeParticlePool(DefaultPoolPreload, DefaultPoolCapacity, CollectableSettings.collectParticle);
+                if (particlePool == null)
+                {
+                    InitializeParticlePool(DefaultPoolPreload, DefaultPoolCapacity, CollectableSettings.collectParticle);
+                }
+
+                var spawnPosition = flyDestination != null ? flyDestination.position : Vector3.zero;
+                var instance = Pools.Instance.Spawn(
+                    CollectableSettings.collectParticle,
+                    spawnPosition,
+                    Quaternion.identity,
+                    GetGameObjectsParent());
+                Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
             }
 
-            var instance = Pools.Instance.Spawn(CollectableSettings.collectParticle, GameInstaller.Instance.CollectableFlyDestination.position, Quaternion.identity, GameInstaller.Instance.GameObjectsParent);
-            Pools.Instance.Despawn(instance.gameObject, instance.main.duration);
 
+            Vector2 startScreenPos = GetCollectedFlyStartScreenPoint(canvas, flyDestination);
 
-            var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
-            Vector2 playerScreenPos = Camera.main.WorldToScreenPoint(playerTransform.position);
-            Vector2 startScreenPos = playerScreenPos;
-
-            if (GameCanvas.Instance != null)
+            var parent = GetFlowParent(canvas);
+            if (UIFlowAnimator.Instance == null)
             {
-                startScreenPos = GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
+                return;
             }
 
             Func<Vector3> endScreenPosProvider3d = null;
@@ -144,29 +211,61 @@ namespace Game.Systems
                 startScreenPos: startScreenPos,
                 endScreenPosProvider: endScreenPosProvider3d,
                 sprite: collectableConfig != null ? collectableConfig.Icon : null,
-                parent: CoreInstaller.Instance.Canvas.transform as RectTransform,
+                parent: parent,
                 particleCount: count,
                 startDelay: startDelay,
                 onReceivedItem: onReceivedItem
+                // TEMP: Fly arrival sounds are disabled.
+                // receivedSoundName: collectableConfig != null && collectableConfig.Id == CollectableIds.Coin
+                //     ? "Fly_Gold"
+                //     : "Fly_Collectable"
             );
         }
 
-        [System.Obsolete]
-        public void SpawnRandomCollectable(Vector2 spawnPos)
+        private CollectableConfig GetCollectedCountKey(CollectableConfig collectableConfig)
         {
-            var random = UnityEngine.Random.RandomRange(0f, 1f);
+            if (collectableConfig == null || string.IsNullOrEmpty(collectableConfig.Id))
+            {
+                return collectableConfig;
+            }
+
+            foreach (var collectedCount in collectedCounts)
+            {
+                var existingConfig = collectedCount.Key;
+                if (existingConfig != null && existingConfig.Id == collectableConfig.Id)
+                {
+                    return existingConfig;
+                }
+            }
+
+            return collectableConfig;
+        }
+
+        public void TrySpawnRandomCollectable(Vector2 spawnPos)
+        {
+            if (CollectableSettings == null)
+            {
+                return;
+            }
+
+            var random = UnityEngine.Random.Range(0f, 1f);
             if (random < CollectableSettings.collectableSpawnRate)
             {
                 CreateCollectable(spawnPos);
             }
         }
 
-        [System.Obsolete]
+        [System.Obsolete("Use TrySpawnRandomCollectable instead.")]
+        public void SpawnRandomCollectable(Vector2 spawnPos)
+        {
+            TrySpawnRandomCollectable(spawnPos);
+        }
+
         private void CreateCollectable(Vector3 position, Collectable collectablePrefab = null)
         {
             if (collectablePrefab == null)
             {
-                var random = UnityEngine.Random.RandomRange(0f, 1f);
+                var random = UnityEngine.Random.Range(0f, 1f);
                 if (random < CollectableSettings.coinSpawnRate)
                 {
                     var coinConfig = CollectableSettings.GetCollectableConfigById(CollectableIds.Coin);
@@ -247,7 +346,13 @@ namespace Game.Systems
 
         private void InitializeColletablePool(int preload, int capacity, Collectable collectablePrefab)
         {
-            if (CollectableSettings.collectablePrefabs == null)
+            if (collectablePrefab == null)
+            {
+                GameLogger.LogWarning("CollectableSystem cannot initialize pool without a collectable prefab.");
+                return;
+            }
+
+            if (CollectableSettings == null || CollectableSettings.collectablePrefabs == null)
             {
                 GameLogger.LogWarning("CollectableSystem cannot initialize pool without a collectable prefab.");
                 return;
@@ -265,19 +370,19 @@ namespace Game.Systems
 
         private void InitializeParticlePool(int preload, int capacity, ParticleSystem particle)
         {
-            if (CollectableSettings.collectablePrefabs == null)
+            if (particle == null)
             {
-                GameLogger.LogWarning("CollectableSystem cannot initialize pool without a collectable prefab.");
+                GameLogger.LogWarning("CollectableSystem cannot initialize pool without a collect particle prefab.");
                 return;
             }
 
             if (capacity > 0)
             {
-                collectablePool = Pools.Instance.InitializePool(particle.gameObject, preload, capacity);
+                particlePool = Pools.Instance.InitializePool(particle.gameObject, preload, capacity);
             }
             else
             {
-                collectablePool = Pools.Instance.InitializePool(particle.gameObject, preload);
+                particlePool = Pools.Instance.InitializePool(particle.gameObject, preload);
             }
         }
 
@@ -285,6 +390,54 @@ namespace Game.Systems
         {
             Pools.Instance.Despawn(collectable.gameObject);
             createdCollectables.Remove(collectable);
+        }
+
+        public void ResetForRestart(bool stopMovement = false)
+        {
+            movementStopped = stopMovement;
+            ClearCreatedCollectables();
+            createdCollectables ??= new List<Collectable>();
+            ResetCollectedCounts();
+        }
+
+        public void StopMovement()
+        {
+            movementStopped = true;
+        }
+
+        private void WarmUpPools()
+        {
+            if (CollectableSettings == null)
+            {
+                return;
+            }
+
+            if (CollectableSettings.collectablePrefabs != null)
+            {
+                for (int i = 0; i < CollectableSettings.collectablePrefabs.Count; i++)
+                {
+                    var collectablePrefab = CollectableSettings.collectablePrefabs[i];
+                    if (collectablePrefab == null)
+                    {
+                        continue;
+                    }
+
+                    var pool = Pools.Instance.InitializePool(
+                        collectablePrefab.gameObject,
+                        DefaultPoolPreload,
+                        DefaultPoolCapacity);
+
+                    collectablePool ??= pool;
+                }
+            }
+
+            if (CollectableSettings.collectParticle != null)
+            {
+                particlePool = Pools.Instance.InitializePool(
+                    CollectableSettings.collectParticle.gameObject,
+                    DefaultPoolPreload,
+                    DefaultPoolCapacity);
+            }
         }
 
         private static Vector2 GetScreenPoint(Canvas canvas, RectTransform rectTransform)
@@ -304,22 +457,137 @@ namespace Game.Systems
             return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
         }
 
+        private static Canvas GetActiveCanvas()
+        {
+            if (GameInstaller.Instance != null && GameInstaller.Instance.Canvas != null)
+            {
+                return GameInstaller.Instance.Canvas;
+            }
+
+            if (RunGameInstaller.Instance != null && RunGameInstaller.Instance.Canvas != null)
+            {
+                return RunGameInstaller.Instance.Canvas;
+            }
+
+            return CoreInstaller.Instance != null ? CoreInstaller.Instance.Canvas : null;
+        }
+
+        private static RectTransform GetCollectableFlyDestination()
+        {
+            if (GameInstaller.Instance != null && GameInstaller.Instance.CollectableFlyDestination != null)
+            {
+                return GameInstaller.Instance.CollectableFlyDestination;
+            }
+
+            if (RunGameInstaller.Instance != null && RunGameInstaller.Instance.CollectableFlyDestination != null)
+            {
+                return RunGameInstaller.Instance.CollectableFlyDestination;
+            }
+
+            return null;
+        }
+
+        private static Transform GetGameObjectsParent()
+        {
+            if (GameInstaller.Instance != null && GameInstaller.Instance.GameObjectsParent != null)
+            {
+                return GameInstaller.Instance.GameObjectsParent;
+            }
+
+            if (RunGameInstaller.Instance != null && RunGameInstaller.Instance.GameObjectsParent != null)
+            {
+                return RunGameInstaller.Instance.GameObjectsParent;
+            }
+
+            return CoreInstaller.Instance != null ? CoreInstaller.Instance.transform : null;
+        }
+
+        private static Vector2 GetCollectedFlyStartScreenPoint(Canvas canvas, RectTransform flyDestination)
+        {
+            if (flyDestination != null)
+            {
+                return GetScreenPoint(canvas, flyDestination);
+            }
+
+            var playerTransform = PlayerSystem.Instance?.GetPlayerTransform();
+            if (playerTransform != null && Camera.main != null)
+            {
+                return Camera.main.WorldToScreenPoint(playerTransform.position);
+            }
+
+            var runnerTransform = RunPlayerSystem.Instance?.GetPlayerTransform();
+            if (runnerTransform != null && Camera.main != null)
+            {
+                return Camera.main.WorldToScreenPoint(runnerTransform.position);
+            }
+
+            return Vector2.zero;
+        }
+
+        private static RectTransform GetFlowParent(Canvas canvas)
+        {
+            if (CoreInstaller.Instance != null && CoreInstaller.Instance.Canvas != null)
+            {
+                return CoreInstaller.Instance.Canvas.transform as RectTransform;
+            }
+
+            return canvas != null ? canvas.transform as RectTransform : null;
+        }
+
         public override void Dispose()
         {
+            SignalBus.Get<GameplayStartedSignal>().Unsubscribe(HandleGameplayStarted);
+            SignalBus.Get<GameplayStoppedSignal>().Unsubscribe(HandleGameplayStopped);
+            ClearCreatedCollectables();
+            createdCollectables = null;
+            collectedCounts.Clear();
+            collectedCollectablesCount = 0;
 
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
+
+        private void HandleGameplayStarted()
+        {
+            ResetForRestart();
+        }
+
+        private void HandleGameplayStopped()
+        {
+            StopMovement();
+        }
+
+        private void ClearCreatedCollectables()
+        {
             if (createdCollectables != null)
             {
-                foreach (Collectable collectable in createdCollectables)
+                for (int i = createdCollectables.Count - 1; i >= 0; i--)
                 {
+                    var collectable = createdCollectables[i];
                     if (collectable != null) Pools.Instance.Despawn(collectable.gameObject);
                 }
 
                 createdCollectables.Clear();
-                collectedCounts.Clear();
-
-                createdCollectables = null;
             }
-            
+        }
+
+        private void ResetCollectedCounts()
+        {
+            if (collectedCounts.Count > 0)
+            {
+                foreach (var collectedCount in collectedCounts)
+                {
+                    if (collectedCount.Key != null)
+                    {
+                        SignalBus.Get<CollectableCollected>().Invoke(collectedCount.Key, 0);
+                    }
+                }
+
+                collectedCounts.Clear();
+            }
+
             collectedCollectablesCount = 0;
         }
 

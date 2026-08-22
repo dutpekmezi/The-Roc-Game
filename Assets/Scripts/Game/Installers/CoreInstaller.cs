@@ -1,175 +1,225 @@
+using Cysharp.Threading.Tasks;
 using Game.Systems;
+using System.Threading;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Utils.Buttons;
 using Utils.Currency;
-using Utils.Level;
+using Utils.ObjectFlowAnimator;
+using Utils.Pools;
+using Utils.Popup;
 using Utils.Save;
 using Utils.Scene;
 using Utils.Signal;
+using VContainer;
+using VContainer.Unity;
 
 namespace Game.Installers
 {
-    public class CoreInstaller : MonoBehaviour
+    public class CoreInstaller : LifetimeScope
     {
         [SerializeField] private SceneServiceSettings sceneServiceSettings;
         [SerializeField] private CurrencyServiceSettings currencyServiceSettings;
-        [SerializeField] private LevelSettings levelSettings;
         [SerializeField] private bool persistBetweenScenes = true;
         [SerializeField] private Canvas canvas;
         [SerializeField] private CollectableSettings collectableSettings;
-        [SerializeField] private int debugShortcutCurrencyAmount = 1;
+        [SerializeField] private EnergySettings energySettings;
+        [SerializeField] private GameLift.Audio.SoundData firestorePurchaseSound;
 
-        [SerializeField] public Canvas Canvas =>  canvas;
+        [Header("Optional GameLift Package Services")]
+        [SerializeField] private GameLift.Audio.AudioServiceSettings gameLiftAudioSettings;
+        [SerializeField] private GameLift.Levels.LevelList gameLiftLevelList;
+        [SerializeField] private GameLift.Ads.AdsSettings gameLiftAdsSettings;
+        [SerializeField] private GameLift.Popup.PopupSettings gameLiftPopupSettings;
+        [SerializeField] private Canvas gameLiftPopupCanvas;
 
-        private bool _initialized;
+        public Canvas Canvas =>  canvas;
+        public bool PersistBetweenScenes => persistBetweenScenes;
 
         public static CoreInstaller Instance { get; private set; }
 
-        private void Awake()
+        protected override void Configure(IContainerBuilder builder)
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             Instance = this;
-
-            if (_initialized)
-            {
-                return;
-            }
-
-            _initialized = true;
-
-            if (persistBetweenScenes)
-            {
-                DontDestroyOnLoad(gameObject);
-            }
-
             SignalBus.Clear();
-            InitializeSaveService();
-            InitializeSceneService();
-            InitializeCurrencyService();
-            InitializeGameState();
-            InitializeCollectableSystem();
+
+            builder.RegisterInstance(sceneServiceSettings);
+            builder.RegisterInstance(currencyServiceSettings);
+            builder.RegisterInstance(collectableSettings);
+            builder.RegisterInstance(energySettings);
+            builder.RegisterInstance(canvas);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            builder.Register<ISaveHandler, WebGLPlayerPrefsSaveHandler>(Lifetime.Singleton);
+#else
+            builder.Register<ISaveHandler, EncryptedSaveHandler>(Lifetime.Singleton);
+#endif
+            builder.Register<ISaveService, SaveService>(Lifetime.Singleton);
+            builder.Register<ISceneService>(_ => new SceneService(sceneServiceSettings, this), Lifetime.Singleton);
+            builder.Register<global::FirestoreGameSecurityService>(
+                resolver =>
+                {
+                    resolver.TryResolve<GameLift.Audio.IAudioService>(out var audioService);
+                    return new global::FirestoreGameSecurityService(audioService, firestorePurchaseSound);
+                },
+                Lifetime.Singleton);
+            builder.Register<CurrencyService>(Lifetime.Singleton).As<ICurrencyService>().AsSelf();
+            builder.Register<GameState>(Lifetime.Singleton);
+            builder.Register<EnergyService>(Lifetime.Singleton).AsSelf();
+            RegisterOptionalGameLiftServices(builder);
+
+            builder.RegisterComponentInHierarchy<PopupService>();
+            builder.RegisterComponentInHierarchy<UIFlowAnimator>().As<IUIFlowAnimator>();
+            builder.RegisterComponentInHierarchy<ButtonManager>();
+            builder.RegisterEntryPoint<CoreStartupEntryPoint>(Lifetime.Singleton);
         }
 
-        private void Update()
+        private void RegisterOptionalGameLiftServices(IContainerBuilder builder)
         {
-            if (CurrencyService.Instance == null)
+            builder.Register<GameLift.Signal.ISignalBus, GameLift.Signal.SignalBus>(Lifetime.Singleton);
+#if UNITY_WEBGL && !UNITY_EDITOR
+            builder.Register<GameLift.Save.ISaveHandler, GameLift.Save.WebGLPlayerPrefsSaveHandler>(Lifetime.Singleton);
+#else
+            builder.Register<GameLift.Save.ISaveHandler, GameLift.Save.EncryptedSaveHandler>(Lifetime.Singleton);
+#endif
+            builder.Register<GameLift.Save.ISaveService, GameLift.Save.SaveService>(Lifetime.Singleton);
+
+            if (gameLiftAudioSettings != null)
             {
-                return;
+                builder.RegisterInstance(gameLiftAudioSettings);
+                builder.RegisterEntryPoint<GameLift.Audio.AudioService>(Lifetime.Singleton)
+                    .As<GameLift.Audio.IAudioService>();
             }
 
-            var keyboard = Keyboard.current;
-            if (keyboard == null)
+            if (gameLiftLevelList != null)
             {
-                return;
+                builder.RegisterInstance(gameLiftLevelList);
+                builder.Register<GameLift.Levels.LevelService<GameLift.Levels.BaseLevelData>>(Lifetime.Singleton);
             }
 
-            if (keyboard.mKey.wasPressedThisFrame)
+            if (gameLiftAdsSettings != null)
             {
-                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Matcha, debugShortcutCurrencyAmount);
+                builder.RegisterInstance(gameLiftAdsSettings);
+                builder.RegisterEntryPoint<GameLift.Ads.AdsService>(Lifetime.Singleton).AsSelf();
             }
-            else if (keyboard.gKey.wasPressedThisFrame)
+
+            if (gameLiftPopupSettings != null)
             {
-                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Coin, debugShortcutCurrencyAmount);
-            }
-            else if (keyboard.cKey.wasPressedThisFrame)
-            {
-                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Coffee, debugShortcutCurrencyAmount);
-            }
-            else if (keyboard.dKey.wasPressedThisFrame)
-            {
-                CurrencyService.Instance.ModifyCurrency(CurrencyIds.Cookie, debugShortcutCurrencyAmount);
+                builder.RegisterInstance(gameLiftPopupSettings);
+                builder.Register<GameLift.Popup.IPopupService, GameLift.Popup.PopupService>(Lifetime.Singleton)
+                    .WithParameter(gameLiftPopupCanvas != null ? gameLiftPopupCanvas : canvas);
             }
         }
 
-        private static void InitializeSaveService()
+        private sealed class CoreStartupEntryPoint : IAsyncStartable
         {
-            if (SaveService.Instance != null)
+            private readonly CoreInstaller _installer;
+            private readonly ISceneService _sceneService;
+            private readonly CurrencyService _cloudCurrencyService;
+            private readonly global::FirestoreGameSecurityService _firestoreService;
+            private readonly EnergyService _energyService;
+            private readonly GameState _gameState;
+
+            public CoreStartupEntryPoint(
+                CoreInstaller installer,
+                ISaveService saveService,
+                ISceneService sceneService,
+                CurrencyService cloudCurrencyService,
+                global::FirestoreGameSecurityService firestoreService,
+                EnergyService energyService,
+                GameState gameState)
             {
-                return;
+                _installer = installer;
+                _sceneService = sceneService;
+                _cloudCurrencyService = cloudCurrencyService;
+                _firestoreService = firestoreService;
+                _energyService = energyService;
+                _gameState = gameState;
             }
 
-            _ = new SaveService(new EncryptedSaveHandler());
+            public async UniTask StartAsync(CancellationToken cancellation = default)
+            {
+                if (_installer.PersistBetweenScenes)
+                {
+                    UnityEngine.Object.DontDestroyOnLoad(_installer.gameObject);
+                }
+
+                _ = Pools.Instance;
+                _gameState.SetState(GameFlowState.Menu);
+
+                bool firebaseReady = await BootstrapFirebaseDataAsync(cancellation);
+
+                if (cancellation.IsCancellationRequested || !firebaseReady)
+                {
+                    return;
+                }
+
+                await _sceneService.LoadScene(SceneKeys.MenuBaseScene);
+            }
+
+            private async UniTask<bool> BootstrapFirebaseDataAsync(CancellationToken cancellation)
+            {
+                if (_firestoreService == null)
+                {
+                    Debug.LogWarning("[CoreStartup] FirestoreGameSecurityService missing; Firebase bootstrap skipped.");
+                    return false;
+                }
+
+                bool firebaseReady;
+                try
+                {
+                    Debug.Log("[CoreStartup] Firebase bootstrap starting.");
+                    firebaseReady = await _firestoreService.InitializeServiceAsync();
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning("[CoreStartup] Firebase bootstrap failed: " + e.Message);
+                    return false;
+                }
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return false;
+                }
+
+                if (!firebaseReady)
+                {
+                    Debug.LogWarning("[CoreStartup] Firebase/Google sign-in did not finish; menu load blocked.");
+                    return false;
+                }
+
+                if (_cloudCurrencyService != null)
+                {
+                    try
+                    {
+                        bool currenciesLoaded = await _cloudCurrencyService.RefreshFromFirebaseAsync();
+                        Debug.Log("[CoreStartup] Firebase currency bootstrap result: " + currenciesLoaded);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning("[CoreStartup] Firebase currency bootstrap failed: " + e.Message);
+                    }
+                }
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return false;
+                }
+
+                if (_energyService != null)
+                {
+                    try
+                    {
+                        await _energyService.InitializeFromFirebaseAsync(forceRefresh: true);
+                        Debug.Log("[CoreStartup] Firebase energy bootstrap finished. energy=" + _energyService.CurrentEnergy);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning("[CoreStartup] Firebase energy bootstrap failed: " + e.Message);
+                    }
+                }
+
+                return true;
+            }
         }
-
-        private void InitializeSceneService()
-        {
-            if (SceneService.Instance != null)
-            {
-                return;
-            }
-
-            if (sceneServiceSettings == null)
-            {
-                Debug.LogWarning("[CoreInstaller] SceneServiceSettings is not assigned.");
-                return;
-            }
-
-            _ = new SceneService(sceneServiceSettings);
-
-            _ = SceneService.Instance.LoadScene(SceneKeys.MenuBaseScene);
-        }
-
-        private void InitializeCurrencyService()
-        {
-            if (CurrencyService.Instance != null)
-            {
-                return;
-            }
-
-            if (currencyServiceSettings == null)
-            {
-                Debug.LogWarning("[CoreInstaller] CurrencyServiceSettings is not assigned.");
-                return;
-            }
-
-            _ = new CurrencyService(currencyServiceSettings);
-        }
-
-        private void InitializeGameState()
-        {
-            if (GameState.Instance != null)
-            {
-                return;
-            }
-
-            _ = new GameState();
-        }
-
-
-        private void InitializeCollectableSystem()
-        {
-            if (CollectableSystem.Instance != null)
-            {
-                return;
-            }
-
-            if (collectableSettings == null)
-            {
-                Debug.LogWarning("[CoreInstaller] CollectableSettings is not assigned.");
-                return;
-            }
-
-            _ = new CollectableSystem(collectableSettings);
-        }
-        /*private void InitializeLevelService()
-        {
-            if (LevelService.Instance != null)
-            {
-                return;
-            }
-
-            if (levelSettings == null)
-            {
-                Debug.LogWarning("[CoreInstaller] LevelSettings is not assigned.");
-                return;
-            }
-
-            _ = new LevelService(levelSettings);
-        }*/
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using Utils.Logger;
 using Utils.Signal;
+using VContainer.Unity;
 
 namespace Utils.Scene
 {
@@ -13,27 +14,34 @@ namespace Utils.Scene
     {
         private Dictionary<string, GameObject> _loadedScenes = new Dictionary<string, GameObject>();
         private Dictionary<string, SceneInstance> _loadedSceneInstances = new Dictionary<string, SceneInstance>();
-        private SceneServiceSettings _settings;
+        private readonly SceneServiceSettings _settings;
+        private readonly LifetimeScope _parent;
 
         public Dictionary<string, GameObject> LoadedScenes => _loadedScenes;
 
         public static SceneService Instance { get; private set; }
 
         public SceneService(SceneServiceSettings settings)
+            : this(settings, null)
+        {
+        }
+
+        public SceneService(SceneServiceSettings settings, LifetimeScope parent)
         {
             if (Instance != null)
                 throw new System.Exception("Scene Service Already Has an Instance");
 
             Instance = this;
 
-            this._settings = settings;
+            _settings = settings;
+            _parent = parent;
         }
 
         public void Clear()
         {
             foreach (var scene in _loadedScenes)
             {
-                ISceneObject sceneObject = scene.Value.GetComponent<ISceneObject>();
+                ISceneObject sceneObject = scene.Value.GetComponentInChildren<ISceneObject>(true);
 
                 if (sceneObject != null)
                 {
@@ -96,11 +104,22 @@ namespace Utils.Scene
                     return null;
                 }
 
-                // Instantiate prefab
-                var currentScene = GameObject.Instantiate(loadResult.ScenePrefab);
+                GameObject currentScene;
+                if (_parent != null)
+                {
+                    using (LifetimeScope.EnqueueParent(_parent))
+                    {
+                        currentScene = GameObject.Instantiate(loadResult.ScenePrefab);
+                    }
+                }
+                else
+                {
+                    currentScene = GameObject.Instantiate(loadResult.ScenePrefab);
+                }
+
                 _loadedScenes.Add(sceneKey, currentScene);
 
-                ISceneObject sceneObject = currentScene.GetComponent<ISceneObject>();
+                ISceneObject sceneObject = currentScene.GetComponentInChildren<ISceneObject>(true);
                 if (sceneObject != null)
                 {
                     await sceneObject.Initialize();
@@ -129,7 +148,8 @@ namespace Utils.Scene
 
         private async Task ClearExcept(string sceneToKeep)
         {
-            var shouldKeepMenuBaseScene = sceneToKeep != SceneKeys.GameScene;
+            var shouldKeepMenuBaseScene = sceneToKeep != SceneKeys.GameScene
+                && sceneToKeep != SceneKeys.RunGameScene;
 
             var loadedSceneKeys = new List<string>(_loadedScenes.Keys);
             for (int i = 0; i < loadedSceneKeys.Count; i++)
@@ -177,7 +197,7 @@ namespace Utils.Scene
 
                 if (_loadedScenes.TryGetValue(scene, out var sceneGO))
                 {
-                    ISceneObject sceneObject = sceneGO.GetComponent<ISceneObject>();
+                    ISceneObject sceneObject = sceneGO.GetComponentInChildren<ISceneObject>(true);
 
                     if (sceneObject != null)
                     {
@@ -213,17 +233,41 @@ namespace Utils.Scene
 
             try
             {
-                var sceneHandle = config.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
-                var sceneInstance = await sceneHandle.Task;
-                return SceneLoadResult.FromSceneInstance(sceneInstance);
+                return await LoadScenePrefab(sceneKey, config.SceneReference);
             }
-            catch (System.Exception sceneException)
+            catch (System.Exception prefabException)
             {
-                return await LoadScenePrefab(sceneKey, config.SceneReference, sceneException);
+                try
+                {
+                    SceneInstance sceneInstance;
+                    if (_parent != null)
+                    {
+                        using (LifetimeScope.EnqueueParent(_parent))
+                        {
+                            var sceneHandle = config.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
+                            sceneInstance = await sceneHandle.Task;
+                        }
+                    }
+                    else
+                    {
+                        var sceneHandle = config.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true);
+                        sceneInstance = await sceneHandle.Task;
+                    }
+
+                    return SceneLoadResult.FromSceneInstance(sceneInstance);
+                }
+                catch (System.Exception sceneException)
+                {
+                    GameLogger.LogError(
+                        $"Failed to load scene resource '{sceneKey}' as prefab or scene. " +
+                        $"Prefab error: {prefabException.Message}. Scene error: {sceneException.Message}");
+
+                    return SceneLoadResult.Empty;
+                }
             }
         }
 
-        private async Task<SceneLoadResult> LoadScenePrefab(string sceneKey, AssetReference sceneReference, System.Exception sceneException = null)
+        private async Task<SceneLoadResult> LoadScenePrefab(string sceneKey, AssetReference sceneReference)
         {
             try
             {
@@ -232,17 +276,7 @@ namespace Utils.Scene
             }
             catch (System.Exception prefabException)
             {
-                if (sceneException != null)
-                {
-                    GameLogger.LogError(
-                        $"Failed to load scene resource '{sceneKey}' as prefab or scene. " +
-                        $"Prefab error: {prefabException.Message}. Scene error: {sceneException.Message}");
-                }
-                else
-                {
-                    GameLogger.LogError($"Failed to load scene resource '{sceneKey}' as prefab. {prefabException.Message}");
-                }
-
+                GameLogger.LogError($"Failed to load scene resource '{sceneKey}' as prefab. {prefabException.Message}");
                 return SceneLoadResult.Empty;
             }
         }

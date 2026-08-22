@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5d4bdb689c5459090f7e977eeff829b, type: 3}
+  m_Name: RunObstacleSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.RunObstacleSettings
+  moveSpeed: 4
+  destroyX: -9
+  groundedSpawnChange: 0.7
+  minSpawnInterval: 0.8
+  maxSpawnInterval: 3
+  spawnX: 6
+  spawnZ: 0
+  GroundedSpawnY: -3.25
+  FlyingSpawnY: -1.75
+  poolPreload: 3
+  poolCapacity: 20
+  BottombstaclePrefabs:
+  - {fileID: 2979362839759752632, guid: f6f4fa3b43709af45b03ab01f6695115, type: 3}
+  - {fileID: 4786123088095721060, guid: 7239a59c88f69874dafc8455bad71163, type: 3}
+  - {fileID: 8496737871230358814, guid: 05376f086f450a34e8a58b980cdb9118, type: 3}
+  - {fileID: 4786123088095721060, guid: 60742c5e07f5e274884522374c8e61a0, type: 3}
+  TopObstaclePrefabs:
+  - {fileID: 2979362839759752632, guid: 934cff04d03405e47874612c3ad94e00, type: 3}
+  - {fileID: 2979362839759752632, guid: c74b5509867464147951a5c1a01bbf76, type: 3}
+  - {fileID: 2979362839759752632, guid: db6b43e1cd9cb654787044ef1177c445, type: 3}

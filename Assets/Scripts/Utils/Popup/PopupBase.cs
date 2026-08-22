@@ -17,6 +17,9 @@ namespace Utils.Popup
         public Action PreDisappear;
 
         public abstract string PopupId { get; }
+        protected virtual float ShowDelay => 0f;
+
+        private Tween appearDelayTween;
 
         protected virtual void Awake()
         {
@@ -25,6 +28,9 @@ namespace Utils.Popup
 
         public void Disappear()
         {
+            appearDelayTween?.Kill();
+            appearDelayTween = null;
+
             canvasGroup.blocksRaycasts = false;
             PreDisappear?.Invoke();
 
@@ -40,6 +46,25 @@ namespace Utils.Popup
         }
 
         public void Appear()
+        {
+            var showDelay = Mathf.Max(0f, ShowDelay);
+            if (showDelay > 0f)
+            {
+                canvasGroup.alpha = 0f;
+                canvasGroup.blocksRaycasts = false;
+                appearDelayTween = DOVirtual.DelayedCall(showDelay, () =>
+                {
+                    appearDelayTween = null;
+                    canvasGroup.alpha = 1f;
+                    AppearNow();
+                }).SetLink(gameObject);
+                return;
+            }
+
+            AppearNow();
+        }
+
+        private void AppearNow()
         {
             canvasGroup.blocksRaycasts = true;
             PreAppear?.Invoke();

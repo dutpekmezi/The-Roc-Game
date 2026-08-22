@@ -13,4 +13,19 @@ MonoBehaviour:
   m_Name: SpinRewardSettings
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.SpinRewardSettings
   Rewards:
-  - {fileID: 11400000, guid: 05f9d88b2c5a1c84185af784b192665c, type: 2}
+  - collectableData: {fileID: 11400000, guid: 1f5d8c61ba7a41cc98f56becfa9d3333, type: 2}
+    amount: 20
+  - collectableData: {fileID: 11400000, guid: 5f95440fbcd94dd897bbbbb4a4bcd833, type: 2}
+    amount: 1
+  - collectableData: {fileID: 11400000, guid: 2d2fe5660fab4941b05cf859af85256b, type: 2}
+    amount: 3
+  - collectableData: {fileID: 11400000, guid: daa4ac5fedbded64fbf83f36fb52c8d8, type: 2}
+    amount: 1
+  - collectableData: {fileID: 11400000, guid: 1f5d8c61ba7a41cc98f56becfa9d3333, type: 2}
+    amount: 5
+  - collectableData: {fileID: 11400000, guid: 5f95440fbcd94dd897bbbbb4a4bcd833, type: 2}
+    amount: 3
+  - collectableData: {fileID: 11400000, guid: 2d2fe5660fab4941b05cf859af85256b, type: 2}
+    amount: 1
+  - collectableData: {fileID: 11400000, guid: daa4ac5fedbded64fbf83f36fb52c8d8, type: 2}
+    amount: 3

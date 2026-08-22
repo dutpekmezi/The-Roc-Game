@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b97e6c66349c6274d8e1d7216b90f2e7, type: 3}
+  m_Name: Blueberry_Matcha
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ProductConfig
+  Sprite: {fileID: -5667675775261579241, guid: d0b65a3744e3c14438f0a9730256a288, type: 3}
+  Id: blueberry_matcha
+  Name: Blueberry Matcha
+  Description: 
+  prices:
+  - currency: coin
+    amount: 100
+  - currency: matcha
+    amount: 10
+  section: 0

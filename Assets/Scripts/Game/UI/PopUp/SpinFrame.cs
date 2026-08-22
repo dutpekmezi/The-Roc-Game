@@ -11,33 +11,52 @@ namespace Game.UI
         [SerializeField] private Image rewardImage;
         [SerializeField] private TextMeshProUGUI amountText;
 
-        private CollectableConfig rewardConfig;
-        public CollectableConfig RewardConfig => rewardConfig;
+        private RewardData rewardData;
+
+        public RewardData RewardData => rewardData;
+        public CollectableConfig RewardConfig => rewardData?.CollectableData;
+        public string RewardName => rewardData?.Name ?? string.Empty;
+        public int RewardAmount => rewardData?.Amount ?? 0;
 
         public RectTransform IconRectTransform => rewardImage.rectTransform;
 
-        public void Initialize(CollectableConfig reward, int amount)
+        public void Initialize(RewardData reward)
         {
-            rewardConfig = reward;
+            rewardData = reward;
+            var collectableData = reward?.CollectableData;
 
-            if (reward == null)
+            if (collectableData == null)
             {
+                if (rewardImage != null)
+                {
+                    rewardImage.sprite = null;
+                    rewardImage.enabled = false;
+                }
+
+                if (amountText != null)
+                {
+                    amountText.text = string.Empty;
+                }
+
                 return;
             }
 
+            gameObject.name = $"SpinFrame ({reward.Name})";
+
             if (frameImage != null)
             {
-                frameImage.color = reward.Color;
+                frameImage.color = collectableData.Color;
             }
 
             if (rewardImage != null)
             {
-                rewardImage.sprite = reward.Icon;
+                rewardImage.enabled = true;
+                rewardImage.sprite = collectableData.Icon;
             }
 
             if (amountText != null)
             {
-                amountText.text = amount.ToString();
+                amountText.text = reward.Amount.ToString();
             }
         }
     }

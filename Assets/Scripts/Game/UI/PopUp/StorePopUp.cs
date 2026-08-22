@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils.Popup;
+using VContainer;
+using VContainer.Unity;
 
 namespace Game.UI
 {
@@ -16,9 +18,18 @@ namespace Game.UI
         [SerializeField] private ProductSection selectedSection = ProductSection.Matcha;
 
         private List<ProductCard> displayingProducts = new List<ProductCard>();
+        private IObjectResolver _resolver;
+
+        [Inject]
+        private void Construct(IObjectResolver resolver)
+        {
+            _resolver = resolver;
+        }
+
         protected override void Awake()
         {
             base.Awake();
+            PostAppear += DisplayProducts;
             PostDisappear += ClearProducts;
         }
 
@@ -26,7 +37,13 @@ namespace Game.UI
         {
             ClearProducts();
 
-            var settings = StoreManager.Instance.StoreSettings;
+            var storeManager = StoreManager.Instance;
+            if (storeManager == null)
+            {
+                return;
+            }
+
+            var settings = storeManager.StoreSettings;
 
             var productList = settings.ProductConfigs.configs;
 
@@ -38,6 +55,7 @@ namespace Game.UI
                 }
 
                 var instance = Instantiate(settings.ProductCardPrefab, productsParent);
+                _resolver?.InjectGameObject(instance.gameObject);
                 instance.Init(productList[i]);
 
                 displayingProducts.Add(instance);
@@ -50,7 +68,11 @@ namespace Game.UI
         {
             for (int i = 0; i < displayingProducts.Count; i++)
             {
-                if (displayingProducts[i] != null) Destroy(displayingProducts[i]);
+                if (displayingProducts[i] != null)
+                {
+                    displayingProducts[i].gameObject.SetActive(false);
+                    Destroy(displayingProducts[i].gameObject);
+                }
             }
 
             displayingProducts.Clear();
@@ -60,6 +82,12 @@ namespace Game.UI
         {
             selectedSection = section;
             DisplayProducts();
+        }
+
+        private void OnDestroy()
+        {
+            PostAppear -= DisplayProducts;
+            PostDisappear -= ClearProducts;
         }
 
         private void ApplySectionBackground(ProductConfigs productConfigs)

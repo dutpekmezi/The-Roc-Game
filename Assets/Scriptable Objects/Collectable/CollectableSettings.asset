@@ -18,7 +18,7 @@ MonoBehaviour:
   - {fileID: -4649295050493684701, guid: 1cb5b578f4a1b7e42a5477194c1518e3, type: 3}
   - {fileID: -4649295050493684701, guid: 6ec049e3a0384334a94ebd0646eca8f8, type: 3}
   collectParticle: {fileID: 4522285013832878512, guid: 39f76c86c066a6144ac790b803f70da0, type: 3}
-  collectableSpawnRate: 1
-  coinSpawnRate: 0.5
+  collectableSpawnRate: 0.95
+  coinSpawnRate: 0.9
   flyGoldStartDelay: 0
-  flyCollectedStartDelay: 1.5
+  flyCollectedStartDelay: 0.5

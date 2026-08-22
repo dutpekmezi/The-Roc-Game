@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 using Utils.Save;
@@ -43,9 +44,23 @@ namespace Game.Systems
         public List<string> PurchasedProductIds => purchasedProductIds;
         private Dictionary<string, string> purchasedProductQRCodesById = new Dictionary<string, string>();
         private SaveRepository<PurchasedProductsEntity> purchasedProductsRepo;
+        private readonly FirestoreGameSecurityService firestoreService;
         public static StoreManager Instance { get; private set; }
 
-        public StoreManager(StoreSettings storeSettings) 
+        public StoreManager(StoreSettings storeSettings)
+            : this(storeSettings, SaveService.Instance, null)
+        {
+        }
+
+        public StoreManager(StoreSettings storeSettings, ISaveService saveService)
+            : this(storeSettings, saveService, null)
+        {
+        }
+
+        public StoreManager(
+            StoreSettings storeSettings,
+            ISaveService saveService,
+            FirestoreGameSecurityService firestoreService)
         {
             if (Instance != null && Instance != this)
             {
@@ -55,9 +70,10 @@ namespace Game.Systems
             Instance = this;
 
             this.storeSettings = storeSettings;
+            this.firestoreService = firestoreService;
 
-            SaveService.Instance.Register<PurchasedProductsEntity>("store_purchased_products");
-            purchasedProductsRepo = SaveService.Instance.GetRepository<PurchasedProductsEntity>();
+            saveService.Register<PurchasedProductsEntity>("store_purchased_products");
+            purchasedProductsRepo = saveService.GetRepository<PurchasedProductsEntity>();
             purchasedProductsRepo.Load();
 
             var purchasedProducts = purchasedProductsRepo.Get();
@@ -69,7 +85,7 @@ namespace Game.Systems
 
         private async Task ReconcilePurchasedProductsWithServerAsync()
         {
-            FirestoreGameSecurityService firebaseService = await WaitForFirebaseServiceAsync();
+            FirestoreGameSecurityService firebaseService = await WaitForFirebaseServiceAsync(firestoreService);
             if (firebaseService == null)
             {
                 return;
@@ -138,37 +154,60 @@ namespace Game.Systems
             SavePurchasedProducts();
         }
 
-        private static async Task<FirestoreGameSecurityService> WaitForFirebaseServiceAsync()
+        private static async Task<FirestoreGameSecurityService> WaitForFirebaseServiceAsync(
+            FirestoreGameSecurityService preferredService = null)
         {
-            const int maxAttempts = 100;
-
-            for (int i = 0; i < maxAttempts; i++)
+            for (;;)
             {
-                FirestoreGameSecurityService service = FirestoreGameSecurityService.Instance;
-                if (service != null && service.IsReady)
+                FirestoreGameSecurityService service = preferredService != null
+                    ? preferredService
+                    : FirestoreGameSecurityService.Instance;
+
+                if (service != null)
                 {
-                    return service;
+                    bool isReady = service.IsReady || await service.InitializeServiceAsync();
+                    return isReady ? service : null;
                 }
 
-                await Task.Delay(100);
+                await UniTask.Delay(100);
+            }
+        }
+
+        public IReadOnlyList<ProductConfig.ProductPrice> GetProductPrices(ProductConfig productConfig)
+        {
+            if (productConfig == null)
+            {
+                return Array.Empty<ProductConfig.ProductPrice>();
             }
 
-            return null;
+            return productConfig.Prices ?? Array.Empty<ProductConfig.ProductPrice>();
         }
 
         public string RegisterPurchasedProduct(string productId, string qrPayload = null)
         {
+            bool hasChanges = false;
+
             if (!purchasedProductIds.Contains(productId))
             {
                 purchasedProductIds.Add(productId);
+                hasChanges = true;
+            }
 
-                if (!purchasedProductQRCodesById.ContainsKey(productId))
-                {
-                    purchasedProductQRCodesById[productId] = string.IsNullOrEmpty(qrPayload)
-                        ? $"{productId}-{Guid.NewGuid():N}"
-                        : qrPayload;
-                }
+            if (!purchasedProductQRCodesById.ContainsKey(productId))
+            {
+                purchasedProductQRCodesById[productId] = string.IsNullOrEmpty(qrPayload)
+                    ? $"{productId}-{Guid.NewGuid():N}"
+                    : qrPayload;
+                hasChanges = true;
+            }
+            else if (!string.IsNullOrEmpty(qrPayload) && purchasedProductQRCodesById[productId] != qrPayload)
+            {
+                purchasedProductQRCodesById[productId] = qrPayload;
+                hasChanges = true;
+            }
 
+            if (hasChanges)
+            {
                 SavePurchasedProducts();
             }
 

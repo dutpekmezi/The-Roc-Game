@@ -1,0 +1,28 @@
+{
+    "name": "GameLift",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Unity.LevelPlay",
+        "Unity.Services.Core",
+        "Unity.Services.Core.Environments",
+        "Unity.Purchasing",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "Vibration",
+        "VContainer",
+        "UniTask",
+        "NaughtyAttributes.Core",
+        "Newtonsoft.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

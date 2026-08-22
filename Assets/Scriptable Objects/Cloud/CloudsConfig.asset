@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c2d6ac017d34d51a90ee4befd19ba15, type: 3}
+  m_Name: CloudsConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.CloudsConfig
+  cloudPrefab: {fileID: 7588418487097841003, guid: 47fd6a47c65b4ea0871d6e8a3b990c62, type: 3}
+  cloudSprites:
+  - {fileID: 2669142961033076756, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -3967920315399815954, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -1749161583622989117, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -5240784962635489071, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: 1327514091082312007, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: 5063102313881138252, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: 7433681639430268716, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -8284803859559965258, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -4712777430531239470, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -1450576290695077454, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -1217386202081140410, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: -6320086053030305126, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: 7197970857688359645, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  - {fileID: 2604134867812441340, guid: 6749bc90bfb5d8f409106167e1ca79b3, type: 3}
+  tint: {r: 1, g: 1, b: 1, a: 0.8}
+  sortingOrder: -10
+  spawnX: 3.5
+  spawnZ: 0
+  verticalOriginY: 0
+  lowerYOffset: 4
+  upperYOffset: 4
+  destroyX: -8
+  minSpawnInterval: 1
+  maxSpawnInterval: 4
+  maxActiveClouds: 15
+  minMoveSpeed: 0.5
+  maxMoveSpeed: 1
+  minScale: 0.35
+  maxScale: 0.65
+  poolPreload: 3
+  poolCapacity: 15

@@ -1,0 +1,42 @@
+{
+  "name": "com.ensareray.gamelift",
+  "version": "1.0.0",
+  "displayName": "Game Lift",
+  "description": "Game Lift is a Unity package that provides tools and features for game development, including UI components, gameplay mechanics, and utility scripts.",
+  "unity": "6000.0",
+  "unityRelease": "68f1",
+  "author": {
+    "name": "Ensar Eray",
+    "email": "ensar.eray.1994@gmail.com"
+  },
+  "keywords": [
+    "game",
+    "mobile",
+    "popup",
+    "currency",
+    "audio",
+    "save",
+    "pooling",
+    "ads",
+    "iap"
+  ],
+  "dependencies": {
+    "com.benoitfreslon.vibration": "2023.1.1",
+    "com.cysharp.unitask": "2.5.11",
+    "com.unity.addressables": "2.8.1",
+    "com.unity.services.core": "1.15.1",
+    "com.unity.services.levelplay": "9.3.0",
+    "com.unity.purchasing": "5.2.1",
+    "jp.hadashikick.vcontainer": "1.18.0",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.textmeshpro": "4.0.0-pre.2"
+  },
+  "samples": [
+    {
+      "displayName": "Starter",
+      "description": "A starter sample with full integration of all Game Lift services including popups, currency, audio, and more.",
+      "path": "Samples~/Starter"
+    }
+  ],
+  "_fingerprint": "68e9e935fa1b62ea86512027817acff7092a09a5"
+}

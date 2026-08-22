@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Utils.Scene.SceneConfig
   <SceneKey>k__BackingField: game_scene
   <SceneReference>k__BackingField:
-    m_AssetGUID: 8c9cfa26abfee488c85f1582747f6a02
+    m_AssetGUID: e193963c1c4323f488cd5672c08bff27
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

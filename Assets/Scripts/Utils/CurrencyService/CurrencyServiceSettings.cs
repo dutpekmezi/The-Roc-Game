@@ -11,8 +11,6 @@ namespace Utils.Currency
 
         public CurrencyConfig softCurrency;
 
-        public CurrencyConfig energyCurrency;
-
         public List<CurrencyConfig> currencyConfigs;
 
         public CurrencyConfig GetCurrencyConfig(string currencyId)

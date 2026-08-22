@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d9a4c064e4547dd8c2e229a5904aafb, type: 3}
+  m_Name: ScoreConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ScoreConfig
+  scoreType: 1
+  initialScore: 0
+  scorePerSecond: 20
+  defaultGainAmount: 1
+  scoreTrigging: 100
+  scoreTriggerSoundName: Score_Sound
+  collectableSettings: {fileID: 11400000, guid: 86e8569471c9a7a46b0d6eab6a58409f, type: 2}
+  collectableRewardConfigs:
+  - collectableConfig: {fileID: 11400000, guid: 1f5d8c61ba7a41cc98f56becfa9d3333, type: 2}
+    scoreRewardRatio: 0.01
+  - collectableConfig: {fileID: 11400000, guid: 5f95440fbcd94dd897bbbbb4a4bcd833, type: 2}
+    scoreRewardRatio: 0.002
+  - collectableConfig: {fileID: 11400000, guid: 2d2fe5660fab4941b05cf859af85256b, type: 2}
+    scoreRewardRatio: 0.002
+  - collectableConfig: {fileID: 11400000, guid: daa4ac5fedbded64fbf83f36fb52c8d8, type: 2}
+    scoreRewardRatio: 0.002

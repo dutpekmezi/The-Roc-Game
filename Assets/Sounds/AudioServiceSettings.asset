@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a561a865041a4f86b5aa1327f31167b5, type: 3}
+  m_Name: AudioServiceSettings
+  m_EditorClassIdentifier: GameLift::GameLift.Audio.AudioServiceSettings
+  sounds:
+  - {fileID: 11400000, guid: a3e5cc5ae8350ba4facec7317df67c47, type: 2}
+  - {fileID: 11400000, guid: 2a7791285fe63f04db0a0f2694e0c5ed, type: 2}
+  - {fileID: 11400000, guid: c2cccdf9aa9787c4297240e518abff06, type: 2}
+  - {fileID: 11400000, guid: a8a9f1a4379ff414d90f0e61e9b10c4a, type: 2}
+  - {fileID: 11400000, guid: 266eaac796a3fe048938b39478db8582, type: 2}
+  - {fileID: 11400000, guid: 726dc0da789f1aa48b8b6fe59799f115, type: 2}
+  - {fileID: 11400000, guid: 473efcf9e3892b4429c55c45e5cd163a, type: 2}
+  - {fileID: 11400000, guid: f5f14a688eb93704c85124b06461c62c, type: 2}
+  - {fileID: 11400000, guid: faee389e733f6d9459d7d81271f12b0f, type: 2}
+  - {fileID: 11400000, guid: 48bb0ac427ef6654aa5da1f3a382f8b1, type: 2}
+  - {fileID: 11400000, guid: 1e8bf26a759bc1049b5f11ca2741ab78, type: 2}
+  - {fileID: 11400000, guid: 65e6ae877d799924c9b119483e0d331b, type: 2}
+  - {fileID: 11400000, guid: 0d7f06aca7176724da2ffa5294ea2eba, type: 2}
+  - {fileID: 11400000, guid: 7c6cd0ad30ea69a4dad63c2da8642b48, type: 2}
+  - {fileID: 11400000, guid: 4797c5a544d36594c80f09376ffc59ce, type: 2}
+  - {fileID: 11400000, guid: 1ec483ddddd306e44bf49cc11f18440d, type: 2}
+  sfxPoolSize: 10

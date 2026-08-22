@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using GameLift.Audio;
 using UnityEngine;
 using Utils.Scene;
 using Utils.Signal;
@@ -13,8 +14,15 @@ namespace Utils.ObjectFlowAnimator
         [SerializeField] private UIFlowAnimatorSettings settings;
         [SerializeField] private RectTransform flowCanvas;
         private List<DestinationAction> destinationActions = new();
+        private IAudioService audioService;
 
         public UIFlowAnimatorSettings Settings => settings;
+
+        [VContainer.Inject]
+        private void Construct(IAudioService audioService)
+        {
+            this.audioService = audioService;
+        }
 
         private void Start()
         {
@@ -27,11 +35,12 @@ namespace Utils.ObjectFlowAnimator
         }
 
         public void AddNewDestinationAction(Vector3 startScreenPos, Vector3 endScreenPos, Sprite sprite, RectTransform parent, int particleCount,
-            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null)
+            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null,
+            string receivedSoundName = null)
         {
             if (startDelay > 0f)
             {
-                StartCoroutine(AddNewDestinationActionAfterDelay(startDelay, startScreenPos, () => endScreenPos, sprite, parent, particleCount, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted));
+                StartCoroutine(AddNewDestinationActionAfterDelay(startDelay, startScreenPos, () => endScreenPos, sprite, parent, particleCount, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted, receivedSoundName));
                 return;
             }
 
@@ -47,22 +56,24 @@ namespace Utils.ObjectFlowAnimator
             dap.onSpawn = onSpawn;
             dap.onReceivedItem = onReceivedItem;
             dap.onCompleted = onCompleted;
+            dap.receivedSoundName = receivedSoundName;
 
             AddNewDestinationAction(dap);
         }
 
         public void AddNewDestinationAction(Vector3 startScreenPos, Func<Vector3> endScreenPosProvider, Sprite sprite, RectTransform parent, int particleCount,
-            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null)
+            float startDelay = 0f, DestinationActionData destinationActionData = null, FlowParticle prefab = null, Action onSpawn = null, Action onReceivedItem = null, Action onCompleted = null,
+            string receivedSoundName = null)
         {
             if (startDelay > 0f)
             {
-                StartCoroutine(AddNewDestinationActionAfterDelay(startDelay, startScreenPos, endScreenPosProvider, sprite, parent, particleCount, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted));
+                StartCoroutine(AddNewDestinationActionAfterDelay(startDelay, startScreenPos, endScreenPosProvider, sprite, parent, particleCount, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted, receivedSoundName));
                 return;
             }
 
             Vector3 endScreenPos = endScreenPosProvider != null ? endScreenPosProvider() : startScreenPos;
 
-            AddNewDestinationAction(startScreenPos, endScreenPos, sprite, parent, particleCount, 0f, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted);
+            AddNewDestinationAction(startScreenPos, endScreenPos, sprite, parent, particleCount, 0f, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted, receivedSoundName);
         }
 
         public void AddNewDestinationAction(DestinationActionProperties destinationActionProperties)
@@ -82,17 +93,31 @@ namespace Utils.ObjectFlowAnimator
                 destinationActionProperties.parent = flowCanvas;
             }
 
+            destinationActionProperties.audioService ??= audioService;
+
             destinationActions.Add(new DestinationAction(destinationActionProperties));
         }
 
+        public void CancelAllDestinationActions()
+        {
+            StopAllCoroutines();
+
+            for (int i = 0; i < destinationActions.Count; i++)
+            {
+                destinationActions[i].Cancel();
+            }
+
+            destinationActions.Clear();
+        }
+
         private IEnumerator AddNewDestinationActionAfterDelay(float delay, Vector3 startScreenPos, Func<Vector3> endScreenPosProvider, Sprite sprite, RectTransform parent, int particleCount,
-            DestinationActionData destinationActionData, FlowParticle prefab, Action onSpawn, Action onReceivedItem, Action onCompleted)
+            DestinationActionData destinationActionData, FlowParticle prefab, Action onSpawn, Action onReceivedItem, Action onCompleted, string receivedSoundName)
         {
             yield return new WaitForSeconds(delay);
 
             Vector3 endScreenPos = endScreenPosProvider != null ? endScreenPosProvider() : startScreenPos;
 
-            AddNewDestinationAction(startScreenPos, endScreenPos, sprite, parent, particleCount, 0f, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted);
+            AddNewDestinationAction(startScreenPos, endScreenPos, sprite, parent, particleCount, 0f, destinationActionData, prefab, onSpawn, onReceivedItem, onCompleted, receivedSoundName);
         }
 
         private void FixedUpdate()
@@ -111,14 +136,7 @@ namespace Utils.ObjectFlowAnimator
 
         private void OnSceneTransitionStarted(SceneConfig _)
         {
-            StopAllCoroutines();
-
-            for (int i = 0; i < destinationActions.Count; i++)
-            {
-                destinationActions[i].Cancel();
-            }
-
-            destinationActions.Clear();
+            CancelAllDestinationActions();
         }
     }
 }

@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 4821708432607485611}
   - component: {fileID: 7415212297068572198}
   - component: {fileID: 2233397934964847342}
-  - component: {fileID: 389274401568681538}
   m_Layer: 5
   m_Name: CurrencyBarCoin
   m_TagString: Untagged
@@ -64,14 +63,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7607843, g: 0.8560278, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1397424353, guid: a37e8466236089c45b610370218b5353, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3ede2972d04176a499f6c9bed6585c1c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -111,10 +110,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 15
-    m_Right: 15
+    m_Left: 20
+    m_Right: 20
     m_Top: 15
-    m_Bottom: 15
+    m_Bottom: 25
   m_ChildAlignment: 3
   m_Spacing: 100
   m_ChildForceExpandWidth: 1
@@ -138,21 +137,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
   m_AspectMode: 1
   m_AspectRatio: 2.3651571
---- !u!114 &389274401568681538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3024096840567322720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 1, y: -10}
-  m_UseGraphicAlpha: 1
 --- !u!1 &4293573778993159080
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,10 +170,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 36318084075940951}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 15, y: 0}
-  m_SizeDelta: {x: 429.7876, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -63.382446}
+  m_SizeDelta: {x: 0, y: 96.76489}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4318451935564265769
 CanvasRenderer:
@@ -308,7 +292,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 577
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 62e764d61c94b4a48a228b7b77c6a8f7, type: 2}
   m_sharedMaterial: {fileID: -9123835801352804279, guid: 62e764d61c94b4a48a228b7b77c6a8f7, type: 2}
@@ -335,7 +319,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 238.85
+  m_fontSize: 53.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

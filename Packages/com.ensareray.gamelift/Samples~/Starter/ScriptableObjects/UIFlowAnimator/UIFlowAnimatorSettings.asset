@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4fda1d22bf48de8297045c06187d30, type: 3}
+  m_Name: UIFlowAnimatorSettings
+  m_EditorClassIdentifier: 
+  defaultUIAnimParticle: {fileID: 4931091540864069472, guid: 0af931bb929a4f9cbeb8e73aa09ee29a, type: 3}
+  defaultDestinationActionData: {fileID: 11400000, guid: c545d6584bb643b697b75a7e0eb3f6d9, type: 2}

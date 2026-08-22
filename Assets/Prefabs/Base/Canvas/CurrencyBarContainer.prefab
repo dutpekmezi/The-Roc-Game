@@ -62,7 +62,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 252.33644, y: 106.689095}
+  m_CellSize: {x: 256, y: 108.23806}
   m_Spacing: {x: 10, y: 30}
   m_Constraint: 2
   m_ConstraintCount: 1
@@ -78,8 +78,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0622d40d054a53a3a3c5b9c8f5a1a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  referenceScreenWidth: 1284
-  referenceCellWidth: 300
+  referenceScreenWidth: 1080
+  referenceCellWidth: 256
   aspectRatio: 2.365157
 --- !u!114 &4863237089840853204
 MonoBehaviour:
@@ -108,8 +108,12 @@ PrefabInstance:
       value: CurrencyBarCookie
       objectReference: {fileID: 0}
     - target: {fileID: 3927692844104241475, guid: 576d130f8ea0f84478a739043133c818, type: 3}
+      propertyPath: m_text
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3927692844104241475, guid: 576d130f8ea0f84478a739043133c818, type: 3}
       propertyPath: m_fontSize
-      value: 41.55
+      value: 43.45
       objectReference: {fileID: 0}
     - target: {fileID: 3928808227466076534, guid: 576d130f8ea0f84478a739043133c818, type: 3}
       propertyPath: m_Pivot.x
@@ -225,7 +229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9173369832956073553, guid: 576d130f8ea0f84478a739043133c818, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 76.689095
+      value: 78.23806
       objectReference: {fileID: 0}
     - target: {fileID: 9173369832956073553, guid: 576d130f8ea0f84478a739043133c818, type: 3}
       propertyPath: m_SizeDelta.y
@@ -338,8 +342,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 37469751959018594, guid: 2c9bed7f9f6b942499b139d61ed9c49f, type: 3}
+      propertyPath: m_text
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 37469751959018594, guid: 2c9bed7f9f6b942499b139d61ed9c49f, type: 3}
       propertyPath: m_fontSize
-      value: 42.6
+      value: 43.45
       objectReference: {fileID: 0}
     - target: {fileID: 3024096840567322720, guid: 2c9bed7f9f6b942499b139d61ed9c49f, type: 3}
       propertyPath: m_Name
@@ -355,7 +363,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5281229347151813488, guid: 2c9bed7f9f6b942499b139d61ed9c49f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 76.689095
+      value: 78.23806
       objectReference: {fileID: 0}
     - target: {fileID: 5281229347151813488, guid: 2c9bed7f9f6b942499b139d61ed9c49f, type: 3}
       propertyPath: m_SizeDelta.y
@@ -412,8 +420,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 8172723298751787782}
     m_Modifications:
     - target: {fileID: 1844919101174300753, guid: a41540032606b044ba1ee7cef1768a60, type: 3}
+      propertyPath: m_text
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1844919101174300753, guid: a41540032606b044ba1ee7cef1768a60, type: 3}
       propertyPath: m_fontSize
-      value: 42.6
+      value: 43.45
       objectReference: {fileID: 0}
     - target: {fileID: 1846020328422240356, guid: a41540032606b044ba1ee7cef1768a60, type: 3}
       propertyPath: m_Pivot.x
@@ -533,7 +545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5788766763631970115, guid: a41540032606b044ba1ee7cef1768a60, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 76.689095
+      value: 78.23806
       objectReference: {fileID: 0}
     - target: {fileID: 5788766763631970115, guid: a41540032606b044ba1ee7cef1768a60, type: 3}
       propertyPath: m_SizeDelta.y
@@ -599,7 +611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3575649453429830502, guid: 0db969afcff4b27479072f5c09a6e861, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 76.689095
+      value: 78.23806
       objectReference: {fileID: 0}
     - target: {fileID: 3575649453429830502, guid: 0db969afcff4b27479072f5c09a6e861, type: 3}
       propertyPath: m_SizeDelta.y
@@ -618,8 +630,12 @@ PrefabInstance:
       value: CurrencyBarMatcha
       objectReference: {fileID: 0}
     - target: {fileID: 8669691713243968628, guid: 0db969afcff4b27479072f5c09a6e861, type: 3}
+      propertyPath: m_text
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8669691713243968628, guid: 0db969afcff4b27479072f5c09a6e861, type: 3}
       propertyPath: m_fontSize
-      value: 42.6
+      value: 43.45
       objectReference: {fileID: 0}
     - target: {fileID: 8670827025891574849, guid: 0db969afcff4b27479072f5c09a6e861, type: 3}
       propertyPath: m_Pivot.x

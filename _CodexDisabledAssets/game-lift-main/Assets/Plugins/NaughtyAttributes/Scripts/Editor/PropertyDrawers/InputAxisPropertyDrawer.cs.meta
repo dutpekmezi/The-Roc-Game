@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ec7a8a0a53232ac44b1983bc6d6ca5c8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 129996
+  packageName: NaughtyAttributes
+  packageVersion: 2.1.4
+  assetPath: Assets/NaughtyAttributes/Scripts/Editor/PropertyDrawers/InputAxisPropertyDrawer.cs
+  uploadId: 480834

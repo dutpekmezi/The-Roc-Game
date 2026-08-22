@@ -15,28 +15,28 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 54bc66fe2977c9b49a794ea3b11cdeb3
   m_SerializeEntries:
-  - m_GUID: 37c7ff513e877f54a947514416990ba0
-    m_Address: Assets/Scenes/Menu.unity
+  - m_GUID: 29631d130d693924d9c263d7e5650b22
+    m_Address: Assets/Scenes/RunGameScene.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8c9cfa26abfee488c85f1582747f6a02
-    m_Address: Assets/Scenes/Game.unity
+  - m_GUID: 37c7ff513e877f54a947514416990ba0
+    m_Address: Assets/Scenes/MenuMainScene.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ae8c320f133c6dd4baabb085f8c45c62
-    m_Address: Assets/Scenes/Store.unity
+    m_Address: Assets/Scenes/StoreScene.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d032ceb27f1118b4ca9e7472613141f9
-    m_Address: Assets/Scenes/MenuBase.unity
+    m_Address: Assets/Scenes/MenuBaseScene.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d4f2230d91c81d445ac0e2ff0ffcb305
-    m_Address: Assets/Scenes/Base.unity
+  - m_GUID: e193963c1c4323f488cd5672c08bff27
+    m_Address: Assets/Scenes/FlyGameScene.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

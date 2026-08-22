@@ -100,7 +100,7 @@ public class SaveResetToolsWindow : EditorWindow
         catch (Exception e)
         {
             _status = "Firebase kayıtları silinemedi.";
-            Debug.LogError("[SaveResetToolsWindow] Firebase silme hatası: " + e);
+            Debug.LogWarning("[SaveResetToolsWindow] Firebase silme hatası: " + e.Message);
         }
         finally
         {

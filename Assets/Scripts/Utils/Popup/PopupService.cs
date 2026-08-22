@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Utils.Singleton;
+using VContainer;
+using VContainer.Unity;
 
 namespace Utils.Popup
 {
@@ -10,6 +12,13 @@ namespace Utils.Popup
     {
         [SerializeField] private Settings _settings;
         private readonly List<PopupBase> _activePopups = new();
+        private IObjectResolver _resolver;
+
+        [Inject]
+        private void Construct(IObjectResolver resolver)
+        {
+            _resolver = resolver;
+        }
 
         public T Create<T>() where T : PopupBase
         {
@@ -30,9 +39,35 @@ namespace Utils.Popup
 
         public PopupBase Create(string popupId)
         {
-            var popupBase = _settings.popupBases.Find(x => x.PopupId == popupId);
+            if (string.IsNullOrEmpty(popupId))
+            {
+                Debug.LogError("[PopupService] Cannot create popup: popupId is empty.");
+                return null;
+            }
 
-            return Create(popupBase.GetType());
+            if (_settings == null || _settings.popupBases == null)
+            {
+                Debug.LogError($"[PopupService] Cannot create popup: settings are not ready. popupId={popupId}");
+                return null;
+            }
+
+            var popupBase = _settings.popupBases.Find(
+                x => x != null && x.PopupId == popupId);
+
+            if (popupBase == null)
+            {
+                string registeredIds = string.Join(
+                    ", ",
+                    _settings.popupBases
+                        .Where(x => x != null)
+                        .Select(x => x.PopupId));
+
+                Debug.LogError(
+                    $"[PopupService] Popup is not registered. popupId={popupId}, registered=[{registeredIds}]");
+                return null;
+            }
+
+            return CreateFromPrefab(popupBase);
         }
 
         public PopupBase Get(string popupId)
@@ -48,8 +83,28 @@ namespace Utils.Popup
 
         private PopupBase Create(Type popupType)
         {
-            var popupBase = _settings.popupBases.Find(x => x.GetType() == popupType);
+            if (popupType == null || _settings == null || _settings.popupBases == null)
+            {
+                Debug.LogError("[PopupService] Cannot create popup: type or settings are invalid.");
+                return null;
+            }
+
+            var popupBase = _settings.popupBases.Find(
+                x => x != null && x.GetType() == popupType);
+
+            if (popupBase == null)
+            {
+                Debug.LogError($"[PopupService] Popup type is not registered: {popupType.FullName}");
+                return null;
+            }
+
+            return CreateFromPrefab(popupBase);
+        }
+
+        private PopupBase CreateFromPrefab(PopupBase popupBase)
+        {
             var instantiatedPopup = Instantiate(popupBase, transform);
+            _resolver?.InjectGameObject(instantiatedPopup.gameObject);
             ShowPopup(instantiatedPopup);
             return instantiatedPopup;
         }

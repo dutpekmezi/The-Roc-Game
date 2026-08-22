@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 171eb0f33b7e477597fef18751bc5221, type: 3}
+  m_Name: SlotConfig
+  m_EditorClassIdentifier: 
+  slotItemPrefab: {fileID: 1425674206996852400, guid: a052104cbd8d7e042b266b166772ebe3, type: 3}
+  slotItemSize: {x: 150, y: 150}
+  spinCurrencyType: 1
+  spinCostAmount: 15
+  secondSlotsSimilarityRate: 0.35
+  lastSlotSimilarityRate: 0.18
+  firstAndLastSlotsSimilarityRate: 0.4
+  reelSettings:
+  - fullLoopCount: 3
+    fullLoopDuration: 0.3
+    settleDuration: 1
+    startDelay: 0
+  - fullLoopCount: 6
+    fullLoopDuration: 0.3
+    settleDuration: 1.5
+    startDelay: 0
+  - fullLoopCount: 9
+    fullLoopDuration: 0.3
+    settleDuration: 2
+    startDelay: 0

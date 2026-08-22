@@ -6,6 +6,6 @@ namespace Game.Systems
     [CreateAssetMenu(fileName = "SpinRewardSettings", menuName = "Game/Spin/Spin Reward Settings")]
     public class SpinRewardSettings : ScriptableObject
     {
-        public List<SpinRewardConfig> Rewards = new();
+        public List<RewardData> Rewards = new();
     }
 }

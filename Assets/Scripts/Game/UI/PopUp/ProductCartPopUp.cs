@@ -2,6 +2,8 @@ using Game.Systems;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils.Popup;
+using VContainer;
+using VContainer.Unity;
 
 namespace Game.UI
 {
@@ -14,6 +16,13 @@ namespace Game.UI
         public override string PopupId => PopupKey;
 
         private readonly List<string> displayingCards = new List<string>();
+        private IObjectResolver _resolver;
+
+        [Inject]
+        private void Construct(IObjectResolver resolver)
+        {
+            _resolver = resolver;
+        }
 
         protected override void Awake()
         {
@@ -24,7 +33,13 @@ namespace Game.UI
 
         private void DisplayProducts()
         {
-            var purchasedProductIds = StoreManager.Instance.PurchasedProductIds;
+            var storeManager = StoreManager.Instance;
+            if (storeManager == null)
+            {
+                return;
+            }
+
+            var purchasedProductIds = storeManager.PurchasedProductIds;
 
             if (purchasedProductIds == null)
             {
@@ -39,16 +54,22 @@ namespace Game.UI
                     continue;
                 }
 
-                var productConfig = StoreManager.Instance.GetProductConfigById(productId);
+                var productConfig = storeManager.GetProductConfigById(productId);
                 if (productConfig == null)
                 {
                     continue;
                 }
 
                 var instance = Instantiate(purchasedProductCardPrefab, productParent);
+                _resolver?.InjectGameObject(instance.gameObject);
                 instance.Init(productConfig);
                 displayingCards.Add(productId);
             }
+        }
+
+        public void RefreshProducts()
+        {
+            DisplayProducts();
         }
     }
 }

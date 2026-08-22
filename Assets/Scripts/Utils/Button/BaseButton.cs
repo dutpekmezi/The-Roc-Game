@@ -58,7 +58,7 @@ namespace Utils.Buttons
 
         public virtual void BaseOnClick()
         {
-            ButtonManager.Instance.OnButtonClickedHandler(this);
+            ButtonManager.Current?.OnButtonClickedHandler(this);
             DOTween.Kill(AnimKey);
 
             transform.DOScale(Vector3.one * 0.85f, 0.15f)

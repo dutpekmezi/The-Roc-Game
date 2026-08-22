@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utils.Currency;
 using Utils.Signal;
+using VContainer;
 
 namespace Game.UI
 {
@@ -15,6 +16,7 @@ namespace Game.UI
         [SerializeField] private RectTransform iconRectTransform;
 
         private bool subscribed;
+        private ICurrencyService _currencyService;
 
         public CurrencyConfig CurrencyConfig => currencyConfig;
         public RectTransform IconRectTransform => iconRectTransform;
@@ -23,6 +25,13 @@ namespace Game.UI
         public void SetCurrencyConfig(CurrencyConfig config)
         {
             currencyConfig = config;
+            InitializeFromConfig();
+        }
+
+        [Inject]
+        private void Construct(ICurrencyService currencyService)
+        {
+            _currencyService = currencyService;
             InitializeFromConfig();
         }
 
@@ -83,12 +92,13 @@ namespace Game.UI
 
         private void RefreshAmount()
         {
-            if (currencyConfig == null || CurrencyService.Instance == null)
+            var currencyService = _currencyService ?? CurrencyService.Instance;
+            if (currencyConfig == null || currencyService == null)
             {
                 return;
             }
 
-            SetAmount(CurrencyService.Instance.GetCurrencyForUI(currencyConfig.currencyId));
+            SetAmount(currencyService.GetCurrencyForUI(currencyConfig.currencyId));
         }
 
         private void InitializeReferences()
@@ -151,12 +161,13 @@ namespace Game.UI
 
         private void TryAssignConfigFromIcon()
         {
-            if (iconImage == null || iconImage.sprite == null || CurrencyService.Instance == null)
+            var currencyService = _currencyService ?? CurrencyService.Instance;
+            if (iconImage == null || iconImage.sprite == null || currencyService == null)
             {
                 return;
             }
 
-            var configs = CurrencyService.Instance.Settings != null ? CurrencyService.Instance.Settings.currencyConfigs : null;
+            var configs = currencyService.Settings != null ? currencyService.Settings.currencyConfigs : null;
             if (configs == null)
             {
                 return;

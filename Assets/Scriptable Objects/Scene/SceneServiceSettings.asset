@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: SceneServiceSettings
   m_EditorClassIdentifier: Assembly-CSharp::Utils.Scene.SceneServiceSettings
   SceneConfigs:
-  - {fileID: 11400000, guid: 778a9af971f81f54a9c158efcf68f7de, type: 2}
   - {fileID: 11400000, guid: ca23968bc5d98f64e947e84159524d4e, type: 2}
-  - {fileID: 11400000, guid: f330f60d50270894c8c94a829aca5d0c, type: 2}
   - {fileID: 11400000, guid: 6aca9761f5e405143ad37cd29857bea0, type: 2}
+  - {fileID: 11400000, guid: f330f60d50270894c8c94a829aca5d0c, type: 2}
+  - {fileID: 11400000, guid: 9e2761e7387347a1a3e05be2315dccbb, type: 2}
   - {fileID: 11400000, guid: 48d4eea9d020467419865be6502d7181, type: 2}

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: cf3a641c94ba38849aa41bae90b2d8b9
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 129996
+  packageName: NaughtyAttributes
+  packageVersion: 2.1.4
+  assetPath: Assets/NaughtyAttributes/Scripts/Test/ProgressBarTest.cs
+  uploadId: 480834

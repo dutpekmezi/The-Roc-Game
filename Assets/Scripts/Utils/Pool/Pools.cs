@@ -201,6 +201,31 @@ namespace Utils.Pools
                 //GameLogger.LogError("Attempting to despawn a null clone");
             }
         }
+
+        public void CancelDelayedDespawn(GameObject clone)
+        {
+            if (clone == null)
+            {
+                return;
+            }
+
+            if (!AllLinks.TryGetValue(clone, out var pool) || pool == null)
+            {
+                return;
+            }
+
+            for (int i = pool.DelayedDestructions.Count - 1; i >= 0; i--)
+            {
+                var delayedDestruction = pool.DelayedDestructions[i];
+                if (delayedDestruction == null || delayedDestruction.Clone != clone)
+                {
+                    continue;
+                }
+
+                pool.DelayedDestructions.RemoveAt(i);
+                ClassPool<DelayedDestruction>.Despawn(delayedDestruction);
+            }
+        }
     }
 
     public class DelayedDestruction

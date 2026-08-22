@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ZXing;
+using ZXing.Common;
 using ZXing.QrCode;
 
 public class QRCodeGenerator : MonoBehaviour
@@ -28,30 +29,47 @@ public class QRCodeGenerator : MonoBehaviour
     {
         if (string.IsNullOrEmpty(payload))
         {
-            payload = string.Empty;
+            payload = "empty";
         }
 
-        var writer = new BarcodeWriterPixelData
+        int size = Mathf.Max(32, textureSize);
+        var writer = new BarcodeWriterGeneric
         {
             Format = BarcodeFormat.QR_CODE,
             Options = new QrCodeEncodingOptions
             {
-                Width = textureSize,
-                Height = textureSize,
+                CharacterSet = "UTF-8",
+                Width = size,
+                Height = size,
                 Margin = Mathf.Max(0, margin)
             }
         };
 
-        var pixelData = writer.Write(payload);
+        BitMatrix matrix = writer.Encode(payload);
+        int width = matrix.Width;
+        int height = matrix.Height;
 
-        Texture2D texture = new Texture2D(pixelData.Width, pixelData.Height, TextureFormat.RGBA32, false)
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
         {
             filterMode = FilterMode.Point,
             wrapMode = TextureWrapMode.Clamp
         };
 
-        texture.LoadRawTextureData(pixelData.Pixels);
-        texture.Apply();
+        Color32[] pixels = new Color32[width * height];
+        Color32 dark = new Color32(0, 0, 0, 255);
+        Color32 light = new Color32(255, 255, 255, 255);
+
+        for (int y = 0; y < height; y++)
+        {
+            int row = y * width;
+            for (int x = 0; x < width; x++)
+            {
+                pixels[row + x] = matrix[x, y] ? dark : light;
+            }
+        }
+
+        texture.SetPixels32(pixels);
+        texture.Apply(false, false);
 
         return texture;
     }

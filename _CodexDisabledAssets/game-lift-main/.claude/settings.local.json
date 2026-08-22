@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Eray/Repos/game-lift -type f \\\\\\(-name *Debug* -o -name *Cheat* \\\\\\) -name *.cs)",
+      "Bash(xargs grep:*)",
+      "Bash(find /c/Eray/Repos/game-lift/Assets/Samples/Starter -type f -name *Panel* -o -name *Popup*)",
+      "Bash(xargs wc:*)"
+    ]
+  }
+}

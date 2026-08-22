@@ -79,8 +79,13 @@ namespace Game.Systems
                     return GetScreenPoint(GameInstaller.Instance.Canvas, GameInstaller.Instance.CollectableFlyDestination);
                 }
 
-                var playerTransform = PlayerSystem.Instance.GetPlayerTransform();
-                return Camera.main.WorldToScreenPoint(playerTransform.position);
+                var playerTransform = PlayerSystem.Instance?.GetPlayerTransform();
+                if (playerTransform != null && Camera.main != null)
+                {
+                    return Camera.main.WorldToScreenPoint(playerTransform.position);
+                }
+
+                return Vector3.zero;
             };
 
             UIFlowAnimator.Instance.AddNewDestinationAction(

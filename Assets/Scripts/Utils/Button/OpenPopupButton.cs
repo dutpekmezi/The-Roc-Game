@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils.Popup;
+using VContainer;
 
 namespace Utils.Buttons
 {
@@ -12,16 +13,24 @@ namespace Utils.Buttons
         [SerializeField] private string popupId;
 
         public string PopupId => popupId;
+        private PopupService _popupService;
+
+        [Inject]
+        private void Construct(PopupService popupService)
+        {
+            _popupService = popupService;
+        }
 
         public override void BaseOnClick()
         {
             base.BaseOnClick();
 
-            var popup = PopupService.Instance.Get(popupId);
+            var popupService = _popupService ?? PopupService.Instance;
+            var popup = popupService.Get(popupId);
             if (popup != null)
                 return;
 
-            var _window = PopupService.Instance.Create(popupId);
+            var _window = popupService.Create(popupId);
         }
     }
 }

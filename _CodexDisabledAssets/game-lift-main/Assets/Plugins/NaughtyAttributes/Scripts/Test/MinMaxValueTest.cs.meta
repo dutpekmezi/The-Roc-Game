@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b4c6c917a54f58941b4b35be7f08de62
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 129996
+  packageName: NaughtyAttributes
+  packageVersion: 2.1.4
+  assetPath: Assets/NaughtyAttributes/Scripts/Test/MinMaxValueTest.cs
+  uploadId: 480834

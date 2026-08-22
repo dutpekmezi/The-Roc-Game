@@ -109,7 +109,7 @@ namespace Utils.Touch
         {
             var currentEventSystem = EventSystem.current;
 
-            if (currentEventSystem == null) currentEventSystem = FindObjectOfType<EventSystem>();
+            if (currentEventSystem == null) currentEventSystem = FindFirstObjectByType<EventSystem>();
 
             return currentEventSystem;
         }

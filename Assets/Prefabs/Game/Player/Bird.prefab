@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
+  m_LocalScale: {x: 0.063982, y: 0.063982, z: 0.063982}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1433300178112050578}
@@ -80,12 +80,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2444923836969248401, guid: 70b7c99a63e3930478913b83e53312f9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0718e61999e6c8141b99964cfbec848e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 31.2, y: 19.20355}
+  m_Size: {x: 33.75, y: 42.197803}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -124,7 +124,6 @@ GameObject:
   - component: {fileID: 1433300178112050578}
   - component: {fileID: 1109046929536873537}
   - component: {fileID: 4740051394969765359}
-  - component: {fileID: 120264163222715859}
   - component: {fileID: 1289717984943678534}
   m_Layer: 0
   m_Name: Bird
@@ -157,7 +156,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7214192257685404903}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -187,33 +186,15 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75619695caaa2ce429b326c83869befe, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.Flipper
   animator: {fileID: 2364229910335764113}
   rb: {fileID: 1109046929536873537}
   playerData: {fileID: 11400000, guid: 5cabe0876847c7e4a8a91ab79556ed1a, type: 2}
-  flapAction: {fileID: -2099379676528639254, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
---- !u!95 &120264163222715859
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7214192257685404903}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ec38f361d9842ff4d85996f36c10aa35, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  startIdleAnim: {fileID: 0}
+  colliders: []
+  spriteRenderers: []
+  deathDownwardImpulse: 15
+  deathAngularVelocity: 240
 --- !u!60 &1289717984943678534
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -251,25 +232,25 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 4.57, y: 2.45}
+    newSize: {x: 4.57, y: 2.45}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.2804171, y: 0.13040024}
-      - {x: 0.19589087, y: 0.22412829}
-      - {x: 0.03053394, y: 0.23237187}
-      - {x: -0.09326352, y: 0.07973996}
-      - {x: -0.2367957, y: 0.05281663}
+    - - {x: 0.20380759, y: 0.11258406}
+      - {x: 0.13353428, y: 0.21165697}
+      - {x: 0.03053394, y: 0.19673952}
+      - {x: -0.10751645, y: 0.13497013}
+      - {x: -0.2920258, y: 0.04034531}
       - {x: -0.18112098, y: -0.07125555}
-      - {x: -0.37610352, y: -0.19672477}
+      - {x: -0.31374693, y: -0.15931086}
       - {x: -0.19252153, y: -0.17310846}
-      - {x: -0.07648328, y: -0.24078181}
-      - {x: 0.11723159, y: -0.24100664}
-      - {x: 0.3710237, y: 0.023312803}
+      - {x: -0.064011954, y: -0.21227592}
+      - {x: 0.08694409, y: -0.18043171}
+      - {x: 0.3247018, y: 0.00015178695}
       - {x: 0.28725183, y: 0.0489299}
   m_UseDelaunayMesh: 0

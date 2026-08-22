@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameLift.Audio;
 using UnityEngine;
 using Utils.Pools;
 using Random = UnityEngine.Random;
@@ -23,6 +24,9 @@ namespace Utils.ObjectFlowAnimator
         public Action onSpawn;
         public Action onReceivedItem;
         public Action onCompleted;
+
+        public IAudioService audioService;
+        public string receivedSoundName;
     }
 
     public class ParticleData
@@ -182,6 +186,11 @@ namespace Utils.ObjectFlowAnimator
                             }
 
                             numberOfReachedParticles++;
+
+                            if (!string.IsNullOrEmpty(actionProperties.receivedSoundName))
+                            {
+                                actionProperties.audioService?.Play(actionProperties.receivedSoundName);
+                            }
 
                             if (actionProperties.onReceivedItem != null) actionProperties.onReceivedItem();
 

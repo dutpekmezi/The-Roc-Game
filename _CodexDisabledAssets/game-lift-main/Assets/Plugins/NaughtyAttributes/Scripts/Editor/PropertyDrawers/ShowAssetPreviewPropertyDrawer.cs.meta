@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 458ad1d39b126b7459bebbc05fb0bd04
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 129996
+  packageName: NaughtyAttributes
+  packageVersion: 2.1.4
+  assetPath: Assets/NaughtyAttributes/Scripts/Editor/PropertyDrawers/ShowAssetPreviewPropertyDrawer.cs
+  uploadId: 480834

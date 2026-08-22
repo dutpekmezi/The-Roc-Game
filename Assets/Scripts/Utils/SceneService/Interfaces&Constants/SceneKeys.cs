@@ -10,6 +10,7 @@ namespace Utils.Scene
         public const string MenuBaseScene = "menu_base_scene";
         public const string StoreScene = "store_scene";
         public const string GameScene = "game_scene";
+        public const string RunGameScene = "run_game_scene";
 
         private static List<string> values = null;
 
@@ -19,7 +20,7 @@ namespace Utils.Scene
             {
                 values = new List<string>()
                 {
-                    InitialScene, SplashScene, MenuScene, MenuBaseScene, GameScene, StoreScene
+                    InitialScene, SplashScene, MenuScene, MenuBaseScene, GameScene, RunGameScene, StoreScene
                 };
             }
 

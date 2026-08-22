@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using Utils.Popup;
 using Utils.Currency;
+using VContainer;
 
 namespace Game.UI
 {
@@ -23,16 +24,27 @@ namespace Game.UI
 
         private ProductConfig productConfig;
         public ProductConfig ProductConfig => productConfig;
+        private ICurrencyService _currencyService;
+
+        [Inject]
+        private void Construct(ICurrencyService currencyService)
+        {
+            _currencyService = currencyService;
+        }
 
         public void Init(ProductConfig productConfig)
         {
             this.productConfig = productConfig;
-            var prices = productConfig.Prices;
+            var currencyService = _currencyService ?? CurrencyService.Instance;
+            var storeManager = StoreManager.Instance;
+            var prices = storeManager != null
+                ? storeManager.GetProductPrices(productConfig)
+                : productConfig.Prices;
 
             productImage.sprite = productConfig.Sprite;
             if (prices.Count > 0)
             {
-                priceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(prices[0].currency).currencySprite;
+                priceImage.sprite = currencyService.GetCurrencyConfig(prices[0].currency).currencySprite;
                 priceAmountText.text = $"{prices[0].amount}";
             }
             else
@@ -42,7 +54,7 @@ namespace Game.UI
 
             if (prices.Count > 1)
             {
-                specialPriceImage.sprite = CurrencyService.Instance.GetCurrencyConfig(prices[1].currency).currencySprite;
+                specialPriceImage.sprite = currencyService.GetCurrencyConfig(prices[1].currency).currencySprite;
                 specialPriceAmountText.text = $"{prices[1].amount}";
             }
             else
@@ -50,7 +62,8 @@ namespace Game.UI
                 specialPriceAmountText.text = "0";
             }
 
-            if (StoreManager.Instance.StoreSettings.ProductConfigs.TryGetSectionColor(productConfig.section, out Color sectionColor))
+            if (storeManager != null &&
+                storeManager.StoreSettings.ProductConfigs.TryGetSectionColor(productConfig.section, out Color sectionColor))
             {
                 //cardImage.color = sectionColor;
             }

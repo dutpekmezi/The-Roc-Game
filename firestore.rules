@@ -5,42 +5,224 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    function isScannerAdmin() {
+      return request.auth != null
+        && (
+          request.auth.token.get('email', '') == 'atilla.2004.akkaya@gmail.com'
+          || (
+            exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+              .get('isScannerAdmin', false) == true
+          )
+        );
+    }
+
+    function isValidCurrencyAmount() {
+      return request.resource.data.amount is int
+        && request.resource.data.amount >= 0;
+    }
+
+    function isValidEnergyAmount() {
+      return isValidCurrencyAmount()
+        && request.resource.data.amount <= 15;
+    }
+
+    function isOwnerEnergySpend(userId) {
+      return isOwner(userId)
+        && isValidEnergyAmount()
+        && request.resource.data.amount < resource.data.amount
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isOwnerEnergyClientSyncCreate(userId) {
+      return isOwner(userId)
+        && isValidEnergyAmount()
+        && request.resource.data.amount == 0
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.keys().hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isOwnerInitialEnergyCreate(userId) {
+      return isOwner(userId)
+        && isValidEnergyAmount()
+        && request.resource.data.amount == 15
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.keys().hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isOwnerEnergyClientSync(userId) {
+      return isOwner(userId)
+        && isValidEnergyAmount()
+        && resource.data.amount is int
+        && request.resource.data.amount <= resource.data.amount
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isScannerEnergyCreate() {
+      return isScannerAdmin()
+        && isValidEnergyAmount()
+        && request.resource.data.amount > 0
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.keys().hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isScannerEnergyGrant() {
+      return isScannerAdmin()
+        && isValidEnergyAmount()
+        && resource.data.amount is int
+        && request.resource.data.amount > resource.data.amount
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isOwnerCurrencyClientCreate(userId) {
+      return isOwner(userId)
+        && isValidCurrencyAmount()
+        && request.resource.data.amount == 0
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.keys().hasOnly(['amount', 'updatedAt']);
+    }
+
+    function isOwnerCurrencyClientSpend(userId) {
+      return isOwner(userId)
+        && isValidCurrencyAmount()
+        && resource.data.amount is int
+        && request.resource.data.amount <= resource.data.amount
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['amount', 'updatedAt']);
+    }
+
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if isOwner(userId) || isScannerAdmin();
+
+      allow create: if isScannerAdmin()
+        || (
+          isOwner(userId)
+          && !request.resource.data.keys().hasAny(['role', 'isScannerAdmin'])
+        );
+
+      allow update: if isScannerAdmin()
+        || (
+          isOwner(userId)
+          && !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['role', 'isScannerAdmin'])
+        );
+
+      allow delete: if isOwner(userId) && !isScannerAdmin();
 
       match /currencies/{currencyId} {
-        allow read: if isOwner(userId);
+        allow read: if isOwner(userId) || isScannerAdmin();
 
-        // Balance can only be changed by a signed-in owner app request
-        // and never go below zero.
-        allow create, update: if isOwner(userId)
-          && request.resource.data.amount is int
-          && request.resource.data.amount >= 0;
+        allow create: if
+          (
+            currencyId == 'energy'
+            && (
+              isScannerEnergyCreate()
+              || isOwnerInitialEnergyCreate(userId)
+              || isOwnerEnergyClientSyncCreate(userId)
+            )
+          )
+          || (
+            currencyId != 'energy'
+            && isOwnerCurrencyClientCreate(userId)
+          );
+
+        allow update: if
+          (
+            currencyId == 'energy'
+            && (
+              isScannerEnergyGrant()
+              || isOwnerEnergySpend(userId)
+              || isOwnerEnergyClientSync(userId)
+            )
+          )
+          || (
+            currencyId != 'energy'
+            && isOwnerCurrencyClientSpend(userId)
+          );
+
+        allow delete: if false;
+      }
+
+      match /runSessions/{runId} {
+        allow read: if isOwner(userId) || isScannerAdmin();
+        allow create, update, delete: if false;
+      }
+
+      match /currencyEvents/{eventId} {
+        allow read: if isOwner(userId) || isScannerAdmin();
+        allow create, update, delete: if false;
+      }
+
+      match /entitlements/dailySpin {
+        allow read: if isOwner(userId) || isScannerAdmin();
+
+        allow create: if isOwner(userId)
+          && request.resource.data.lastUsedAt == request.time
+          && request.resource.data.keys().hasOnly(['lastUsedAt']);
+
+        allow update: if isOwner(userId)
+          && request.resource.data.lastUsedAt == request.time
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['lastUsedAt'])
+          && resource.data.lastUsedAt <= request.time - duration.value(24, 'h');
 
         allow delete: if false;
       }
 
       match /QRCodes/{qrId} {
-        allow read: if isOwner(userId);
+        allow read: if isOwner(userId) || isScannerAdmin();
 
-        // QR is write-once from store flow.
-        allow create: if isOwner(userId)
-          && request.resource.data.userId == userId
-          && request.resource.data.status == 'active';
+        // Store QR creation is handled by Cloud Functions so prices cannot be spoofed.
+        allow create: if false;
 
-        // Scanner flow can only switch to redeemed/revoked.
-        allow update: if isOwner(userId)
+        // Scanner flow can only switch active product QRs to a terminal state.
+        allow update: if isScannerAdmin()
           && resource.data.status == 'active'
-          && request.resource.data.status in ['redeemed', 'revoked'];
+          && request.resource.data.status in ['deactive', 'redeemed', 'revoked'];
 
         allow delete: if false;
       }
 
       match /purchasedProducts/{productId} {
-        allow read: if isOwner(userId);
-        allow create: if isOwner(userId) && !exists(/databases/$(database)/documents/users/$(userId)/purchasedProducts/$(productId));
-        allow update, delete: if false;
+        allow read: if isOwner(userId) || isScannerAdmin();
+        allow create, update, delete: if false;
       }
+    }
+
+    match /economy/{documentId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if false;
+    }
+
+    match /ShopConfig/{documentId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if false;
+    }
+
+    match /energyGrants/{grantId} {
+      allow create: if isScannerAdmin()
+        && request.resource.data.scannerId == request.auth.uid
+        && request.resource.data.amount is int
+        && request.resource.data.amount > 0
+        && request.resource.data.amount <= 15
+        && request.resource.data.balanceAfter is int
+        && request.resource.data.balanceAfter <= 15;
+      allow read: if isScannerAdmin();
+      allow update, delete: if false;
+    }
+
+    match /redeemedQRCodes/{redeemId} {
+      allow create: if isScannerAdmin()
+        && request.resource.data.readBy == request.auth.uid;
+      allow read: if isScannerAdmin();
+      allow update, delete: if false;
     }
   }
 }

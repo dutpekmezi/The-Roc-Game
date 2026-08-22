@@ -64,15 +64,15 @@ public class GameCanvas : BaseSystem
 
     private void UpdateCollecteds(CollectableConfig collectableConfig, int amount)
     {
-        switch (collectableConfig)
-        {
-            case var _ when coffeeBar != null && collectableConfig == coffeeBar.CollectableConfig:
+            switch (collectableConfig)
+            {
+            case var _ when IsSameCollectable(collectableConfig, coffeeBar?.CollectableConfig):
                 coffeeBar.SetCount(amount);
                 break;
-            case var _ when matchaBar != null && collectableConfig == matchaBar.CollectableConfig:
+            case var _ when IsSameCollectable(collectableConfig, matchaBar?.CollectableConfig):
                 matchaBar.SetCount(amount);
                 break;
-            case var _ when coinBar != null && collectableConfig == coinBar.CollectableConfig:
+            case var _ when IsSameCollectable(collectableConfig, coinBar?.CollectableConfig):
                 coinBar.SetCount(amount);
                 break;
             default:
@@ -87,22 +87,32 @@ public class GameCanvas : BaseSystem
             return null;
         }
 
-        if (coffeeBar != null && coffeeBar.CollectableConfig == collectableConfig)
+        if (coffeeBar != null && IsSameCollectable(coffeeBar.CollectableConfig, collectableConfig))
         {
             return coffeeBar;
         }
 
-        if (matchaBar != null && matchaBar.CollectableConfig == collectableConfig)
+        if (matchaBar != null && IsSameCollectable(matchaBar.CollectableConfig, collectableConfig))
         {
             return matchaBar;
         }
 
-        if (coinBar != null && coinBar.CollectableConfig == collectableConfig)
+        if (coinBar != null && IsSameCollectable(coinBar.CollectableConfig, collectableConfig))
         {
             return coinBar;
         }
 
         return null;
+    }
+
+    private static bool IsSameCollectable(CollectableConfig left, CollectableConfig right)
+    {
+        if (left == null || right == null)
+        {
+            return false;
+        }
+
+        return left == right || (!string.IsNullOrEmpty(left.Id) && left.Id == right.Id);
     }
 
     public override void Tick()
@@ -130,7 +140,9 @@ public class GameCanvas : BaseSystem
 
     public override void Dispose()
     {
-        if (collectableBarsParent != null)
+        SignalBus.Get<CollectableSystem.CollectableCollected>().Unsubscribe(UpdateCollecteds);
+
+        if (collectableBarsParent != null && createdCollectableBars != null)
         {
             foreach (var collectableBar in createdCollectableBars)
             {

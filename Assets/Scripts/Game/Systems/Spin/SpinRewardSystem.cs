@@ -9,7 +9,7 @@ namespace Game.Systems
         [SerializeField] private SpinRewardSettings settings;
 
         public static SpinRewardSystem Instance { get; private set; }
-        public IReadOnlyList<SpinRewardConfig> Rewards => settings != null ? settings.Rewards : null;
+        public IReadOnlyList<RewardData> Rewards => settings != null ? settings.Rewards : null;
 
         public SpinRewardSystem(SpinRewardSettings spinSettings) 
         {
@@ -33,7 +33,7 @@ namespace Game.Systems
             
         }
 
-        public bool TryGetReward(int index, out SpinRewardConfig reward)
+        public bool TryGetReward(int index, out RewardData reward)
         {
             reward = null;
             var rewards = Rewards;

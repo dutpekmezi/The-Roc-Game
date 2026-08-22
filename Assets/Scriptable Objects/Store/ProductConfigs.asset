@@ -14,12 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Systems.ProductConfigs
   configs:
   - {fileID: 11400000, guid: 03cc8d886a66ef54cb4cca974cb22b63, type: 2}
+  - {fileID: 11400000, guid: 270b0404e53ae504db40b6b7f86f61af, type: 2}
+  - {fileID: 11400000, guid: a3d5a5f40324a314e853590533122b9f, type: 2}
+  - {fileID: 11400000, guid: 7db63f62e8b8f6f45853592b33fae1e0, type: 2}
+  - {fileID: 11400000, guid: 6f67feaf75eabaa47b937ce0ae4f5325, type: 2}
+  - {fileID: 11400000, guid: d4d9ec140608f354a9c8934748dfe9d8, type: 2}
   - {fileID: 11400000, guid: de1a87b514b316a4ab880f21182fc5c1, type: 2}
+  - {fileID: 11400000, guid: 66a0dd26c1850cb4e9839ac07883172b, type: 2}
+  - {fileID: 11400000, guid: f2dad46164116b24c8ba10f0ab23ddde, type: 2}
+  - {fileID: 11400000, guid: 82d2fcc706fde484f9d174bd22e72778, type: 2}
+  - {fileID: 11400000, guid: 4e5ead0bf16065c4a8a35cd0f147d083, type: 2}
+  - {fileID: 11400000, guid: 08290e93e1db6e048b83ce7809a9dca3, type: 2}
   - {fileID: 11400000, guid: 561763d07cd94e44c965db777061f138, type: 2}
+  - {fileID: 11400000, guid: ea0f4ab9b48943449a993f676c78f8ae, type: 2}
+  - {fileID: 11400000, guid: 00faf5d9992ae8748b64c5cff79094d2, type: 2}
+  - {fileID: 11400000, guid: bf0848cba1d4e354b9478a56c5289a1f, type: 2}
   sectionConfigs:
   - section: 0
-    color: {r: 0.043137256, g: 0.7176471, b: 0, a: 1}
+    color: {r: 1, g: 1, b: 1, a: 1}
   - section: 1
-    color: {r: 0.6, g: 0.227451, b: 0, a: 1}
+    color: {r: 1, g: 1, b: 1, a: 1}
   - section: 0
-    color: {r: 0.91372555, g: 0.6039216, b: 0, a: 1}
+    color: {r: 1, g: 1, b: 1, a: 1}

@@ -2,6 +2,7 @@ using Game.Systems;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils.Popup;
+using VContainer;
 
 namespace Game.UI
 {
@@ -15,7 +16,13 @@ namespace Game.UI
 
         public void Init(string productId)
         {
-            string payload = StoreManager.Instance.GetQRCodePayloadByProductId(productId);
+            var storeManager = StoreManager.Instance;
+            if (storeManager == null)
+            {
+                return;
+            }
+
+            string payload = storeManager.GetQRCodePayloadByProductId(productId);
             productImage.sprite = GenerateQrSprite(payload);
         }
 

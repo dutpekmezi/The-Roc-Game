@@ -1,43 +1,85 @@
-﻿using UnityEngine;
+using System;
+using System.Threading.Tasks;
+using UnityEngine;
+#if !UNITY_WEBGL || UNITY_EDITOR
 using Firebase;
 using Firebase.Extensions;
 using Firebase.Firestore;
+#endif
 
 public class FirebaseSmokeTest : MonoBehaviour
 {
-    string docId = "jyOw9zXFQhAk50na6KMT";
+#if !UNITY_WEBGL || UNITY_EDITOR
+    private readonly string docId = "jyOw9zXFQhAk50na6KMT";
 
-    void Start()
+    private void Start()
     {
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.Result != DependencyStatus.Available)
+            if (task.IsFaulted || task.IsCanceled)
             {
-                Debug.LogError("Firebase init failed: " + task.Result);
+                Debug.LogWarning("[FirebaseSmokeTest] Firebase dependency check skipped: " + GetTaskIssue(task));
                 return;
             }
 
-            Debug.Log("✅ Firebase initialized");
+            if (task.Result != DependencyStatus.Available)
+            {
+                Debug.LogWarning("[FirebaseSmokeTest] Firebase dependencies are not available: " + task.Result);
+                return;
+            }
 
-            var db = FirebaseFirestore.DefaultInstance;
+            Debug.Log("Firebase initialized");
+
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
             db.Collection("QRCodes").Document(docId)
                 .GetSnapshotAsync()
                 .ContinueWithOnMainThread(t =>
                 {
-                    if (t.IsFaulted)
+                    if (t.IsFaulted || t.IsCanceled)
                     {
-                        Debug.LogError("Firestore read error");
+                        Debug.LogWarning("[FirebaseSmokeTest] Firestore read skipped: " + GetTaskIssue(t));
                         return;
                     }
 
-                    var snap = t.Result;
+                    DocumentSnapshot snap = t.Result;
 
                     if (snap.Exists)
-                        Debug.Log("✅ Firestore bağlantısı OK");
+                    {
+                        Debug.Log("Firestore connection OK");
+                    }
                     else
-                        Debug.Log("❌ Document bulunamadı");
+                    {
+                        Debug.Log("Document not found");
+                    }
                 });
         });
     }
+
+    private static string GetTaskIssue(Task task)
+    {
+        if (task == null)
+        {
+            return "unknown";
+        }
+
+        if (task.IsCanceled)
+        {
+            return "task canceled";
+        }
+
+        if (task.Exception == null)
+        {
+            return "unknown";
+        }
+
+        Exception exception = task.Exception.Flatten().InnerException ?? task.Exception;
+        return exception.GetType().Name + ": " + exception.Message;
+    }
+#else
+    private void Start()
+    {
+        Debug.Log("[FirebaseSmokeTest] Skipped in WebGL player builds.");
+    }
+#endif
 }

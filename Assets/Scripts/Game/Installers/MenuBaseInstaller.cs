@@ -1,92 +1,95 @@
 using Game.Systems;
-using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
-using Utils.LogicTimer;
 using Utils.Scene;
+using VContainer;
+using VContainer.Unity;
 
 namespace Game.Installers
 {
-    public class MenuBaseInstaller : MonoBehaviour, ISceneObject
+    public class MenuBaseInstaller : LifetimeScope, ISceneObject
     {
-        private bool _initialized;
-
-        private readonly List<IDisposable> _disposables = new();
-
-
-        private readonly List<IInitializable> _initializables = new();
-
-        private SpinRewardSystem _spinRewardSystem;
-        private StoreManager _storeManager;
-
         [SerializeField] private SpinRewardSettings _spinRewardSettings;
         [SerializeField] private StoreSettings _storeSettings;
 
         public static MenuBaseInstaller Instance { get; private set; }
 
-        private void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
+        private MenuRuntimeEntryPoint _runtimeEntryPoint;
 
+        protected override void Configure(IContainerBuilder builder)
+        {
             Instance = this;
 
-            Initialize();
+            builder.RegisterInstance(_spinRewardSettings);
+            builder.RegisterInstance(_storeSettings);
+            if (_storeSettings != null && _storeSettings.ProductConfigs != null)
+            {
+                builder.RegisterInstance(_storeSettings.ProductConfigs);
+            }
+
+            builder.Register<SpinRewardSystem>(Lifetime.Singleton);
+            builder.Register<StoreManager>(Lifetime.Singleton);
+
+            builder.RegisterEntryPoint<MenuRuntimeEntryPoint>(Lifetime.Singleton);
         }
 
-        public Task Initialize()
+        internal void SetRuntimeEntryPoint(MenuRuntimeEntryPoint runtimeEntryPoint)
         {
-            if (_initialized)
-                return Task.CompletedTask;
-
-            _initialized = true;
-
-            _spinRewardSystem = BindDisposable(new SpinRewardSystem(_spinRewardSettings));
-            _storeManager = BindDisposable(new StoreManager(_storeSettings));
-
-            GameState.Instance.SetState(GameFlowState.Menu);
-
-            _ = SceneService.Instance.LoadScene(SceneKeys.MenuScene);
-
-            /*_logicTimer = BindDisposable(new LogicTimer(OnLogicTick));
-            _logicTimer.Start();*/
-
-
-            return Task.CompletedTask;
+            _runtimeEntryPoint = runtimeEntryPoint;
         }
+
+        public Task Initialize() => Task.CompletedTask;
 
         public Task Clear()
         {
-            for (int i = 0; i < _initializables.Count; i++)
-                _initializables[i].Dispose();
-            _initializables.Clear();
-
-            for (int i = 0; i < _disposables.Count; i++)
-                _disposables[i].Dispose();
-            _disposables.Clear();
-
+            _runtimeEntryPoint?.Dispose();
+            _runtimeEntryPoint = null;
             return Task.CompletedTask;
         }
+    }
 
+    public sealed class MenuRuntimeEntryPoint : IStartable, IDisposable
+    {
+        private readonly MenuBaseInstaller _installer;
+        private readonly ISceneService _sceneService;
+        private readonly GameState _gameState;
+        private readonly SpinRewardSystem _spinRewardSystem;
+        private readonly StoreManager _storeManager;
 
-        private T BindDisposable<T>(T obj)
+        private bool _disposed;
+
+        public MenuRuntimeEntryPoint(
+            MenuBaseInstaller installer,
+            ISceneService sceneService,
+            GameState gameState,
+            SpinRewardSystem spinRewardSystem,
+            StoreManager storeManager)
         {
-            if (obj is IDisposable disposable)
-                _disposables.Add(disposable);
-
-            return obj;
+            _installer = installer;
+            _sceneService = sceneService;
+            _gameState = gameState;
+            _spinRewardSystem = spinRewardSystem;
+            _storeManager = storeManager;
+            _installer.SetRuntimeEntryPoint(this);
         }
 
-        private T InitializeInitializable<T>(T initializable) where T : IInitializable
+        public void Start()
         {
-            initializable.Initialize();
-            _initializables.Add(initializable);
-            return initializable;
+            _gameState.SetState(GameFlowState.Menu);
+            _ = _sceneService.LoadScene(SceneKeys.MenuScene);
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _storeManager.Dispose();
+            _spinRewardSystem.Dispose();
         }
     }
 }

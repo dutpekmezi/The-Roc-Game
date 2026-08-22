@@ -23,6 +23,32 @@ namespace Game.Systems
         [MinValue(0)]
         public float flyCollectedStartDelay = 0f;
 
+        public List<CollectableConfig> GetCollectableConfigs()
+        {
+            var configs = new List<CollectableConfig>();
+            if (collectablePrefabs == null)
+            {
+                return configs;
+            }
+
+            for (int i = 0; i < collectablePrefabs.Count; i++)
+            {
+                var collectablePrefab = collectablePrefabs[i];
+                if (collectablePrefab == null || collectablePrefab.CollectableConfig == null)
+                {
+                    continue;
+                }
+
+                var config = collectablePrefab.CollectableConfig;
+                if (!ContainsCollectableConfig(configs, config))
+                {
+                    configs.Add(config);
+                }
+            }
+
+            return configs;
+        }
+
         public CollectableConfig GetCollectableConfigById(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || collectablePrefabs == null)
@@ -46,6 +72,30 @@ namespace Game.Systems
             }
 
             return null;
+        }
+
+        private static bool ContainsCollectableConfig(List<CollectableConfig> configs, CollectableConfig config)
+        {
+            if (configs == null || config == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < configs.Count; i++)
+            {
+                var existingConfig = configs[i];
+                if (existingConfig == null)
+                {
+                    continue;
+                }
+
+                if (existingConfig == config || (!string.IsNullOrEmpty(existingConfig.Id) && existingConfig.Id == config.Id))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

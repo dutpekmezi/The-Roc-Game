@@ -1,11 +1,10 @@
 using Game.Installers;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.LowLevel;
 using Utils.Logger;
 using Utils.LogicTimer;
 using Utils.Pools;
+using Utils.Signal;
 
 namespace Game.Systems
 {
@@ -15,6 +14,7 @@ namespace Game.Systems
 
         private List<ObstacleMover> createdObstacles = new();
         private float timer;
+        private bool movementStopped;
 
         private const int DefaultPoolCapacity = 25;
         private const int DefaultPoolPreload = 1;
@@ -31,13 +31,27 @@ namespace Game.Systems
 
             Instance = this;
 
-            this.ObstacleSettings = obstacleSettings;
+            ObstacleSettings = obstacleSettings;
+            movementStopped = true;
 
-            timer = obstacleSettings.spawnInterval;
+            timer = ObstacleSettings != null ? ObstacleSettings.spawnInterval : 0f;
+            SignalBus.Get<GameplayStartedSignal>().Subscribe(HandleGameplayStarted);
+            SignalBus.Get<GameplayStoppedSignal>().Subscribe(HandleGameplayStopped);
+            WarmUpPools();
         }
 
         public override void Tick()
         {
+            if (createdObstacles == null || ObstacleSettings == null)
+            {
+                return;
+            }
+
+            if (movementStopped)
+            {
+                return;
+            }
+
             timer -= LogicTimer.FixedDelta;
 
             if (timer <= 0)
@@ -80,7 +94,7 @@ namespace Game.Systems
 
             CreateObstacle(new Vector2(ObstacleSettings.spawnX, targetSpawnPosYBottom), false);
             CreateObstacle(new Vector2(ObstacleSettings.spawnX, targetSpawnPosYTop), true);
-            CollectableSystem.Instance.SpawnRandomCollectable(collectableSpawnPos);
+            CollectableSystem.Instance.TrySpawnRandomCollectable(collectableSpawnPos);
         }
 
         private void CreateObstacle(Vector3 position, bool flipVertically)
@@ -114,9 +128,53 @@ namespace Game.Systems
             createdObstacles.Remove(obstacle);
         }
 
+        public void ResetForRestart(bool stopMovement = false)
+        {
+            movementStopped = stopMovement;
+            ClearCreatedObstacles();
+            createdObstacles ??= new List<ObstacleMover>();
+            timer = ObstacleSettings != null ? ObstacleSettings.spawnInterval : 0f;
+        }
+
+        public void StopMovement()
+        {
+            movementStopped = true;
+        }
+
+        private void WarmUpPools()
+        {
+            if (ObstacleSettings == null || ObstacleSettings.obstaclePrefabs == null)
+            {
+                GameLogger.LogWarning("ObstacleSystem cannot initialize pool without a obstacle prefab.");
+                return;
+            }
+
+            for (int i = 0; i < ObstacleSettings.obstaclePrefabs.Count; i++)
+            {
+                var obstaclePrefab = ObstacleSettings.obstaclePrefabs[i];
+                if (obstaclePrefab == null)
+                {
+                    continue;
+                }
+
+                var pool = Pools.Instance.InitializePool(
+                    obstaclePrefab.gameObject,
+                    DefaultPoolPreload,
+                    DefaultPoolCapacity);
+
+                obstaclePool ??= pool;
+            }
+        }
+
         private void InitializePool(int preload, int capacity, ObstacleMover obstaclePrefab)
         {
-            if (ObstacleSettings.obstaclePrefabs == null)
+            if (obstaclePrefab == null)
+            {
+                GameLogger.LogWarning("ObstacleSystem cannot initialize pool without a obstacle prefab.");
+                return;
+            }
+
+            if (ObstacleSettings == null || ObstacleSettings.obstaclePrefabs == null)
             {
                 GameLogger.LogWarning("ObstacleSystem cannot initialize pool without a obstacle prefab.");
                 return;
@@ -134,18 +192,38 @@ namespace Game.Systems
 
         public override void Dispose()
         {
-            if (createdObstacles != null)
-            {
-                foreach (var obstacle in createdObstacles)
-                {
-                    if (obstacle != null) Pools.Instance.Despawn(obstacle.gameObject);
-                }
-
-                createdObstacles.Clear();
-                createdObstacles = null;
-            }
+            SignalBus.Get<GameplayStartedSignal>().Unsubscribe(HandleGameplayStarted);
+            SignalBus.Get<GameplayStoppedSignal>().Unsubscribe(HandleGameplayStopped);
+            ClearCreatedObstacles();
+            createdObstacles = null;
 
             return;
+        }
+
+        private void HandleGameplayStarted()
+        {
+            ResetForRestart();
+        }
+
+        private void HandleGameplayStopped()
+        {
+            StopMovement();
+        }
+
+        private void ClearCreatedObstacles()
+        {
+            if (createdObstacles == null)
+            {
+                return;
+            }
+
+            for (int i = createdObstacles.Count - 1; i >= 0; i--)
+            {
+                var obstacle = createdObstacles[i];
+                if (obstacle != null) Pools.Instance.Despawn(obstacle.gameObject);
+            }
+
+            createdObstacles.Clear();
         }
     }   
 }

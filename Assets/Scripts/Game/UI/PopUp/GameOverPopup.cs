@@ -1,8 +1,10 @@
 using Game.Systems;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils.Currency;
 using Utils.Popup;
+using VContainer;
 
 namespace Game.UI
 {
@@ -10,13 +12,25 @@ namespace Game.UI
     {
         [SerializeField] public const string PopupKey = "game_over";
         [SerializeField] private List<CollectableBar> collectableBars = new();
+        [SerializeField] private float showDelay = 0.6f;
 
         public override string PopupId => PopupKey;
+        protected override float ShowDelay => showDelay;
+
+        private ICurrencyService _currencyService;
+        private bool scoreRewardsApplied;
+
+        [Inject]
+        private void Construct(ICurrencyService currencyService)
+        {
+            _currencyService = currencyService;
+        }
 
         protected override void Awake()
         {
             base.Awake();
             CacheCollectableBars();
+            PostAppear += ApplyScoreRewardsToCollectedCounts;
             PostAppear += FlyCollectedCollectablesToBars;
             PostAppear += HandleGameOverState;
         }
@@ -26,6 +40,38 @@ namespace Game.UI
             if (collectableBars == null || collectableBars.Count == 0)
             {
                 collectableBars = new List<CollectableBar>(GetComponentsInChildren<CollectableBar>(true));
+            }
+        }
+
+        private void ApplyScoreRewardsToCollectedCounts()
+        {
+            if (scoreRewardsApplied)
+            {
+                return;
+            }
+
+            scoreRewardsApplied = true;
+
+            if (CollectableSystem.Instance == null || ScoreService.Instance == null)
+            {
+                return;
+            }
+
+            var scoreConfig = ScoreService.Instance.Config;
+            if (scoreConfig == null)
+            {
+                return;
+            }
+
+            var scoreRewards = scoreConfig.CalculateCollectableRewards(ScoreService.Instance.RewardableScore);
+            if (scoreRewards == null || scoreRewards.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var scoreReward in scoreRewards)
+            {
+                CollectableSystem.Instance.AddCollectedCount(scoreReward.Key, scoreReward.Value);
             }
         }
 
@@ -94,14 +140,10 @@ namespace Game.UI
             return RectTransformUtility.WorldToScreenPoint(camera, rectTransform.position);
         }
 
-        private void HandleGameOverState()
+        private async void HandleGameOverState()
         {
-            if (GameState.Instance != null)
-            {
-                GameState.Instance.SetState(GameFlowState.GameOver);
-            }
-
-            if (CollectableSystem.Instance == null || CurrencyService.Instance == null)
+            var currencyService = _currencyService ?? CurrencyService.Instance;
+            if (CollectableSystem.Instance == null || currencyService == null)
             {
                 return;
             }
@@ -121,7 +163,7 @@ namespace Game.UI
                     continue;
                 }
 
-                var currencyConfig = CurrencyService.Instance.GetCurrencyConfig(collected.Key.Id);
+                var currencyConfig = currencyService.GetCurrencyConfig(collected.Key.Id);
                 if (currencyConfig == null)
                 {
                     continue;
@@ -142,12 +184,74 @@ namespace Game.UI
                 return;
             }
 
-            foreach (var reward in pendingRewards)
+            string runId = GameState.Instance != null
+                ? GameState.Instance.ConsumeActiveRunId()
+                : string.Empty;
+
+            if (string.IsNullOrEmpty(runId))
             {
-                CurrencyService.Instance.ModifyCurrency(reward.Key, reward.Value);
+                Debug.LogWarning("[GameOverPopup] Server run id bulunamadi; odul claim edilmedi.");
+#if UNITY_EDITOR
+                Debug.LogWarning("[GameOverPopup] Editor fallback: Run odulu local-only veriliyor, Firebase'e yazmak icin functions deploy gerekli.");
+                ApplyLocalRewards(currencyService, pendingRewards);
+#endif
+                return;
             }
 
-            GameState.Instance?.SetPendingCurrencyRewards(pendingRewards);
+            try
+            {
+                FirestoreGameSecurityService firebase = FirestoreGameSecurityService.Instance;
+                if (firebase == null)
+                {
+                    Debug.LogWarning("[GameOverPopup] Firebase service yok; odul claim edilmedi.");
+                    return;
+                }
+
+                Debug.Log("[GameOverPopup] Run reward claim basliyor. runId=" + runId + ", rewardTypes=" + pendingRewards.Count);
+                RewardClaimResult claimResult = await firebase.ClaimRunRewardsAsync(runId, pendingRewards);
+                if (!claimResult.IsSuccess)
+                {
+                    Debug.LogWarning("[GameOverPopup] Run reward claim reddedildi: " + claimResult.Error);
+#if UNITY_EDITOR
+                    Debug.LogWarning("[GameOverPopup] Editor fallback: Run odulu local-only veriliyor, Firebase'e yazmak icin functions deploy gerekli.");
+                    ApplyLocalRewards(currencyService, pendingRewards);
+#endif
+                    return;
+                }
+
+                if (currencyService is CurrencyService concreteCurrencyService)
+                {
+                    await concreteCurrencyService.RefreshFromFirebaseAsync();
+                }
+
+                Debug.Log("[GameOverPopup] Run reward claim tamamlandi. runId=" + runId + ", grantTypes=" + (claimResult.Grants?.Count ?? 0));
+                GameState.Instance?.AddPendingCurrencyRewards(claimResult.Grants);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[GameOverPopup] Run reward claim hata: " + e.Message);
+#if UNITY_EDITOR
+                Debug.LogWarning("[GameOverPopup] Editor fallback: Run odulu local-only veriliyor, Firebase'e yazmak icin functions deploy gerekli.");
+                ApplyLocalRewards(currencyService, pendingRewards);
+#endif
+            }
+        }
+
+        private static void ApplyLocalRewards(
+            ICurrencyService currencyService,
+            Dictionary<string, int> rewards)
+        {
+            if (currencyService == null || rewards == null || rewards.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var reward in rewards)
+            {
+                currencyService.ModifyCurrency(reward.Key, reward.Value);
+            }
+
+            GameState.Instance?.AddPendingCurrencyRewards(rewards);
         }
     }
 }

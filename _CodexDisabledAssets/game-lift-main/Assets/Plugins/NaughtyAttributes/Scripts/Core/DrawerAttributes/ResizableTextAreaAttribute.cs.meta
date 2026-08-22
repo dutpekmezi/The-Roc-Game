@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 4a1e09480d2008a4db9fe65acc658912
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 129996
+  packageName: NaughtyAttributes
+  packageVersion: 2.1.4
+  assetPath: Assets/NaughtyAttributes/Scripts/Core/DrawerAttributes/ResizableTextAreaAttribute.cs
+  uploadId: 480834
